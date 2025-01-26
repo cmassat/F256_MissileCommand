@@ -1,0 +1,4 @@
+assets/bitmap.bin filter=lfs diff=lfs merge=lfs -text
+assets/sprite.bin filter=lfs diff=lfs merge=lfs -text
+assets/bitmap.pal filter=lfs diff=lfs merge=lfs -text
+assets/sprite.pal filter=lfs diff=lfs merge=lfs -text

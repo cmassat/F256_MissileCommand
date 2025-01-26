@@ -1,0 +1,6 @@
+*.ps1
+*.map
+*.lst
+*.pgz
+workspace/
+.venv/
