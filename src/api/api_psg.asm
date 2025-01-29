@@ -120,16 +120,42 @@ psg_1_freq_left
     sta mDebug + 1
     rts
 
-psg_noise_mono
-    lda #PSG_TONE_4_CTRL_MASK_WHT_0512
-    
-    sta PSG_MONO_REG
-    rts 
+psg_2_freq_left
+    sta mPSGFreqL2
+    stx mPSGFreqH2
 
-psg_noise_vol
+    lda mPSGFreqL2
+    and #$0f
+    ora #PSG_TONE_2_FREQ_MASK_L
+    sta PSG_LEFT_REG
+    sta mDebug
+    clc
+
+    ror mPSGFreqH2
+    ror mPSGFreqL2
+
+    ror mPSGFreqH2
+    ror mPSGFreqL2
+
+    ror mPSGFreqH2
+    ror mPSGFreqL2
+
+    ror mPSGFreqH2
+    ror mPSGFreqL2
+
+    lda mPSGFreqL2
+    and #%01111111
+    sta PSG_LEFT_REG
+    rts
+
+psg_noise_left
+    lda #PSG_TONE_4_CTRL_MASK_WHT_2048
+    sta PSG_LEFT_REG
+
+psg_noise_vol_left
     and #$0F
     ora #PSG_TONE_4_ATTN_MASK
-    sta PSG_MONO_REG
+    sta PSG_LEFT_REG
     rts 
 ;a register 0-15 
 ; 0 is the loudest
@@ -167,9 +193,9 @@ psg_2_volume_mono
 
 psg_2_volume_left
     and #$0F
-    sta mPSGVol2
-    lda #PSG_TONE_2_ATTN_MASK
-    ora mPSGVol2
+  ;  sta mPSGVol2
+    ora #PSG_TONE_2_ATTN_MASK
+    ;ora mPSGVol2
     sta PSG_LEFT_REG
     rts
 

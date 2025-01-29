@@ -1,4 +1,51 @@
 ;TODO: Clean this S$it up
+clutInc
+    asl
+    tay
+    lda #CLUT_IO
+    sta MMU_IO_CTRL
+
+    lda #<$D020
+    sta POINTER_CLUT_DEST
+
+    lda #>$D020
+    sta POINTER_CLUT_DEST  + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #5
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #10
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #15
+    sta (POINTER_CLUT_DEST)
+    stz  MMU_IO_CTRL
+
+
+    rts
+
 clut_load_0
     lda #CLUT_IO
     sta MMU_IO_CTRL
@@ -216,8 +263,28 @@ _clut_row3
 
     inx
     cpx #$ff
-    bne _clut_row3
+    bne _clut_row3+4
+
 
     lda #0
     sta MMU_IO_CTRL
     rts
+
+.section variables
+mColor1
+    .byte $00
+mclut
+   .word $D000 ;0
+   .word $D008 ;1
+   .word $D00C ;2
+   .word $D010 ;3
+   .word $D014 ;3
+   .word $D018 ;4
+   .word $D01C ;5
+   .word $D020 ;6
+   .word $D024 ;7
+   .word $D028 ;8
+   .word $D02c
+
+
+.endsection

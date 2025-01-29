@@ -1,3 +1,6 @@
+setPixelColor
+	sta mPixelColor
+	rts
 
 setOrginX
 	STA l_x1
@@ -433,6 +436,9 @@ _neg
     rts
 
 lineInit
+	pha
+	phx
+	phy
 	stz mSteep
     jsr calcXDir
 	jsr calcYDir
@@ -440,10 +446,19 @@ lineInit
 	jsr calcai
 	jsr calcbi
 	jsr calcDecision
+	ply
+	plx
+	pla
 	rts
 
 linestep
+	pha
+	phx
+	phy
 	jsr lineUpdateDecision
+	ply
+	plx
+	pla
 	rts
 
 do_line
@@ -453,6 +468,7 @@ _loop
     jsr putPixel
 
 ;updateDecision
+
 	jsr lineUpdateDecision
 
 	lda mXdir
@@ -492,7 +508,10 @@ _putLastPixel
    jsr putPixel
     rts
 
-putPixel
+getPixel
+	phy
+	phx
+	;pha
 	lda #<320
 	ldx #>320
 	jsr setMulA
@@ -543,16 +562,161 @@ putPixel
 	lda mPixel
 	clc
 	adc #<$a000
-	sta POINTER_BMP
+	sta POINTER_LINE
 
 	lda mPixel + 1
 	adc #>$a000
-	sta POINTER_BMP + 1
-	lda #112
-	sta (POINTER_BMP)
+	sta POINTER_LINE + 1
+
+	lda (POINTER_LINE)
+
+
+
+
+
+;	pla
+	plx
+	ply
+
   rts
 
-;POINTER_BMP = $B4
+clearPixel
+	pha
+	phx
+	phy
+	lda #<320
+	ldx #>320
+	jsr setMulA
+
+	lda l_y1
+	ldx l_y1 + 1
+	jsr setMulB
+
+	jsr getMulResult
+	sta mPixel
+	stx mPixel + 1
+	sty mPixel + 2
+
+	lda mPixel
+	clc
+	adc l_x1
+	sta mPixel
+	lda mPixel + 1
+	adc l_x1 + 1
+	sta mPixel + 1
+
+	lda mPixel + 2
+	adc #0
+	sta mPixel + 2
+
+	jsr getBank
+	sta $d
+	txa
+	tay
+	lda #$b3
+	lda MMU_MEM_CTRL
+
+	lda #<mLineOffset
+	sta pointer
+	lda #>mLineOffset + 1
+	sta pointer + 1
+
+	lda mPixel
+	sec
+	sbc (pointer),y
+	sta mPixel
+
+	lda mPixel + 1
+	iny
+	sbc (pointer),y
+	sta mPixel + 1
+
+	lda mPixel
+	clc
+	adc #<$a000
+	sta POINTER_LINE
+
+	lda mPixel + 1
+	adc #>$a000
+	sta POINTER_LINE + 1
+	lda #112
+	sta (POINTER_LINE)
+
+
+	ply
+	plx
+	pla
+	rts
+
+putPixel
+	pha
+	phx
+	phy
+	lda #<320
+	ldx #>320
+	jsr setMulA
+
+	lda l_y1
+	ldx l_y1 + 1
+	jsr setMulB
+
+	jsr getMulResult
+	sta mPixel
+	stx mPixel + 1
+	sty mPixel + 2
+
+	lda mPixel
+	clc
+	adc l_x1
+	sta mPixel
+	lda mPixel + 1
+	adc l_x1 + 1
+	sta mPixel + 1
+
+	lda mPixel + 2
+	adc #0
+	sta mPixel + 2
+
+	jsr getBank
+	sta $d
+	txa
+	tay
+	lda #$b3
+	lda MMU_MEM_CTRL
+
+	lda #<mLineOffset
+	sta pointer
+	lda #>mLineOffset + 1
+	sta pointer + 1
+
+	lda mPixel
+	sec
+	sbc (pointer),y
+	sta mPixel
+
+	lda mPixel + 1
+	iny
+	sbc (pointer),y
+	sta mPixel + 1
+
+	lda mPixel
+	clc
+	adc #<$a000
+	sta POINTER_LINE
+
+	lda mPixel + 1
+	adc #>$a000
+	sta POINTER_LINE + 1
+	lda mPixelColor
+	sta (POINTER_LINE)
+
+
+	ply
+	plx
+	pla
+  rts
+
+;POINTER_LINE = $B4
 getBank
 	lda mPixel + 2
 	cmp #1
@@ -619,8 +783,9 @@ _bank17
 	lda #17
 	ldx #18
 	rts
+mLineData
 l_dx .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-l_dy .word $0  ; ZU - "dlugosc" y 
+l_dy .word $0  ; ZU - "dlugosc" y A
 l_xi .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
 l_yi .word $0  ; U2
 l_ai .word $0 ; U2 step
@@ -634,14 +799,21 @@ l_x2 .word $0 ; ZU koniec linii
 l_y2 .word $0 ; ZU
 mSteep
 	.byte $0
+mXdir
+    .byte $00
+mYdir
+    .byte $00
+; mDWeight
+;     .byte $00
+
+mLineDateEnd
+lineDataLength
+	.byte mLineDateEnd - mLineData
 mPixel
 	.byte $00, $00, $00
-mLineError
-	.byte $00,$00
-mLineError2
-	.byte $00,$00
-mLineTemp
-	.byte $00, $00
+
+mPixelColor
+	.byte $00
 mLineOffset
 	.word $0000
 	.word $2000
@@ -658,12 +830,6 @@ lDirZer = 0
 lDirNeg = 1
 lDirPos = 2
 
-mXdir
-    .byte $00
-mYdir
-    .byte $00
-mDWeight
-    .byte $00
 
 lWeight1 = 0
 lWeightX = 2

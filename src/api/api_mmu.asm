@@ -15,17 +15,18 @@ clearExtMem
     jsr clearMemory
     lda #15
     jsr clearMemory
-    lda #16
-    jsr clearMemory
-    lda #17
-    jsr clearMemory
-    lda #0
+   ; lda #16
+   ; jsr clearMemory
+    lda #$b3
+    sta MMU_MEM_CTRL
+    lda #5
+    sta $d
     rts
 
 clearMemory
     pha
     lda #$b3
-    lda MMU_MEM_CTRL
+    sta MMU_MEM_CTRL
 
     pla
     sta $d

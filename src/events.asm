@@ -1,5 +1,19 @@
 .section code
+gameLoop
+    pha
+    phx
+    phy
+    jsr splash.handle
+    jsr menu.handle
+    jsr psg.handle
+    inc r_seed
+    ply
+    plx
+    pla
+rts
+
 handleEvents
+
 _wait_for_event 
 ; Peek at the queue to see if anything is pending
     lda		kernel.args.events.pending  ; Negated count
@@ -13,6 +27,7 @@ _wait_for_event
     jsr		_dispatch
  _done
         ; Continue until the queue is drained.
+
 
     bra		handleEvents
     rts
@@ -30,26 +45,26 @@ _wait_for_event
 
     cmp #kernel.event.timer.EXPIRED
     beq handleTimerEvent
+
    rts
 
 keyPressed
    lda event.key.ascii
    sta mKeyPress
-   ;jsr keyboardAnykey
-   ;jsr keyboardPressed
+   jsr keyboardAnykey
+   jsr keyboardPressed
    rts
 
 keyReleased
     lda event.key.ascii
     sta mKeyRelease
- ;   jsr keyboardReleased
+    jsr keyboardReleased
     rts
 
 handleTimerEvent
-    jsr moveMissle
+
 	jsr setFrameTimer
-    lda #0
-    sta mSOFSemaphore
+     jsr gameLoop
 	rts
 
 setFrameTimer

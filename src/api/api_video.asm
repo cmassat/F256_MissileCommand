@@ -230,11 +230,11 @@ _clut_row
     stz MMU_IO_CTRL
     rts
 
+
 setBackgroundColor
-    lda #0
     sta VKY_BKG_COL_B
-    sta VKY_BKG_COL_G
-    sta VKY_BKG_COL_R
+    stx VKY_BKG_COL_G
+    sty VKY_BKG_COL_R
 
     ;sta MMU_IO_CTRL
     rts

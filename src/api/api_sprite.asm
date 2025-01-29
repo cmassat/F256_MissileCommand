@@ -5,6 +5,8 @@
 ;sprite pointer
 ;------------------
 setSpriteNumber
+    phx
+    phy
     asl a
     tax
     lda mSpriteAttrAddr,x
@@ -12,6 +14,8 @@ setSpriteNumber
     inx
     lda mSpriteAttrAddr,x
     sta POINTER_SPR + 1
+    ply
+    plx
     rts
 
 ;------------------
@@ -72,24 +76,37 @@ hideSprite
     sta (POINTER_SPR)
     rts
 
+
+; hideAllSprites
+;     ldx #60
+;     lda #60
+;     sta mSpriteTracker
+; _loop
+;     cpx #0
+;     beq _end
+;     lda mSpriteTracker
+;     jsr setSpriteNumber
+;     lda #0
+;     jsr showSprite
+;     dec mSpriteTracker
+;     dex
+;     bra _loop
+; _end
+;     rts
+
 hideAllSprites
-    ldx #60
-    lda #60
+    lda #0
     sta mSpriteTracker
+    ldx #0
 _loop
-    cpx #0
-    beq _end
     lda mSpriteTracker
     jsr setSpriteNumber
-    lda #0
-    jsr showSprite
-    dec mSpriteTracker
-    dex 
-    bra _loop
-_end
+    jsr hideSprite
+    inc mSpriteTracker
+    lda mSpriteTracker
+    cmp #64
+    bne _loop
     rts
-
-
 .endsection
 .section variables
 ;_ |size |layer |lut| enable
