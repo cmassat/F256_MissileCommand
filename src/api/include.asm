@@ -10,4 +10,4 @@
 .include "consts.asm"
 .include "kernel.asm"
 .include "api_util.asm"
-;.include "api_linestep.asm"
+.include "mouse.asm"

@@ -22,3 +22,24 @@ getMulResult
 	tay
 	pla
 	rts
+
+
+;a low
+;x hi
+setNum
+	sta $DE06
+	txa
+	sta $DE07
+	rts
+;a low
+;x hi
+setDen
+	sta $DE04
+	txa
+	sta $DE05
+	rts
+
+getDivResult
+	lda $DDE14
+	ldx $DE15
+	rts

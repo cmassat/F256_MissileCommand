@@ -21,232 +21,239 @@ init
     sta icbmFrame5
     sta icbmFrame6
     sta icbmFrame7
+
+    stz  mSpeedWaves
+    stz  mSpeedWaves + 1
+    stz mLaunchNext
+    stz mLaunchCount
+    jsr newAttack
+    rts
+
+
+drawMissle
+    lda (POINTER_ACTIVE)
+    cmp #0
+    bne _move
+    jsr initMissle
+    lda (POINTER_ACTIVE)
+    cmp #0
+    bne _saveLineData
+    rts
+_saveLineData
+    ;save line data for later
+
+    ldy #0
+_loop
+    lda (POINTER_TX),y
+    sta (POINTER_ICBM),y
+    iny
+    cpy #$19
+    bne _loop
+
+    rts
+_move
+  ; lda #0
+   ;sta (POINTER_FRAME)
+
+    ldy #0
+_setLineDatagetPixel
+    lda (POINTER_ICBM),y
+    sta (POINTER_TX),y
+    iny
+    cpy #$19
+    bne _setLineDatagetPixel
+
+    jsr linestep
+    jsr getOrginY
+    cmp #215
+    bne _ok
+    bcs _deactivte
+_ok
+    jsr getPixel
+    cmp #112
+    beq _putPixel
+    jsr getPixel
+    cmp #0
+    bne _deactivte
+_putPixel
+    jsr putPixel
+    bra _saveLineData
+    rts
+_deactivte
+    dec mLaunchCount
+    lda #0
+    sta (POINTER_ACTIVE)
+
+
+    lda (POINTER_SOURCEX)
+    pha
+    ldy #1
+    lda (POINTER_SOURCEX),y
+    tax
+    pla
+    jsr setOrginX
+
+    lda (POINTER_SOURCEY)
+    pha
+    ldy #1
+    lda (POINTER_SOURCEY),y
+    tax
+    pla
+    jsr setOrginY
+
+    lda (POINTER_DESTX)
+    pha
+    ldy #1
+    lda (POINTER_DESTX),y
+    tax
+    pla
+    jsr setDestX
+
+    lda (POINTER_DESTY)
+    pha
+    ldy #1
+    lda (POINTER_DESTY),y
+    tax
+    pla
+    jsr setDestY
+
+    lda #0
+    jsr setPixelColor
+    jsr do_line
+    lda #112
+    jsr setPixelColor
+
+    rts
+
+initMissle
+    lda mLaunchNext
+    cmp #0
+    bne _activate
+    ;4 or less activate
+    lda mLaunchCount
+    cmp #4
+    bcc _activate
+
+
+    ;check if we sould wait for next wave
+    jsr checkWait
+    stx mDebug
+    cpx #0
+    beq _nextMissels
+    rts
+_nextMissels
+    ;we waited long enough
+    lda #1
+    sta mLaunchNext
+_activate
+    inc mLaunchCount
+    jsr setupRandomPath
+    jsr lineInit
+    jsr putPixel
+    jsr linestep
+    jsr putPixel
+    lda #1
+    sta (POINTER_ACTIVE)
+    clc
+    rts
+
+moveMacro .macro
+    lda <#\1
+    sta POINTER_ICBM
+    lda >#\1
+    sta POINTER_ICBM + 1
+
+    lda <#\2
+    sta POINTER_TX
+    lda >#\2
+    sta POINTER_TX + 1
+
+    lda #<\3
+    sta POINTER_SOURCEX
+    lda #>\3
+    sta POINTER_SOURCEX + 1
+
+    lda #<\4
+    sta POINTER_SOURCEY
+    lda #>\4
+    sta POINTER_SOURCEY + 1
+
+    lda #<\5
+    sta POINTER_DESTX
+    lda #>\5
+    sta POINTER_DESTX + 1
+
+    lda #<\6
+    sta POINTER_DESTY
+    lda #>\6
+    sta POINTER_DESTY + 1
+
+    lda #<\7
+    sta POINTER_ACTIVE
+    lda #>\7
+    sta POINTER_ACTIVE + 1
+
+    jsr drawMissle
+.endmacro
+
+demo
+    lda mSpeedWaves
+    clc
+    adc #$14
+    sta mSpeedWaves
+    lda mSpeedWaves + 1
+    adc #0
+    sta  mSpeedWaves + 1
+    cmp #0
+    bne _move
+
+    rts
+_move
+    stz mSpeedWaves + 1
+    inc mOkToMove
+    jsr draw
+    stz mOkToMove
+    stz mLaunchNext
+    rts
+
+draw
+    jsr drawMissle0
+    jsr drawMissle1
+    jsr drawMissle2
+    jsr drawMissle3
+    jsr drawMissle4
+    jsr drawMissle5
+    jsr drawMissle6
+    jsr drawMissle7
     rts
 
 drawMissle0
-    lda <#icbm0
-    sta POINTER_ICBM
-    lda >#icbm0
-    sta POINTER_ICBM + 1
-
-    lda <#mLineData
-    sta POINTER_TX
-    lda >#mLineData
-    sta POINTER_TX + 1
-
-    lda icbmActve0
-    cmp #0
-    bne _move
-
-    jsr setupRandomPath
-
-    jsr getOrginX
-    sta origX0
-    stx origX0 + 1
-
-    jsr getOrginY
-    sta origY0
-    stx origY0 + 1
-
-    jsr getDestX
-    sta destX0
-    stx destX0 + 1
-
-    jsr getDestY
-    sta destY0
-    stx destY0 + 1
-
-    jsr lineInit
-    jsr putPixel
-    jsr linestep
-    jsr putPixel
-    lda #1
-    sta icbmActve0
-_saveLineData
-    ;save line data for later
-
-    ldy #0
-_loop
-    lda (POINTER_TX),y
-    sta (POINTER_ICBM),y
-    iny
-    cpy lineDataLength
-    bne _loop
-
+    #moveMacro icbm0, mLineData, origX0, origY0, destX0, destY0, icbmActve0
     rts
-_move
-    lda icbmFrame0
-    cmp #wave0
-    beq _goodFrame
-    inc icbmFrame0
-    rts
-_goodFrame
-    stz icbmFrame0
-
-    ldy #0
-_setLineDatagetPixel
-    lda (POINTER_ICBM),y
-    sta (POINTER_TX),y
-    iny
-    cpy lineDataLength
-    bne _setLineDatagetPixel
-
-    jsr linestep
-    jsr getOrginY
-    cmp #215
-    bne _ok
-    bcs _deactivte
-    jsr getPixel
-    cmp #112
-    beq _ok
-    cmp #0
-    bne _deactivte
-_ok
-    jsr putPixel
-    bra _saveLineData
-    rts
-_deactivte
-    stz icbmActve0
-
-
-
-    lda origX0
-    ldx origX0 + 1
-    jsr setOrginX
-
-    lda origY0
-    ldx origY0 + 1
-    jsr setOrginY
-
-    lda destX0
-    ldx destX0 + 1
-    jsr setDestX
-
-    lda destY0
-    ldx destY0 + 1
-    jsr setDestY
-
-    lda #0
-    jsr setPixelColor
-    jsr do_line
-    lda #112
-    jsr setPixelColor
-    rts
-
-
-
 drawMissle1
-    lda <#icbm1
-    sta POINTER_ICBM
-    lda >#icbm1
-    sta POINTER_ICBM + 1
-
-    lda <#mLineData
-    sta POINTER_TX
-    lda >#mLineData
-    sta POINTER_TX + 1
-
-    lda icbmActve1
-    cmp #0
-    bne _move
-
-    jsr setupRandomPath
-
-    jsr getOrginX
-    sta origX1
-    stx origX1 + 1
-
-    jsr getOrginY
-    sta origY1
-    stx origY1 + 1
-
-    jsr getDestX
-    sta destX1
-    stx destX1 + 1
-
-    jsr getDestY
-    sta destY1
-    stx destY1 + 1
-
-    jsr lineInit
-    jsr putPixel
-    jsr linestep
-    jsr putPixel
-    lda #1
-    sta icbmActve1
-_saveLineData
-    ;save line data for later
-
-    ldy #0
-_loop
-    lda (POINTER_TX),y
-    sta (POINTER_ICBM),y
-    iny
-    cpy lineDataLength
-    bne _loop
-
+    #moveMacro icbm1, mLineData, origX1, origY1, destX1, destY1, icbmActve1
     rts
-_move
-    lda icbmFrame1
-    cmp #wave0
-    beq _goodFrame
-    inc icbmFrame1
+drawMissle2
+    #moveMacro icbm2, mLineData, origX2, origY2, destX2, destY2, icbmActve2
     rts
-_goodFrame
-    stz icbmFrame1
-
-    ldy #0
-_setLineDatagetPixel
-    lda (POINTER_ICBM),y
-    sta (POINTER_TX),y
-    iny
-    cpy lineDataLength
-    bne _setLineDatagetPixel
-
-    jsr linestep
-    jsr getOrginY
-    cmp #215
-    bne _ok
-    bcs _deactivte
-    jsr getPixel
-    cmp #112
-    beq _ok
-    cmp #0
-    bne _deactivte
-_ok
-    jsr putPixel
-    bra _saveLineData
+drawMissle3
+    #moveMacro icbm3, mLineData, origX3, origY3, destX3, destY3, icbmActve3
     rts
-_deactivte
-    stz icbmActve1
-
-
-
-    lda origX1
-    ldx origX1 + 1
-    jsr setOrginX
-
-    lda origY1
-    ldx origY1 + 1
-    jsr setOrginY
-
-    lda destX1
-    ldx destX1 + 1
-    jsr setDestX
-
-    lda destY1
-    ldx destY1 + 1
-    jsr setDestY
-
-    lda #0
-    jsr setPixelColor
-    jsr do_line
-    lda #112
-    jsr setPixelColor
+drawMissle4
+    #moveMacro icbm4, mLineData, origX4, origY4, destX4, destY4, icbmActve4
     rts
-
+drawMissle5
+    #moveMacro icbm5, mLineData, origX5, origY5, destX5, destY5, icbmActve5
+    rts
+drawMissle6
+    #moveMacro icbm6, mLineData, origX6, origY6, destX6, destY6, icbmActve6
+    rts
+drawMissle7
+    #moveMacro icbm7, mLineData, origX7, origY7, destX7, destY7, icbmActve7
+    rts
 setupRandomPath
-    jsr generateOriginX
+_tryAgain
+
     lda mrandXStart
     ldx mrandXStart + 1
     jsr setOrginX
@@ -262,8 +269,40 @@ setupRandomPath
     ldx >#215
     jsr setDestY
 
-    rts
+    jsr getOrginX
+    sta (POINTER_SOURCEX)
+    txa
+    ldy #1
+    sta (POINTER_SOURCEX),y
 
+    jsr getOrginY
+    sta (POINTER_SOURCEY)
+    txa
+    ldy #1
+    sta (POINTER_SOURCEY),y
+
+    jsr getDestX
+    sta (POINTER_DESTX)
+    txa
+    ldy #1
+    sta (POINTER_DESTX),y
+
+    jsr getDestY
+    sta (POINTER_DESTY)
+    txa
+    ldy #1
+    sta (POINTER_DESTY),y
+
+    ldy #1
+    lda (POINTER_SOURCEX),y
+    cmp (POINTER_DESTX),y
+    beq _checkLo
+    rts
+_checkLo
+    lda (POINTER_SOURCEX)
+    lda (POINTER_DESTX)
+    beq _tryAgain
+    rts
 
 generateOriginX
 _tryAgain
@@ -282,7 +321,7 @@ _checkLo
     cmp <#320
     bcs _tryAgain
     lda r_seed
-    asl
+    aslmOkToMove
     sta r_seed
     rts
 
@@ -290,23 +329,125 @@ generateDestX
 _tryAgain
     jsr getRandom
     sta mrandXStart
+    sta r_seed
     jsr getRandom
-    sta mrandXStart + 1
-_checkOver320
-    lda mrandXStart + 1
-    cmp >#300
-    beq _checkLo
-    bcs _tryAgain
-    rts
-_checkLo
+    and #%00000001
+    stz mrandXStart + 1
+;_checkOver320
+;    lda mrandXStart + 1
+;    cmp #1
+;    beq _checkLo
+;    bcs _tryAgain
+;    bcc _checkMin
+;    lda r_seed
+;    asl
+;    sta r_seed
+;    rts
+;_checkLo
+;    lda mrandXStart
+;    cmp <#300
+;    bcs _tryAgain
+;    lda r_seed
+;    asl
+;    sta r_seed
+;    rts
+;_checkMin
     lda mrandXStart
-    cmp <#300
-    bcs _tryAgain
+    cmp #$50
+    bcc _tryAgain
     lda r_seed
     asl
     sta r_seed
     rts
 
+checkWait
+    ldx #0
+    ldy #16
+    lda icbmActve0
+    cmp #0
+    beq _check1
+    lda icbm0, y
+    cmp mLaunchWait
+    bcs _check1
+    inx
+    rts
+_check1
+    rts
+    lda icbmActve1
+    cmp #0
+    beq _check2
+    ldy #16
+    lda icbm1, y
+    cmp mLaunchWait
+    bcc _check2
+    inx
+    rts
+_check2
+    lda icbmActve2
+    cmp #0
+    beq _check3
+    lda icbm2, y
+    cmp mLaunchWait
+    bcs _check3
+    inx
+    rts
+_check3
+    lda icbmActve3
+    cmp #0
+    beq _check4
+    lda icbm3, y
+    cmp mLaunchWait
+    bcs _check4
+    inx
+    rts
+_check4
+    lda icbmActve4
+    cmp #0
+    beq _check5
+    lda icbm4, y
+    cmp mLaunchWait
+    bcs _check5
+    inx
+    rts
+_check5
+    lda icbmActve5
+    cmp #0
+    beq _check6
+    lda icbm5, y
+    cmp mLaunchWait
+    bcs _check6
+    inx
+    rts
+_check6
+    lda icbmActve6
+    cmp #0
+    beq _check7
+    lda icbm6, y
+    cmp mLaunchWait
+    bcs _check7
+    inx
+    rts
+_check7
+    lda icbmActve7
+    cmp #0
+    beq _end
+    lda icbm7, y
+    cmp mLaunchWait
+    bcs _end
+    inx
+_end
+    rts
+
+newAttack
+    lda mCurrentWave
+    asl
+    sta pointer
+    lda #100
+    sec
+    sbc pointer
+    sta mLaunchWait
+    ;202 - 2 * wave_number ; sta mydirection
+    rts
 
 .endsection
 .section variables
@@ -336,21 +477,21 @@ destY0 .byte $00, $00
 
 icbm1
     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
+     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y
     .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
     .word $0  ; U2
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
 icbmActve1 .byte $0
 icbmFrame1 .byte $0
 icbmDestX1 .byte $00,$00
@@ -360,46 +501,52 @@ destX1 .byte $00, $00
 destY1 .byte $00, $00
 
 icbm2
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
+     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y
     .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
     .word $0  ; U2
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
 icbmActve2 .byte $0
 icbmFrame2 .byte $0
 icbmDestX2 .byte $00,$00
+origX2 .byte $00, $00
+origY2 .byte $00, $00
+destX2 .byte $00, $00
+destY2 .byte $00, $00
 
 icbm3
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
+     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y
     .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
     .word $0  ; U2
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
 icbmActve3 .byte $0
 icbmFrame3 .byte $0
 icbmDestX3 .byte $00,$00
+origX3 .byte $00, $00
+origY3 .byte $00, $00
+destX3 .byte $00, $00
+destY3 .byte $00, $00
 
 icbm4
     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
@@ -409,39 +556,45 @@ icbm4
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
 icbmActve4 .byte $0
 icbmFrame4 .byte $0
 icbmDestX4 .byte $00,$00
+origX4 .byte $00, $00
+origY4 .byte $00, $00
+destX4 .byte $00, $00
+destY4 .byte $00, $00
 
 icbm5
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
+     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y
     .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
     .word $0  ; U2
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
 icbmActve5 .byte $0
 icbmFrame5 .byte $0
 icbmDestX5 .byte $00,$00
+origX5 .byte $00, $00
+origY5 .byte $00, $00
+destX5 .byte $00, $00
+destY5 .byte $00, $00
 
 icbm6
     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
@@ -451,44 +604,64 @@ icbm6
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
+    .byte $00
 icbmActve6 .byte $0
 icbmFrame6 .byte $0
 icbmDestX6 .byte $00,$00
+origX6 .byte $00, $00
+origY6 .byte $00, $00
+destX6 .byte $00, $00
+destY6 .byte $00, $00
 
 
 icbm7
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
+     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y
     .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
     .word $0  ; U2
     .word $0 ; U2 step
     .word $0 ; U2 step
     .word $0 ; U2 'error'
-    .byte $00
-    .byte $00
-
     ;poin.byte $0 ;
     .word $0 ; ZU poczatek linii
     .word $0 ; ZU
     .word $0 ; ZU koniec linii
     .word $0 ; ZU
     .byte $0
+    .byte $00
+    .byte $00
 icbmActve7 .byte $0
 icbmFrame7 .byte $0
 icbmDestX7 .byte $00,$00
+origX7 .byte $00, $00
+origY7 .byte $00, $00
+destX7 .byte $00, $00
+destY7 .byte $00, $00
 
+frameTrack
+    .byte $00
 mrandXStart
     .byte $00, $00
-wave0 = 5
-wave1 = 5
+
+mSpeedWaves
+    .byte $00, $00
+mOkToMove
+    .byte $00
+mLaunchWait
+    .byte $00, $00
+mLaunchCount
+    .byte $00
+mCurrentWave
+    .byte $00
+mLaunchNext
+    .byte $0
 .endsection
 .endnamespace

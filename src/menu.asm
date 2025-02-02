@@ -20,7 +20,7 @@ showSpriteMacro .macro spriteNum, spriteAddr, x, y
 .endmacro
 .section code
 handle
-    jsr debug
+
     lda #state.menu
     jsr state.is
     bcc _ok
@@ -43,14 +43,15 @@ _demo
     rts
 
 begin
+    jsr psg.playExplosion
     jsr hideAllSprites
-    ;jsr clearScreenMemory
+
     lda #0
     ldx #0
     ldy #0
     jsr setBackgroundColor
     jsr clearVideo
-    ;jsr enableText
+    jsr enableText
     jsr enableGrafix
     jsr enableSprite
     jsr enableBitmap
@@ -107,14 +108,18 @@ begin
 
 demo
     jsr debug
+    jsr icbm.demo
+    jsr cruise.drawCruiseMissle
+    jsr plane.drawPlane
+    jsr abm.handle
+
+
     dec mArrowBlink
     lda mArrowBlink
     cmp #30
     beq _arrowOff
     cmp #0
     beq _arrowOn
-    jsr icbm.drawMissle0
-    jsr icbm.drawMissle1
     rts
 _arrowOff
     lda #34

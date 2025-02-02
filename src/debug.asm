@@ -3,8 +3,8 @@ debug
     lda #2
     sta MMU_IO_CTRL
 
-    ldy #16
-    lda icbm.origX1 + 1
+    ldy #17
+    lda abm.mAbmCount
     lsr
     lsr
     lsr
@@ -13,8 +13,8 @@ debug
     lda mHex, y
     sta $C000
 
-    ldy #16
-    lda icbm.origX1 + 1
+    ldy #17
+    lda abm.mAbmCount
     and #$0F
     tay
     lda mHex, y
@@ -22,7 +22,7 @@ debug
 
 
     ldy #16
-    lda icbm.origX1
+    lda abm.mFireDelay
     lsr
     lsr
     lsr
@@ -31,64 +31,111 @@ debug
     lda mHex, y
     sta $C002
 
-    ldy #16
-    lda icbm.origX1
+     ldy #16
+    lda abm.mFireDelay
     and #$0F
      tay
     lda mHex, y
     sta $C003
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lda icbm.icbmActve2
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C000 + 80
 
-    ; ldy #15
-    ; lda wave1.icbm0, y
-    ; lsr
-    ; lsr
-    ; lsr
-    ; lsr
-    ; tay
-    ; lda mHex, y
-    ; sta $C005
-
-    ; ldy #15
-    ; lda wave1.icbm0, y
-    ; and #$0F
-    ; tay
-    ; lda mHex, y
-    ; sta $C006
+    lda icbm.icbmActve2
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C001 + 80
 
 
-    ; ldy #14
-    ; lda wave1.icbm0, y
-    ; lsr
-    ; lsr
-    ; lsr
-    ; lsr
-    ; tay
-    ; lda mHex, y
-    ; sta $C007
+    lda icbm.icbmActve3
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C002 + 80
 
-    ; ldy #14
-    ; lda wave1.icbm0, y
-    ; and #$0F
-    ;  tay
-    ; lda mHex, y
-    ; sta $C008
+    lda icbm.icbmActve3
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C003 + 80
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ldx #17
+    lda icbm.icbmActve4
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C000 + 80+ 80
+
+     ldx #17
+    lda icbm.icbmActve4
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C001 + 80+ 80
 
 
-    ; lda wave1.icbm0
-    ; lsr
-    ; lsr
-    ; lsr
-    ; lsr
-    ; tay
-    ; lda mHex, y
-    ; sta $C009
+     ldx #16
+    lda icbm.icbmActve5
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C002 + 80+ 80
+
+     ldx #16
+    lda icbm.icbmActve5
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C003 + 80+ 80
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lda icbm.icbmActve6
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C000 + 80+ 80+ 80
+
+    lda icbm.icbmActve6
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C001 + 80+ 80+ 80
 
 
-    ; lda wave1.icbm0
-    ; and #$0F
-    ;  tay
-    ; lda mHex, y
-    ; sta $C00a
+    lda icbm.icbmActve7
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C002 + 80+ 80+ 80
+
+    lda icbm.icbmActve7
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C003 + 80+ 80+ 80
+
 
     stz MMU_IO_CTRL
 
@@ -98,4 +145,5 @@ rts
 .section variables
 mHex
     .text '0123456789ABCDEF'
+
 .endsection

@@ -19,92 +19,15 @@ start
 .include "score.asm"
 .include "wave1.asm"
 .include "icbm.asm"
+.include "cruise.asm"
+.include "plane.asm"
+.include "saucer.asm"
+.include "abm.asm"
 .include "debug.asm"
 main
     stz MMU_IO_CTRL
     jsr initGame
-
-
-    ; stz mMoveMisleFrame
-
-    ; jsr clearVideo
-    ; jsr enableText
-    ; jsr enableBitmap
-    ; jsr enableGrafix
-    ; jsr enableSprite
-    ; jsr setVideo
-    ; jsr setBackgroundColor
-    ; jsr setBitmapLayer0
-    ; jsr setLayers
-
-
-    ; lda #0
-    ; jsr setSpriteNumber
-
-    ; lda #<SPRITE_NUMBERS
-    ; ldx #>SPRITE_NUMBERS
-    ; ldy #`SPRITE_NUMBERS
-    ; jsr setSpriteAddress
-
-
-    ; lda <#32
-    ; ldx >#32
-    ; jsr setSpriteX
-
-    ; lda <#32
-    ; ldx >#32
-    ; jsr setSpriteY
-    ; jsr showSprite
-
-    ; lda #1
-    ; jsr setSpriteNumber
-
-    ; lda #<SPRITE_NUMBERS + SPRITE_SIZE
-    ; ldx #>SPRITE_NUMBERS + SPRITE_SIZE
-    ; ldy #`SPRITE_NUMBERS + SPRITE_SIZE
-    ; jsr setSpriteAddress
-
-
-    ; lda <#32 + 16
-    ; ldx >#32 + 16
-    ; jsr setSpriteX
-
-    ; lda <#32
-    ; ldx >#32
-    ; jsr setSpriteY
-
-    ; jsr showSprite
-
-    ; lda #0
-    ; jsr setBitmapNumber
-
-    ; lda #<BITMAP_START
-    ; ldx #>BITMAP_START
-    ; ldy #`BITMAP_START
-    ; jsr setBitmapAddress
-
-    ; lda #0
-    ; jsr setBitmapClut
-
-    ; jsr showBitmap
-
-    ; lda <#300
-    ; ldx >#300
-    ; jsr setOrginX
-    ; lda <#0
-    ; ldx >#0
-    ; jsr setOrginY
-
-    ; lda <#100
-    ; ldx >#100
-    ; jsr setDestX
-    ; lda <#200
-    ; ldx >#200
-    ; jsr setDestY
-    ; jsr putPixel
-    ; jsr lineInit
-    ; jsr getLineData
-   ; jsr do_line
+    jsr init_mouse
 
     jsr initEvents
     jsr setFrameTimer

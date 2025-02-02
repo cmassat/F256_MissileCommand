@@ -1,8 +1,15 @@
 .section code
 gameLoop
+    lda mSOFSemaphore
+    cmp #0
+    beq _run
+    rts
+_run
     pha
     phx
     phy
+    lda #1
+    sta mSOFSemaphore
     jsr splash.handle
     jsr menu.handle
     jsr psg.handle
@@ -14,6 +21,7 @@ rts
 
 handleEvents
 
+   ; jsr gameLoop
 _wait_for_event 
 ; Peek at the queue to see if anything is pending
     lda		kernel.args.events.pending  ; Negated count
@@ -37,6 +45,9 @@ _wait_for_event
    lda		event.type
 
    ; Call the appropriate handler
+    ; cmp	 #kernel.event.mouse.CLICKS
+    ; beq	_mouse_clicked
+
     cmp #kernel.event.key.PRESSED
     beq keyPressed
 
@@ -46,6 +57,19 @@ _wait_for_event
     cmp #kernel.event.timer.EXPIRED
     beq handleTimerEvent
 
+    cmp	 #kernel.event.mouse.DELTA
+    beq	_mouse_moved
+
+
+   rts
+_mouse_moved
+    pha
+    phx
+    phy
+    jsr handle_mouse
+    ply
+    plx
+    pla
    rts
 
 keyPressed
@@ -62,10 +86,28 @@ keyReleased
     rts
 
 handleTimerEvent
-
-	jsr setFrameTimer
+    lda event.timer.cookie
+    cmp #42
+    beq _sofTimer
+    rts
+_sofTimer
+    lda mFireTimer
+    cmp #0
+    beq _next
+    dec mFireTimer
+_next
+	 jsr setFrameTimer
+     stz mSOFSemaphore
      jsr gameLoop
+     inc mGameTicks
+     lda mGameTicks
+     cmp #60
+     beq _updateSeconds
 	rts
+_updateSeconds
+    inc mGameSeconds
+    stz mGameTicks
+    rts
 
 setFrameTimer
     lda #0
@@ -74,7 +116,7 @@ setFrameTimer
     sta kernel.args.timer.units
 
     stz kernel.args.timer.absolute
-    lda #1
+    lda #42
     sta kernel.args.timer.cookie
     jsr kernel.Clock.SetTimer
 
@@ -84,7 +126,7 @@ setFrameTimer
     lda #kernel.args.timer.FRAMES
     sta kernel.args.timer.units
 
-    lda #1
+    lda #42
     sta kernel.args.timer.cookie
     jsr kernel.Clock.SetTimer
     rts
@@ -96,21 +138,14 @@ initEvents
     sta kernel.args.events+1
     rts
 
-is_sof
-    lda mSOFSemaphore
-    cmp #1
-    beq _block
-    clc
-    rts
-_block
-    sec
-    rts
+
 .endsection
 
 event	.dstruct	 kernel.event.event_t
 
 .section variables
-
+mFireTimer
+    .byte $0
 mSOFSemaphore
     .byte $00
 mKeypress
@@ -119,7 +154,9 @@ mKeyRelease
     .byte $01
 v_sync
     .byte 0
-sof_semaphore
-    .byte 0
+mGameTicks
+    .byte $00
+mGameSeconds
+    .byte $00
 .endsection
 
