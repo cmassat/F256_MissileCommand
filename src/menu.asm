@@ -107,12 +107,13 @@ begin
     rts
 
 demo
-    jsr debug
+
     jsr icbm.demo
+    jsr site.draw
     jsr cruise.drawCruiseMissle
     jsr plane.drawPlane
     jsr abm.handle
-
+    jsr explosion.handle
 
     dec mArrowBlink
     lda mArrowBlink

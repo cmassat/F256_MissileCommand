@@ -10,6 +10,7 @@ initGame
     jsr plane.init
     jsr saucer.init
     jsr abm.init
+    jsr explosion.init
 
     stz $D6E0
     rts 

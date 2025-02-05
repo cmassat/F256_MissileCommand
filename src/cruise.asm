@@ -21,13 +21,13 @@ draw
 
     jsr setupRandomPath
 
-    jsr getOrginX
+    jsr getOriginX
     sta (POINTER_SOURCEX)
     txa
     ldy #1
     sta (POINTER_SOURCEX),y
 
-    jsr getOrginY
+    jsr getOriginY
     sta (POINTER_SOURCEY)
     txa
     ldy #1
@@ -86,7 +86,7 @@ _setLineDatagetPixel
     bne _setLineDatagetPixel
 
     jsr linestep
-    jsr getOrginY
+    jsr getOriginY
     cmp #240
     bne _ok
     bcs _deactivte
@@ -97,10 +97,10 @@ _ok
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
 
-    jsr getOrginX
+    jsr getOriginX
     jsr setSpriteX
 
-    jsr getOrginY
+    jsr getOriginY
     jsr setSpriteY
     jsr showSprite
     bra _saveLineData

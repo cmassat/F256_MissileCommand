@@ -30,13 +30,13 @@ draw
 
     jsr setupRandomPath
 
-    jsr getOrginX
+    jsr getOriginX
     sta (POINTER_SOURCEX)
     txa
     ldy #1
     sta (POINTER_SOURCEX),y
 
-    jsr getOrginY
+    jsr getOriginY
     sta (POINTER_SOURCEY)
     txa
     ldy #1
@@ -95,11 +95,11 @@ _setLineDatagetPixel
     bne _setLineDatagetPixel
 
     jsr linestep
-    jsr getOrginx
+    jsr getOriginx
     txa
     cmp #0
     beq _ok
-    jsr getOrginx
+    jsr getOriginx
     cmp #$FA
     bcs _deactivte
 
@@ -107,16 +107,16 @@ _ok
     lda #SPRITENUMBER_PLANE1
     jsr setSpriteNumber
 
-    jsr getOrginX
+    jsr getOriginX
     jsr setSpriteX
-    jsr getOrginY
+    jsr getOriginY
     jsr setSpriteY
     jsr showSprite
 
     lda #SPRITENUMBER_PLANE2
     jsr setSpriteNumber
 
-    jsr getOrginX
+    jsr getOriginX
     sta spiteCalc
     stx spiteCalc + 1
     lda spiteCalc
@@ -132,7 +132,7 @@ _ok
     ldx spiteCalc + 1
     jsr setSpriteX
 
-    jsr getOrginY
+    jsr getOriginY
     jsr setSpriteY
 
     jsr showSprite

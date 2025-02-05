@@ -21,12 +21,12 @@ setDestY
     stx l_y2 + 1
     rts
 
-getOrginX
+getOriginX
 	lda l_x1
     ldx l_x1 + 1
     rts
 
-getOrginY
+getOriginY
     lda l_y1
     ldx l_y1 + 1
     rts

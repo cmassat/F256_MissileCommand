@@ -22,24 +22,28 @@ init
 
 
 handle
-    jsr displayRedicle
-    jsr draw
     jsr handleFire
+    jsr draw
     rts
 
 handleFire
     lda mFireDelay
     cmp #0
     beq _ok
+    lda mFireDelay
+    cmp #0
+    beq _end
     dec mFireDelay
+    stz mLeftClicked
+_end
     rts
 _ok
-    lda #45
-    sta mFireDelay
     jsr isLeftClick
     bcc _fireLeft
     rts
 _fireLeft
+    lda #20
+    sta mFireDelay
     jsr fire
     rts
 
@@ -190,7 +194,7 @@ _setLineDatagetPixel
     bne _setLineDatagetPixel
 
     jsr linestep
-    jsr getOrginY
+    jsr getOriginY
     cmp (POINTER_DESTY)
     bcs _ok
     bcc _deactivte
@@ -228,6 +232,7 @@ _deactivte
     pla
     jsr setDestX
 
+
     lda (POINTER_DESTY)
     pha
     ldy #1
@@ -236,11 +241,19 @@ _deactivte
     pla
     jsr setDestY
 
+
+    jsr getDestX
+    jsr explosion.setX
+    jsr getDestY
+    jsr explosion.setY
+    jsr explosion.start
+
     lda #0
     jsr setPixelColor
     jsr do_line
     lda #112
     jsr setPixelColor
+
     rts
 
 initLeftAbm
@@ -271,66 +284,6 @@ _loop
     bne _loop
     rts
 
-displayRedicle
-     stz $D6E0
-    lda m_mouse_x_pos
-    ldx m_mouse_x_pos + 1
-    jsr setNum
-
-    lda #2
-    ldx #0
-    jsr setDen
-
-    jsr getDivResult
-    sta TEMP_X
-    stx TEMP_X + 1
-
-    lda m_mouse_y_pos
-    ldx m_mouse_y_pos + 1
-    jsr setNum
-
-    lda #2
-    ldx #0
-    jsr setDen
-
-    jsr getDivResult
-    sta TEMP_Y
-    stx TEMP_Y + 1
-
-
-    lda TEMP_X
-    clc
-    adc #32 - 8
-    sta TEMP_X
-
-    lda TEMP_X + 1
-    adc #0
-    sta TEMP_X + 1
-
-
-    lda TEMP_Y
-    clc
-    adc #32 - 8
-    sta TEMP_Y
-
-    lda TEMP_Y + 1
-    adc #0
-    sta TEMP_Y + 1
-
-    lda #SPRITENUMBER_REDICLE
-    jsr setSpriteNumber
-
-    lda TEMP_X
-    ldx TEMP_X + 1
-    jsr setSpriteX
-
-    lda TEMP_Y
-    ldx TEMP_Y + 1
-    jsr setSpriteY
-
-    jsr showSprite
-
-    rts
 
 setupPath
     lda (POINTER_ACTIVE)
@@ -364,13 +317,13 @@ _setup
     pla
     jsr setDestY
 
-    jsr getOrginX
+    jsr getOriginX
     sta (POINTER_SOURCEX)
     txa
     ldy #1
     sta (POINTER_SOURCEX),y
 
-    jsr getOrginY
+    jsr getOriginY
     sta (POINTER_SOURCEY)
     txa
     ldy #1
@@ -428,11 +381,6 @@ initMacro .macro
 
 .endsection
 .section variables
-TEMP_X
-    .byte $00, $00
-TEMP_Y
-    .byte $00, $00
-
 abm0
     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y

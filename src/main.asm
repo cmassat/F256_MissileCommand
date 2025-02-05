@@ -23,6 +23,8 @@ start
 .include "plane.asm"
 .include "saucer.asm"
 .include "abm.asm"
+.include "site.asm"
+.include "explosion.asm"
 .include "debug.asm"
 main
     stz MMU_IO_CTRL

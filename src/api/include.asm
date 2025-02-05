@@ -11,3 +11,5 @@
 .include "kernel.asm"
 .include "api_util.asm"
 .include "mouse.asm"
+.include "api_circle.asm"
+.include "api_collision.asm"

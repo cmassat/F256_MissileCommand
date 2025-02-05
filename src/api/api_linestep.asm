@@ -31,12 +31,12 @@ setDestY
     STA (POINTER_LINE),y
     rts
 
-; ; getOrginX
+; ; getOriginX
 ; ; 	lda ls_x1
 ; ;     ldx ls_x1 + 1
 ; ; ;     rts
 
-; ; getOrginY
+; ; getOriginY
 ; ;     lda ls_y1
 ; ;     ldx ls_y1 + 1
 ; ;     rts
@@ -148,13 +148,13 @@ _checkLoX
     lda mtemp1
 	cmp mtemp2
 	beq _zeroX
-	bcc _posX 
+	bcc _posX
 	bcs _negX
 	rts
 _posX
     lda #lDirPos
 	sta mXdir
-	
+
 	lda ls_x2
 	SEC
 	sbc ls_x1
@@ -246,7 +246,7 @@ calcai
     lda ls_ai
     asl
     sta ls_ai
-    
+
     lda ls_ai + 1
     rol
     sta ls_ai + 1
@@ -315,7 +315,7 @@ _setSteep
 calcDecision
     ;decision = ai-dx
     lda ls_ai
-	sec  
+	sec
     sbc ls_dx
 	sta ls_d
 
@@ -323,7 +323,7 @@ calcDecision
 	sbc ls_dx + 1
 	sta ls_d + 1
 
-	rts 
+	rts
 
 checkSteep
 	lda mXdir
@@ -359,7 +359,7 @@ lineUpdateDecision
 	bmi _isNeg
 
 	lda ls_d
-	clc 
+	clc
 	adc ls_bi
 	sta ls_d
 	lda ls_d + 1
@@ -375,8 +375,8 @@ lineUpdateDecision
 	bmi _updateX
 	beq _updateY
 	bpl _updateY
-    rts 
-_isNeg 
+    rts
+_isNeg
     lda ls_d
 	clc
 	adc ls_ai
@@ -384,7 +384,7 @@ _isNeg
 	lda ls_d + 1
 	adc ls_ai + 1
 	sta ls_d + 1
-	 
+
 	lda mSteepLs
 	cmp #1
 	beq _steepSlope
@@ -418,7 +418,7 @@ _steepSlope
 lineUpdateX
     lda mXdir
 	cmp #lDirNeg
-	beq _neg 
+	beq _neg
 	lda ls_x1
 	clc
 	adc #1
@@ -451,7 +451,7 @@ lineUpdateY
 	lda ls_y1 + 1
 	adc #0
 	sta ls_y1 + 1
-    rts  
+    rts
 _neg
     lda ls_y1
 	sec

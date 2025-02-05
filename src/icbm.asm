@@ -64,7 +64,7 @@ _setLineDatagetPixel
     bne _setLineDatagetPixel
 
     jsr linestep
-    jsr getOrginY
+    jsr getOriginY
     cmp #215
     bne _ok
     bcs _deactivte
@@ -137,7 +137,7 @@ initMissle
 
     ;check if we sould wait for next wave
     jsr checkWait
-    stx mDebug
+
     cpx #0
     beq _nextMissels
     rts
@@ -269,13 +269,13 @@ _tryAgain
     ldx >#215
     jsr setDestY
 
-    jsr getOrginX
+    jsr getOriginX
     sta (POINTER_SOURCEX)
     txa
     ldy #1
     sta (POINTER_SOURCEX),y
 
-    jsr getOrginY
+    jsr getOriginY
     sta (POINTER_SOURCEY)
     txa
     ldy #1
@@ -452,21 +452,21 @@ newAttack
 .endsection
 .section variables
 icbm0
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
+    .word $0 ;dx
+    .word $0  ; dy 2
+    .word $0  ; xi 4
+    .word $0  ; yi 6
+    .word $0 ; ai 8
+    .word $0 ; bi 10
+    .word $0 ; decision' 12
     ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
-    .byte $0
-    .byte $00
-    .byte $00
+    .word $0 ; currentx 14
+    .word $0 ; currenty
+    .word $0 ; destX
+    .word $0 ; destY
+    .byte $0  ; steep
+    .byte $00 ; dir
+    .byte $00 ;dir
 icbmActve0 .byte $0
 icbmFrame0 .byte $0
 icbmDestX0 .byte $00,$00

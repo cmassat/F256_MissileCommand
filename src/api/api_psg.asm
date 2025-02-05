@@ -99,7 +99,7 @@ psg_1_freq_left
     and #$0f 
     ora #PSG_TONE_1_FREQ_MASK_L
     sta PSG_LEFT_REG
-    sta mDebug
+
     clc
    
     ror mPSGFreqH1
@@ -117,7 +117,7 @@ psg_1_freq_left
     lda mPSGFreqL1
     and #%01111111
     sta PSG_LEFT_REG
-    sta mDebug + 1
+
     rts
 
 psg_2_freq_left
@@ -128,7 +128,6 @@ psg_2_freq_left
     and #$0f
     ora #PSG_TONE_2_FREQ_MASK_L
     sta PSG_LEFT_REG
-    sta mDebug
     clc
 
     ror mPSGFreqH2

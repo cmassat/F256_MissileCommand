@@ -25,15 +25,15 @@ checkButtonsClicked
     lda event.mouse.delta.buttons
     cmp #1
     bne _skip
-    lda abm.TEMP_X
+    lda site.TEMP_X
     sta m_mouse_click_x
-    lda abm.TEMP_X + 1
+    lda site.TEMP_X + 1
     sta m_mouse_click_x + 1
 
 
-    lda abm.TEMP_Y
+    lda site.TEMP_Y
     sta m_mouse_click_y
-    lda abm.TEMP_Y + 1
+    lda site.TEMP_Y + 1
     sta m_mouse_click_y + 1
 
     lda #1
@@ -43,7 +43,6 @@ _skip
     rts
 
 handle_mouse
-    sta mDebug
     jsr mousex
     jsr mousey
     jsr adjust_off_screen
@@ -119,6 +118,7 @@ _is_off_bottom
 isLeftClick
     lda mLeftClicked
     bne _yes
+    stz mLeftClicked
     sec
     rts
 _yes
