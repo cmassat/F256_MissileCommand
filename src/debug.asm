@@ -7,7 +7,7 @@ debug
     sta MMU_IO_CTRL
 
     ldy #17
-    lda explosion.exp0
+    lda POINTER_EXP + 1
     lsr
     lsr
     lsr
@@ -17,7 +17,7 @@ debug
     sta $C000
 
     ldy #17
-    lda explosion.exp0
+    lda POINTER_EXP + 1
     and #$0F
     tay
     lda mHex, y
@@ -25,7 +25,7 @@ debug
 
 
     ldy #16
-    lda explosion.exp1
+    lda POINTER_EXP
     lsr
     lsr
     lsr
@@ -35,13 +35,13 @@ debug
     sta $C002
 
      ldy #16
-    lda explosion.exp1
+    lda POINTER_EXP
     and #$0F
      tay
     lda mHex, y
     sta $C003
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda mDebug + 1
+    lda explosion.exp2
     lsr
     lsr
     lsr
@@ -50,14 +50,14 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda mDebug + 1
+    lda explosion.exp2
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80
 
 
-    lda mDebug
+    lda explosion.exp3
     lsr
     lsr
     lsr
@@ -66,14 +66,14 @@ debug
     lda mHex, y
     sta $C002 + 80
 
-    lda  mDebug
+    lda  explosion.exp3
     and #$0F
     tay
     lda mHex, y
     sta $C003 + 80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ldx #17
-    lda  circle.PY
+    lda explosion.exp4
     lsr
     lsr
     lsr
@@ -83,7 +83,7 @@ debug
     sta $C000 + 80+ 80
 
      ldx #17
-    lda icbm.icbmActve4
+    lda explosion.exp4
     and #$0F
     tay
     lda mHex, y
@@ -91,7 +91,7 @@ debug
 
 
      ldx #16
-    lda icbm.icbmActve5
+    lda explosion.exp5
     lsr
     lsr
     lsr
@@ -101,14 +101,14 @@ debug
     sta $C002 + 80+ 80
 
      ldx #16
-    lda icbm.icbmActve5
+    lda explosion.exp5
     and #$0F
     tay
     lda mHex, y
     sta $C003 + 80+ 80
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda icbm.icbmActve6
+    lda explosion.exp6
     lsr
     lsr
     lsr
@@ -117,14 +117,14 @@ debug
     lda mHex, y
     sta $C000 + 80+ 80+ 80
 
-    lda icbm.icbmActve6
+    lda explosion.exp6
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80+ 80+ 80
 
 
-    lda icbm.icbmActve7
+    lda explosion.exp7
     lsr
     lsr
     lsr
@@ -133,7 +133,7 @@ debug
     lda mHex, y
     sta $C002 + 80+ 80+ 80
 
-    lda icbm.icbmActve7
+    lda explosion.exp7
     and #$0F
     tay
     lda mHex, y

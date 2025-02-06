@@ -1,15 +1,16 @@
 .section code
 gameLoop
+
     lda mSOFSemaphore
-    cmp #0
-    beq _run
+    cmp #1
+    bcs _run
     rts
 _run
     pha
     phx
     phy
-    lda #1
-    sta mSOFSemaphore
+    stz  mSOFSemaphore
+
     jsr splash.handle
     jsr menu.handle
     jsr psg.handle
@@ -21,7 +22,8 @@ rts
 
 handleEvents
 
-   ; jsr gameLoop
+    jsr gameLoop
+    jsr debug
 _wait_for_event 
 ; Peek at the queue to see if anything is pending
     lda		kernel.args.events.pending  ; Negated count
@@ -97,8 +99,9 @@ _sofTimer
     dec mFireTimer
 _next
 	 jsr setFrameTimer
-     stz mSOFSemaphore
-     jsr gameLoop
+     inc mSOFSemaphore
+    ; stz mSOFSemaphore
+     ;jsr gameLoop
      inc mGameTicks
      lda mGameTicks
      cmp #60

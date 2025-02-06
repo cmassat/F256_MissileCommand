@@ -1,9 +1,7 @@
 explosion .namespace
 .section code
 handle
-
     jsr drawExplosions
-
     rts
 
 init
@@ -16,6 +14,9 @@ init
     sta exp5
     sta exp6
     sta exp7
+    rts
+
+demo
     rts
 
 drawExplosions
@@ -31,36 +32,43 @@ drawExplosions
     lda (POINTER_SRC),y
     sta POINTER_EXP + 1
 
-    ldx #8
-findActive
-   ; dex
-   ; cpx #0
-   ; beq _end
+
+    bra _explode
+
+_continue
+    jsr nextABM
+
+    lda #<expTableEND
+    cmp POINTER_SRC
+    beq _checHi
+    bra _explode
+    rts
+_checHi
+    lda #>expTableEND
+    cmp POINTER_SRC + 1
+    beq _end
+
+_explode
     ldy #STATUS
     lda (POINTER_EXP),y
+    jsr explosion
+    bra _continue
+
+_end
+rts
+
+explosion
     cmp #1
     beq _animate
-    lda (POINTER_EXP),y
     cmp #2
     beq _dissolve
-    ;lda pointer
-    ;cmp #0
-  ;  bne _checkNextAbm
-   ; jsr _checkNextAbm
-_end
-    rts
-_dissolve
-    jsr dissolve
-   ; jsr nextABM
     rts
 _animate
     jsr animate
-  ;  jsr nextABM
     rts
-_checkNextAbm
-  ;  jsr nextABM
+_dissolve
+    jsr dissolve
     rts
-
 
 nextABM
     lda POINTER_SRC
@@ -78,7 +86,8 @@ nextABM
     iny
     lda (POINTER_SRC),y
     sta POINTER_EXP + 1
-    jsr findActive
+    ; ldy #STATUS
+    ; lda (POINTER_EXP),y
     rts
 
 animate
@@ -147,7 +156,7 @@ deactivate
     rts
 
 dissolve
-    jsr debug
+
     ldy #FRAME
     lda (POINTER_EXP),y
     cmp #0
@@ -195,8 +204,6 @@ _resetExplosion
     rts
 
 start
-    ldx #8
-
     lda #<expTable
     sta POINTER_SRC
     lda #>expTable
@@ -210,9 +217,6 @@ start
     sta POINTER_EXP + 1
 
 _find
-    dex
-    cpx #0
-    beq _end
     ldy #STATUS
     lda (POINTER_EXP),y
     cmp #0
@@ -226,6 +230,15 @@ _find
     adc #0
     sta POINTER_SRC + 1
 
+    lda POINTER_SRC
+    cmp #<expTableEND
+    beq _checkHI
+    bne _setNext
+_checkHI
+    lda POINTER_SRC + 1
+    cmp #>expTableEND
+    beq _end
+_setNext
     ldy #0
     lda (POINTER_SRC),y
     sta POINTER_EXP
@@ -266,36 +279,11 @@ _activate
 setX
     sta explosionX
     stx explosionX + 1
-
- ;   lda explosionX
- ;   ldx explosionX + 1
- ;   jsr circle.setCenterX
-
-   ; lda explosionX
- ;   clc
- ;   adc #16
-  ;  sta explosionX
-  ;  lda explosionX + 1
-  ;  adc #0
-  ;  sta explosionX + 1
     rts
 
 setY
     sta explosionY
     stx explosionY + 1
-
-
-   ; lda explosionY
-   ; ldx explosionY + 1
-   ; jsr circle.setCenterY
-
-   ; lda explosionY
-   ; clc
-   ; adc #16
-   ; sta explosionY
-   ; lda explosionY + 1
-   ; adc #0
-   ; sta explosionY + 1
     rts
 
 
@@ -316,7 +304,9 @@ expTable
  .word exp4
  .word exp5
  .word exp6
+expTableEND
  .word exp7
+
 
 exp0
 mActive ; 0
@@ -337,8 +327,15 @@ exp1
     .byte $00
     .byte $00
 
+        .byte $00
+    .byte $00, $00
+    .byte $00, $00
+    .byte $00
+    .byte $00
+
 exp2
     .byte $00
+    .byte 00
     .byte $00, $00
     .byte $00, $00
     .byte $00
@@ -349,13 +346,34 @@ exp3
     .byte $00, $00
     .byte $00
     .byte $00
+
+        .byte $00
+    .byte $00, $00
+    .byte $00, $00
+    .byte $00
+    .byte $00
+
+        .byte $00
+    .byte $00, $00
+    .byte $00, $00
+    .byte $00
+    .byte $00
 exp4
     .byte $00
     .byte $00, $00
     .byte $00, $00
     .byte $00
     .byte $00
+
+        .byte $00
+    .byte $00, $00
+    .byte $00, $00
+    .byte $00
+    .byte $00
+    .byte $00, $00
+    .byte $00, $00
 exp5
+    .byte $00
     .byte $00
     .byte $00, $00
     .byte $00, $00
@@ -367,6 +385,12 @@ exp6
     .byte $00, $00
     .byte $00
     .byte $00
+
+        .byte $00
+    .byte $00, $00
+    .byte $00, $00
+    .byte $00
+    .byte $00
 exp7
     .byte $00
     .byte $00, $00
@@ -374,7 +398,11 @@ exp7
     .byte $00
     .byte $00
 
-
+    .byte $00
+    .byte $00, $00
+    .byte $00, $00
+    .byte $00
+    .byte $00
 explosionX
     .byte $00, $00
 explosionY
