@@ -1,5 +1,8 @@
 .section code
 handlecruise
+    pha
+    phx
+    phy
     jsr handlecruiseTL
     bcc _hit
     jsr handlecruiseTR
@@ -10,8 +13,10 @@ handlecruise
     bcc _hit
     jsr handlecruiseMiddle
     bcc _hit
-    rts
 _hit
+    ply
+    plx
+    pla
     rts
 
 handlecruiseTL

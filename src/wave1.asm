@@ -37,10 +37,12 @@ play
     jsr icbm.play
     jsr abm.play
     jsr explosion.play
+    jsr cities.play
 
     rts
 
 info
+    jsr cities.init
     lda mDelayTimer
     cmp #0
     beq _next

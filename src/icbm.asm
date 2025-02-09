@@ -66,26 +66,28 @@ _setLineDatagetPixel
     bne _setLineDatagetPixel
 
     jsr linestep
-    jsr getOriginY
-    cmp #215
-    bne _ok
-    bcs _deactivte
-_ok
-    jsr getPixel
-    cmp #112
-    beq _putPixel
-    jsr getPixel
-    cmp #48
-    beq _deactivte
-    cmp #0
-    bne _deactivte
-_putPixel
     lda #112
     jsr setPixelColor
     jsr putPixel
     bra _saveLineData
     rts
-_deactivte
+
+deactivate
+    ;jsr getX
+    ;jsr setOrginX
+    ;jsr getY
+    ;jsr setOrginY
+    jsr linestep
+    jsr getPixel
+    ;sta mDebug
+
+    cmp #$11
+    beq _turnOff
+    cmp #EXPLOSION_CLR
+    beq _turnOff
+    rts
+_turnOff
+    jsr getOriginX
     dec mLaunchCount
     lda #0
     sta (POINTER_ACTIVE)
@@ -128,7 +130,6 @@ _deactivte
     jsr do_line
     lda #112
     jsr setPixelColor
-
     rts
 
 initMissle
@@ -219,6 +220,7 @@ _move
     rts
 
 play
+    jsr debug
     lda mSpeedTracker
     clc
     adc mSpeed
@@ -260,34 +262,42 @@ draw
 drawMissle0
     #moveMacro icbm0, mLineData, origX0, origY0, destX0, destY0, icbmActve0
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle1
     #moveMacro icbm1, mLineData, origX1, origY1, destX1, destY1, icbmActve1
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle2
     #moveMacro icbm2, mLineData, origX2, origY2, destX2, destY2, icbmActve2
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle3
     #moveMacro icbm3, mLineData, origX3, origY3, destX3, destY3, icbmActve3
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle4
     #moveMacro icbm4, mLineData, origX4, origY4, destX4, destY4, icbmActve4
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle5
     #moveMacro icbm5, mLineData, origX5, origY5, destX5, destY5, icbmActve5
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle6
     #moveMacro icbm6, mLineData, origX6, origY6, destX6, destY6, icbmActve6
     jsr drawMissle
+    jsr deactivate
     rts
 drawMissle7
     #moveMacro icbm7, mLineData, origX7, origY7, destX7, destY7, icbmActve7
     jsr drawMissle
+    jsr deactivate
     rts
 setupRandomPath
 _tryAgain
@@ -303,8 +313,8 @@ _tryAgain
     lda mrandXStart
     ldx mrandXStart + 1
     jsr setDestX
-    lda <#215
-    ldx >#215
+    lda <#$ff
+    ldx >#$ff
     jsr setDestY
 
     jsr getOriginX
@@ -493,6 +503,31 @@ setSpeed
     sta mSpeed
     stx mSpeed + 1
     rts
+
+getX
+    phy
+    ldy #14
+    lda (POINTER_ICBM), y
+    pha
+    iny
+    lda (POINTER_ICBM), y
+    tax
+    pla
+    ply
+    rts
+
+getY
+    phy
+    ldy #16
+    lda (POINTER_ICBM), y
+    pha
+    iny
+    lda (POINTER_ICBM), y
+    tax
+    pla
+    ply
+    rts
+
 .endsection
 .section variables
 icbm0

@@ -1,5 +1,8 @@
 .section code
 handlePlane
+    pha
+    phx
+    phy
     jsr handlePlaneTL
     bcc _hit
     jsr handlePlaneTR
@@ -10,8 +13,10 @@ handlePlane
     bcc _hit
     jsr handlePlaneMiddle
     bcc _hit
-    rts
 _hit
+    ply
+    plx
+    pla
     rts
 
 handlePlaneTL
@@ -149,8 +154,6 @@ handlePlaneMiddle
     pla
     jsr setOrginX
     sta mDebug
-
-
 
     jsr plane.getY
     clc

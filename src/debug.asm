@@ -7,7 +7,7 @@ debug
     sta MMU_IO_CTRL
 
     ldy #17
-    lda icbm.mSpeedTracker + 1
+    lda collision.mCityHit0
     lsr
     lsr
     lsr
@@ -17,7 +17,7 @@ debug
     sta $C000
 
     ldy #17
-    lda icbm.mSpeedTracker + 1
+    lda collision.mCityHit0
     and #$0F
     tay
     lda mHex, y
@@ -25,7 +25,7 @@ debug
 
 
     ldy #16
-    lda icbm.mSpeedTracker
+    lda collision.mCityHit1
     lsr
     lsr
     lsr
@@ -35,13 +35,13 @@ debug
     sta $C002
 
      ldy #16
-    lda icbm.mSpeedTracker
+    lda collision.mCityHit1
     and #$0F
      tay
     lda mHex, y
     sta $C003
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda explosion.exp2
+    lda collision.mCityHit2
     lsr
     lsr
     lsr
@@ -50,14 +50,14 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda explosion.exp2
+    lda collision.mCityHit2
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80
 
 
-    lda explosion.exp3
+    lda collision.mCityHit3
     lsr
     lsr
     lsr
@@ -66,14 +66,14 @@ debug
     lda mHex, y
     sta $C002 + 80
 
-    lda  explosion.exp3
+    lda  collision.mCityHit3
     and #$0F
     tay
     lda mHex, y
     sta $C003 + 80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ldx #17
-    lda explosion.exp4
+    lda collision.mCityHit4
     lsr
     lsr
     lsr
@@ -83,7 +83,7 @@ debug
     sta $C000 + 80+ 80
 
      ldx #17
-    lda explosion.exp4
+    lda collision.mCityHit4
     and #$0F
     tay
     lda mHex, y
@@ -91,7 +91,7 @@ debug
 
 
      ldx #16
-    lda explosion.exp5
+    lda collision.mCityHit5
     lsr
     lsr
     lsr
@@ -101,7 +101,7 @@ debug
     sta $C002 + 80+ 80
 
      ldx #16
-    lda explosion.exp5
+    lda collision.mCityHit5
     and #$0F
     tay
     lda mHex, y

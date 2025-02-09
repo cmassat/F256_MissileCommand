@@ -73,12 +73,13 @@ begin
 
     jsr showBitmap
 
-    #showSpriteMacro 63, SPRITE_CITY, 80, 247
-    #showSpriteMacro 62, SPRITE_CITY, 115, 248
-    #showSpriteMacro 61, SPRITE_CITY, 144, 250
-    #showSpriteMacro 60, SPRITE_CITY, 205, 247
-    #showSpriteMacro 59, SPRITE_CITY, 250, 244
-    #showSpriteMacro 58, SPRITE_CITY, 285, 250
+    ; #showSpriteMacro 63, SPRITE_CITY, 80, 247
+    ; #showSpriteMacro 62, SPRITE_CITY, 115, 248
+    ; #showSpriteMacro 61, SPRITE_CITY, 144, 250
+    ; #showSpriteMacro 60, SPRITE_CITY, 205, 247
+    ; #showSpriteMacro 59, SPRITE_CITY, 250, 244
+    ;#showSpriteMacro 58, SPRITE_CITY, 285, 250
+    jsr cities.demo
 
     #showSpriteMacro 51, SPRITE_LETTER_D, 80, 200
     #showSpriteMacro 50, SPRITE_LETTER_E, 80 + 16, 200

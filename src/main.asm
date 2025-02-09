@@ -15,7 +15,6 @@ start
 .include "menu.asm"
 .include "init.asm"
 .include "psgSounds.asm"
-.include "cities.asm"
 .include "score.asm"
 .include "wave1.asm"
 .include "icbm.asm"
@@ -25,6 +24,7 @@ start
 .include "abm.asm"
 .include "site.asm"
 .include "explosion.asm"
+.include "cities.asm"
 .include "collision/collision.asm"
 .include "debug.asm"
 main

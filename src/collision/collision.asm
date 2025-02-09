@@ -7,5 +7,6 @@ handle
 .endsection 
 .include "plane.asm"
 .include "cruise.asm"
+.include "cities.asm"
 .endnamespace
 
