@@ -1,7 +1,9 @@
 .section code 
 initGame
 
+    ;jsr psg.init
     jsr clearScreenMemory
+    jsr clearLayers
     jsr loadDefaultPalette
     jsr state.init
     jsr splash.init
@@ -14,6 +16,6 @@ initGame
     jsr abm.init
     jsr explosion.init
 
-    stz $D6E0
+  ;  stz $D6E0
     rts 
 .endsection

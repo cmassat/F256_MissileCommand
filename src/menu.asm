@@ -43,6 +43,44 @@ _demo
     rts
 
 begin
+    lda #8
+    jsr clearMemory
+    lda #9
+    jsr clearMemory
+    lda #10
+    jsr clearMemory
+    lda #11
+    jsr clearMemory
+    lda #12
+    jsr clearMemory
+    lda #13
+    jsr clearMemory
+    lda #14
+    jsr clearMemory
+    lda #15
+    jsr clearMemory
+
+    lda #18
+    jsr clearMemory
+    lda #19
+    jsr clearMemory
+    lda #20
+    jsr clearMemory
+    lda #21
+    jsr clearMemory
+    lda #22
+    jsr clearMemory
+    lda #23
+    jsr clearMemory
+     lda #24
+    jsr clearMemory
+    lda #25
+    jsr clearMemory
+
+
+    ; jsr clearExtMem
+
+
     jsr psg.playExplosion
     jsr hideAllSprites
 
@@ -56,29 +94,34 @@ begin
     jsr enableSprite
     jsr enableBitmap
     jsr setVideo
+    jsr clearLayers
+
     jsr clut_load_0
 
 
-    jsr clearExtMem
-    lda #0
-    jsr setBitmapNumber
+   ; jsr clearExtMem
+    ; lda #0
+    ; jsr setBitmapNumber
 
-    lda #<BITMAP_START
-    ldx #>BITMAP_START
-    ldy #`BITMAP_START
-    jsr setBitmapAddress
 
-    lda #0
-    jsr setBitmapClut
+    ; lda #<BITMAP_START
+    ; ldx #>BITMAP_START
+    ; ldy #`BITMAP_START
+    ; jsr setBitmapAddress
 
-    jsr showBitmap
+    ; lda #0
+    ; jsr setBitmapClut
+    ; jsr showBitmap
 
-    ; #showSpriteMacro 63, SPRITE_CITY, 80, 247
-    ; #showSpriteMacro 62, SPRITE_CITY, 115, 248
-    ; #showSpriteMacro 61, SPRITE_CITY, 144, 250
-    ; #showSpriteMacro 60, SPRITE_CITY, 205, 247
-    ; #showSpriteMacro 59, SPRITE_CITY, 250, 244
-    ;#showSpriteMacro 58, SPRITE_CITY, 285, 250
+
+    jsr setBitmapLayer0
+    jsr setupBitmap0
+
+    jsr setBitmapLayer1
+    jsr setupBitmap1
+    jsr setLayers
+
+    jsr debug
     jsr cities.demo
 
     #showSpriteMacro 51, SPRITE_LETTER_D, 80, 200
@@ -127,7 +170,7 @@ _playDemo
     jsr icbm.demo
    ; jsr site.draw
     jsr cruise.demo
-    jsr plane.demo
+    ;jsr plane.demo
   ;  jsr abm.handle
   ;  jsr explosion.handle
 
@@ -210,6 +253,33 @@ is
     rts
 _yes
     clc
+    rts
+
+setupBitmap0
+    lda #0
+    jsr setBitmapNumber
+
+
+    lda <#BITMAP_START
+    ldx >#BITMAP_START
+    ldy `#BITMAP_START
+    jsr setBitmapAddress
+
+    jsr setBitmapClut0
+    jsr showBitmap
+    rts
+
+setupBitmap1
+     lda #1
+    jsr setBitmapNumber
+    lda <#BITMAP_STATIC
+    ldx >#BITMAP_STATIC
+    ldy `#BITMAP_STATIC
+    jsr setBitmapAddress
+
+    jsr setBitmapClut0
+
+    jsr showBitmap
     rts
 .endsection
 .section variables

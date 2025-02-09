@@ -73,8 +73,11 @@ setup
     ldx #0
     ldy #0
     jsr setBackgroundColor
+  ;  jsr setBitmapLayer0
+  ;  jsr setBitmapLayer1
     jsr clearVideo
     jsr clearScreenMemory
+    jsr setBitmapLayer0
     jsr enableText
     jsr enableGrafix
     jsr enableSprite
@@ -103,6 +106,24 @@ setup
     ldy #12
     jsr setColorByLine
 
+
+
+    jsr psg.playPulse
+
+    lda #127
+    sta mDelayTimer
+    sta mDelayTimer + 1
+    ;jsr showBitmap
+
+
+   ; jsr setupBitmap0
+  ;  jsr setupBitmap0
+    inc mState
+    rts
+
+
+
+setupBitmap0
     lda #0
     jsr setBitmapNumber
 
@@ -112,19 +133,23 @@ setup
     ldy #`BITMAP_START
     jsr setBitmapAddress
 
-    lda #0
-    jsr setBitmapClut
 
-    jsr psg.playPulse
-
-    lda #127
-    sta mDelayTimer
-    sta mDelayTimer + 1
+    jsr setBitmapClut0
     jsr showBitmap
-    inc mState
     rts
 
+setupBitmap1
+     lda #1
+    jsr setBitmapNumber
+    lda #<$20000
+    ldx #>$20000
+    ldy #`$20000
+    jsr setBitmapAddress
 
+    jsr setBitmapClut0
+
+    jsr showBitmap
+    rts
 .endsection
 .section variables
 stateSetup = 0

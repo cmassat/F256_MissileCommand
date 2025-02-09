@@ -14,7 +14,7 @@ start
 .include "state.asm"
 .include "menu.asm"
 .include "init.asm"
-.include "psgSounds.asm"
+.include "psg/psgSounds.asm"
 .include "score.asm"
 .include "wave1.asm"
 .include "icbm.asm"
@@ -43,25 +43,6 @@ _loop
 
 
 .section variables
-; wave1 = 5
-; mMoveMisleFrame
-;     .byte $00
-; mx
-;     .byte $00, $00
-; my
-;     .byte $00, $00
-; mAi
-;     .byte $00, $00
-; mBi
-;     .byte $00, $00
-; mD
-;     .byte $00, $00
-; mDx
-;     .byte $00, $00
-; mDy
-;     .byte $00, $00
-; mS
-;     .byte $00
 mxdirection
     .byte $00
 mydirection
@@ -69,13 +50,17 @@ mydirection
 .endsection
 .endsection
 *=$a000
-.binary "../assets/sprite.pal"
+    .binary "../assets/sprite.pal"
 
 *=$10000
 mBitmapData
-*=$1F000
+ *=$1F000
+     .binary "../assets/bitmap.bin"
 
-.binary "../assets/bitmap.bin"
+*=$24000
+mBitmapStatic
+*=$33000
+mStaticBmp
+    .binary "../assets/bitmap.bin"
 mSpriteData
-.binary "../assets/sprite.bin"
-
+    .binary "../assets/sprite.bin"

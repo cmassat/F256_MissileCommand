@@ -17,12 +17,23 @@ init
     rts
 
 demo
+    pha
+    phx
+    phy
     jsr drawExplosions
+    ply
+    plx
+    pla
     rts
 
-
 play
+    pha
+    phx
+    phy
     jsr drawExplosions
+    ply
+    plx
+    pla
     rts
 
 drawExplosions
@@ -160,11 +171,10 @@ deactivate
     rts
 
 dissolve
-
     ldy #FRAME
     lda (POINTER_EXP),y
-    cmp #0
-    beq _resetExplosion
+    cmp #01
+    bcc _resetExplosion
 
     ldy #PX
     lda (POINTER_EXP),y
@@ -204,7 +214,6 @@ dissolve
 _resetExplosion
     lda #0
     sta (POINTER_EXP)
-
     rts
 
 start
@@ -331,12 +340,6 @@ exp1
     .byte $00
     .byte $00
 
-        .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
-
 exp2
     .byte $00
     .byte 00
@@ -351,31 +354,12 @@ exp3
     .byte $00
     .byte $00
 
-        .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
-
-        .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
 exp4
     .byte $00
     .byte $00, $00
     .byte $00, $00
     .byte $00
     .byte $00
-
-        .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
-    .byte $00, $00
-    .byte $00, $00
 exp5
     .byte $00
     .byte $00
@@ -390,11 +374,6 @@ exp6
     .byte $00
     .byte $00
 
-        .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
 exp7
     .byte $00
     .byte $00, $00
@@ -402,11 +381,6 @@ exp7
     .byte $00
     .byte $00
 
-    .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
 explosionX
     .byte $00, $00
 explosionY

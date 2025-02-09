@@ -7,7 +7,7 @@ debug
     sta MMU_IO_CTRL
 
     ldy #17
-    lda collision.mCityHit0
+    lda mVideoLayerCtrl01
     lsr
     lsr
     lsr
@@ -17,7 +17,7 @@ debug
     sta $C000
 
     ldy #17
-    lda collision.mCityHit0
+    lda mVideoLayerCtrl01
     and #$0F
     tay
     lda mHex, y

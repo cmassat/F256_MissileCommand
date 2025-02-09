@@ -34,14 +34,45 @@ setBitmapAddress
     sta (POINTER_BMP), y
     rts
 
-setBitmapClut
+setBitmapClut0
     phy
     ldy #0
     lda (POINTER_BMP), y
-    ora #$02
+    and #%0000001
     sta (POINTER_BMP), y
     ply
     rts
+
+etBitmapClut1
+    phy
+    ldy #0
+    lda (POINTER_BMP), y
+    and #%0000001
+    ora #%0000011
+    sta (POINTER_BMP), y
+    ply
+    rts
+
+etBitmapClut2
+    phy
+    ldy #0
+    lda (POINTER_BMP), y
+    and #%0000001
+    ora #%0000101
+    sta (POINTER_BMP), y
+    ply
+    rts
+
+etBitmapClut3
+    phy
+    ldy #0
+    lda (POINTER_BMP), y
+    and #%0000001
+    ora #%0000111
+    sta (POINTER_BMP), y
+    ply
+    rts
+
 showBitmap
     lda #1
     sta (POINTER_BMP)

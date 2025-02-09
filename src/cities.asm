@@ -36,6 +36,9 @@ init
     #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
     rts
 play
+    pha
+    phx
+    phy
    ; #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
    ; #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1
    ; #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2
@@ -43,14 +46,17 @@ play
    ; #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4
    ; #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
 
-    jsr collision.handleCities
-    jsr cityColission0
-    jsr cityColission1
-    jsr cityColission2
-    jsr cityColission3
-    jsr cityColission4
-    jsr cityColission5
-rts
+   jsr collision.handleCities
+   jsr cityColission0
+   jsr cityColission1
+   jsr cityColission2
+   jsr cityColission3
+   jsr cityColission4
+   jsr cityColission5
+    ply
+    plx
+    pla
+    rts
 
 
 cityColission0
@@ -58,6 +64,15 @@ cityColission0
     bcc _yes
     rts
 _yes
+
+    lda <#cityBmpX0
+    ldx #>cityBmpX0
+    jsr explosion.setX
+    lda <#cityBmpY0
+    ldx #>cityBmpY0
+    jsr explosion.setY
+    jsr explosion.start
+
     lda #63
     jsr setSpriteNumber
     jsr hideSprite
@@ -68,6 +83,13 @@ cityColission1
     bcc _yes
     rts
 _yes
+    lda <#cityBmpX1
+    ldx #>cityBmpX1
+    jsr explosion.setX
+    lda <#cityBmpY1
+    ldx #>cityBmpY1
+    jsr explosion.setY
+    jsr explosion.start
     lda #62
     jsr setSpriteNumber
     jsr hideSprite
@@ -78,6 +100,13 @@ cityColission2
     bcc _yes
     rts
 _yes
+     lda <#cityBmpX2
+    ldx #>cityBmpX2
+    jsr explosion.setX
+    lda <#cityBmpY2
+    ldx #>cityBmpY2
+    jsr explosion.setY
+    jsr explosion.start
     lda #61
     jsr setSpriteNumber
     jsr hideSprite
@@ -88,6 +117,13 @@ cityColission3
     bcc _yes
     rts
 _yes
+    lda <#cityBmpX3
+    ldx >#cityBmpX3
+    jsr explosion.setX
+    lda <#cityBmpY3
+    ldx >#cityBmpY3
+    jsr explosion.setY
+    jsr explosion.start
     lda #60
     jsr setSpriteNumber
     jsr hideSprite
@@ -98,6 +134,13 @@ cityColission4
     bcc _yes
     rts
 _yes
+    lda <#cityBmpX4
+    ldx #>cityBmpX4
+    jsr explosion.setX
+    lda <#cityBmpY4
+    ldx #>cityBmpY4
+    jsr explosion.setY
+    jsr explosion.start
     lda #59
     jsr setSpriteNumber
     jsr hideSprite
@@ -108,6 +151,13 @@ cityColission5
     bcc _yes
     rts
 _yes
+    lda <#cityBmpX5
+    ldx #>cityBmpX5
+    jsr explosion.setX
+    lda <#cityBmpY5
+    ldx #>cityBmpY5
+    jsr explosion.setY
+    jsr explosion.start
     lda #58
     jsr setSpriteNumber
     jsr hideSprite
@@ -127,5 +177,19 @@ cityY2 = 250
 cityY3 = 247
 cityY4 = 244
 cityY5 = 250
+
+cityBmpX0 = 80 - 32 + 8
+cityBmpX1 = 115 - 32 + 8
+cityBmpX2 = 144 - 32 + 8
+cityBmpX3 = 205 - 32 + 8
+cityBmpX4 = 250 - 32 + 8
+cityBmpX5 = 285 - 32 + 8
+
+cityBmpY0 = 247 - 32 + 8
+cityBmpY1 = 248 - 32 + 8
+cityBmpY2 = 250 - 32 + 8
+cityBmpY3 = 247 - 32 + 8
+cityBmpY4 = 244 - 32 + 8
+cityBmpY5 = 250 - 32 + 8
 .endsection
 .endnamespace

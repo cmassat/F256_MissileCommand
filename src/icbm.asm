@@ -85,8 +85,12 @@ deactivate
     beq _turnOff
     cmp #EXPLOSION_CLR
     beq _turnOff
+    jsr getY
+    cmp #230
+    bcs _turnOff
     rts
 _turnOff
+    jsr psg.playExplosion
     jsr getOriginX
     dec mLaunchCount
     lda #0
@@ -200,6 +204,9 @@ moveMacro .macro
 .endmacro
 
 demo
+    pha
+    phx
+    phy
     lda mSpeedTracker
     clc
     adc #$14
@@ -209,7 +216,9 @@ demo
     sta mSpeedTracker + 1
     cmp #0
     bne _move
-
+    ply
+    plx
+    pla
     rts
 _move
     stz mSpeedTracker + 1
@@ -217,10 +226,15 @@ _move
     jsr draw
     stz mOkToMove
     stz mLaunchNext
+     ply
+    plx
+    pla
     rts
 
 play
-    jsr debug
+     pha
+    phx
+    phy
     lda mSpeedTracker
     clc
     adc mSpeed
@@ -231,12 +245,18 @@ play
     lda  mSpeedTracker + 1
     cmp #0
     bne _move
+       ply
+    plx
+    pla
     rts
 _move
     lda  mSpeedTracker + 1
     cmp  mSpeed + 1
     beq _okToMove_reset
     bcc _okToMove
+       ply
+    plx
+    pla
     rts
 _okToMove_reset
     stz mSpeedTracker + 1
@@ -246,6 +266,9 @@ _okToMove
     stz mOkToMove
     stz mLaunchNext
   ;  stz mSpeedTracker + 1
+     ply
+    plx
+    pla
     rts
 
 draw
