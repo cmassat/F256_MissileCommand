@@ -14,6 +14,10 @@ init
     rts
 
 
+demo
+    jsr drawCruiseMissle
+    rts
+
 draw
     lda (POINTER_ACTIVE)
     cmp #0
@@ -86,14 +90,6 @@ _setLineDatagetPixel
     bne _setLineDatagetPixel
 
     jsr linestep
-    jsr getOriginY
-    cmp #240
-    bne _ok
-    bcs _deactivte
-    cmp #0
-    bne _deactivte
-    rts
-_ok
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
 
@@ -104,13 +100,6 @@ _ok
     jsr setSpriteY
     jsr showSprite
     bra _saveLineData
-    rts
-_deactivte
-    lda #0
-    sta (POINTER_ACTIVE)
-    lda #SPRITENUMBER_CRUISE
-    jsr setSpriteNumber
-    jsr hideSprite
     rts
 
 cruiseMacro .macro
@@ -153,18 +142,62 @@ cruiseMacro .macro
     sta POINTER_FRAME
     lda #>\8
     sta POINTER_FRAME + 1
-    jsr draw
+
 .endmacro
 drawCruiseMissle
     phy
     phx
     pha
     #cruiseMacro mCruiseMissle, mLineData, origX, origY, destX, destY, cruiseActve, cruiseFrame
+    jsr draw
+    jsr collision.handlecruise
+    bcc _deactivate
+    jsr isYMax
+    bcc _deactivate
+    bra _end
+_deactivate
+    jsr deactivate
+    bra _end
+_wait
+    dec mWait
+_end
     pla
     plx
     ply
     rts
 
+deactivate
+    lda #0
+    sta (POINTER_ACTIVE)
+    lda #SPRITENUMBER_CRUISE
+    jsr setSpriteNumber
+    jsr hideSprite
+
+    lda #0
+    ldx #0
+    jsr setSpriteX
+    jsr setSpriteY
+
+    ldy #0
+_loop
+    lda #0
+    sta (POINTER_CRUISE),y
+    iny
+    cpy lineDataLength
+    bne _loop
+
+    lda #0
+    sta cruiseActve
+    sta cruiseFrame
+    sta origX
+    sta origY
+    sta destX
+    sta destY
+
+    lda #waitFrames
+    sta mWait
+
+    rts
 setupRandomPath
     jsr generateOriginX
     lda mrandXStart
@@ -181,9 +214,22 @@ setupRandomPath
     lda <#240
     ldx >#240
     jsr setDestY
-
     rts
 
+isYMax
+    jsr getY
+    cmp #<240 + 32
+    bcs_checkHi
+    bcc _no
+_checkHi
+    cpx #1
+    bcs _yes
+_no
+    sec
+    rts
+_yes
+    clc
+    rts
 
 generateOriginX
 _tryAgain
@@ -237,6 +283,16 @@ _checkMin
     bcc _tryAgain
     rts
 
+getX
+    lda mCruiseMissle + 14
+    ldx mCruiseMissle + 15
+    rts
+
+getY
+    lda mCruiseMissle + 16
+    ldx mCruiseMissle + 17
+    rts
+
 .endsection
 .section variables
 mCruiseMissle
@@ -258,7 +314,6 @@ mCruiseMissle
     .byte $00
 cruiseActve .byte $0
 cruiseFrame .byte $0
-cruisestX6 .byte $00,$00
 origX .byte $00, $00
 origY .byte $00, $00
 destX .byte $00, $00
@@ -266,6 +321,11 @@ destY .byte $00, $00
 
 mrandXStart
     .byte $00, $00
+
+
+mWait
+    .byte $0
+waitFrames = 120
 wave0 = 2
 wave1 = 5
 .endsection

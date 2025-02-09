@@ -13,6 +13,7 @@ _run
 
     jsr splash.handle
     jsr menu.handle
+    jsr wave1.handle
     jsr psg.handle
     inc r_seed
     ply
@@ -23,7 +24,7 @@ rts
 handleEvents
 
     jsr gameLoop
-    jsr debug
+
 _wait_for_event 
 ; Peek at the queue to see if anything is pending
     lda		kernel.args.events.pending  ; Negated count
@@ -75,16 +76,28 @@ _mouse_moved
    rts
 
 keyPressed
+     pha
+    phx
+    phy
    lda event.key.ascii
    sta mKeyPress
    jsr keyboardAnykey
    jsr keyboardPressed
+     ply
+    plx
+    pla
    rts
 
 keyReleased
+     pha
+    phx
+    phy
     lda event.key.ascii
     sta mKeyRelease
     jsr keyboardReleased
+      ply
+    plx
+    pla
     rts
 
 handleTimerEvent

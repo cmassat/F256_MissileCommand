@@ -17,6 +17,12 @@ init
     rts
 
 demo
+    jsr drawExplosions
+    rts
+
+
+play
+    jsr drawExplosions
     rts
 
 drawExplosions
@@ -86,8 +92,6 @@ nextABM
     iny
     lda (POINTER_SRC),y
     sta POINTER_EXP + 1
-    ; ldy #STATUS
-    ; lda (POINTER_EXP),y
     rts
 
 animate
@@ -97,7 +101,6 @@ animate
     sta (POINTER_EXP),y
     lda (POINTER_EXP),y
     cmp #TIME_PER_FRAME
-   ; beq _updateFrame
     bcs _updateFrame
     rts
 _updateFrame
@@ -123,7 +126,7 @@ _drawAnimation
     tax
     pla
     jsr circle.setCenterX
-;
+    ;
     ldy #PY
     lda (POINTER_EXP),y
     pha
@@ -132,14 +135,15 @@ _drawAnimation
     tax
     pla
     jsr circle.setCenterY
-;
-     ldy #FRAME
-     lda (POINTER_EXP),y
+    ;
+    lda #EXPLOSION_CLR
+    jsr setPixelColor
+
+    ldy #FRAME
+    lda (POINTER_EXP),y
     jsr circle.setRadius
     jsr circle.activate
     jsr circle.doCircle
-
-
     rts
  _deactivate
     jsr deactivate

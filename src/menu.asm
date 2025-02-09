@@ -100,6 +100,17 @@ begin
     #showSpriteMacro 36, SPRITE_DOWN_ARROW, 205, 220
     #showSpriteMacro 35, SPRITE_DOWN_ARROW, 250, 220
     #showSpriteMacro 34, SPRITE_DOWN_ARROW, 285, 220
+    jsr setDoubleText
+    lda <#mMenuStart
+    ldx >#mMenuStart
+    ldy #10
+    jsr drawText
+
+    lda #dk_brown
+    ldx #black
+    ldy #10
+    jsr setColorByLine
+
     lda #60
     sta mArrowBlink
 
@@ -107,13 +118,17 @@ begin
     rts
 
 demo
-
+    jsr isF1Pressed
+    bcs _playDemo
+    jsr state.next
+    rts
+_playDemo
     jsr icbm.demo
-    jsr site.draw
-    jsr cruise.drawCruiseMissle
-    jsr plane.drawPlane
-    jsr abm.handle
-    jsr explosion.handle
+   ; jsr site.draw
+    jsr cruise.demo
+    jsr plane.demo
+  ;  jsr abm.handle
+  ;  jsr explosion.handle
 
     dec mArrowBlink
     lda mArrowBlink
@@ -184,6 +199,7 @@ nextState
 init
     stz mState
     stz mArrowBlink
+
     rts
 
 is
@@ -202,5 +218,10 @@ mArrowBlink
     .byte $00
 mState
     .byte $00
+
+mMenuStart
+    .text '           Press F1 To Start'
+    .byte $00
+    .text '0123456789012345678901234567890123456789'
 .endsection
 .endnamespace

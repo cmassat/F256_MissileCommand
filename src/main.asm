@@ -25,6 +25,7 @@ start
 .include "abm.asm"
 .include "site.asm"
 .include "explosion.asm"
+.include "collision/collision.asm"
 .include "debug.asm"
 main
     stz MMU_IO_CTRL

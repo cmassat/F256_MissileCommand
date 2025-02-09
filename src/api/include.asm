@@ -13,3 +13,4 @@
 .include "mouse.asm"
 .include "api_circle.asm"
 .include "api_collision.asm"
+.include "api_text.asm"

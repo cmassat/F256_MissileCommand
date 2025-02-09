@@ -26,6 +26,12 @@ handle
     jsr draw
     rts
 
+
+play
+    jsr handleFire
+    jsr draw
+    rts
+
 handleFire
     lda mFireDelay
     cmp #0
@@ -200,6 +206,8 @@ _setLineDatagetPixel
     bcc _deactivte
     rts
 _ok
+    lda #4
+    jsr setPixelColor
     jsr putPixel
     bra _saveLineData
     rts

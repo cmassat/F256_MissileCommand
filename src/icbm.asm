@@ -1,8 +1,15 @@
 icbm .namespace
 .section code
 init
-    lda #112
-    jsr setPixelColor
+    jsr reset
+    stz  mSpeedTracker
+    stz  mSpeedTracker + 1
+    stz mLaunchNext
+    stz mLaunchCount
+    jsr newAttack
+    rts
+
+reset
     lda #0
     sta icbmActve0
     sta icbmActve1
@@ -21,13 +28,8 @@ init
     sta icbmFrame5
     sta icbmFrame6
     sta icbmFrame7
-
-    stz  mSpeedWaves
-    stz  mSpeedWaves + 1
-    stz mLaunchNext
-    stz mLaunchCount
-    jsr newAttack
     rts
+
 
 
 drawMissle
@@ -73,9 +75,13 @@ _ok
     cmp #112
     beq _putPixel
     jsr getPixel
+    cmp #48
+    beq _deactivte
     cmp #0
     bne _deactivte
 _putPixel
+    lda #112
+    jsr setPixelColor
     jsr putPixel
     bra _saveLineData
     rts
@@ -166,8 +172,6 @@ moveMacro .macro
     lda <#\2
     sta POINTER_TX
     lda >#\2
-    sta POINTER_TX + 1
-
     lda #<\3
     sta POINTER_SOURCEX
     lda #>\3
@@ -192,28 +196,54 @@ moveMacro .macro
     sta POINTER_ACTIVE
     lda #>\7
     sta POINTER_ACTIVE + 1
-
-    jsr drawMissle
 .endmacro
 
 demo
-    lda mSpeedWaves
+    lda mSpeedTracker
     clc
     adc #$14
-    sta mSpeedWaves
-    lda mSpeedWaves + 1
+    sta mSpeedTracker
+    lda mSpeedTracker + 1
     adc #0
-    sta  mSpeedWaves + 1
+    sta mSpeedTracker + 1
     cmp #0
     bne _move
 
     rts
 _move
-    stz mSpeedWaves + 1
+    stz mSpeedTracker + 1
     inc mOkToMove
     jsr draw
     stz mOkToMove
     stz mLaunchNext
+    rts
+
+play
+    lda mSpeedTracker
+    clc
+    adc mSpeed
+    sta mSpeedTracker
+    lda mSpeedTracker + 1
+    adc #0
+    sta mSpeedTracker + 1
+    lda  mSpeedTracker + 1
+    cmp #0
+    bne _move
+    rts
+_move
+    lda  mSpeedTracker + 1
+    cmp  mSpeed + 1
+    beq _okToMove_reset
+    bcc _okToMove
+    rts
+_okToMove_reset
+    stz mSpeedTracker + 1
+_okToMove
+    inc mOkToMove
+    jsr draw
+    stz mOkToMove
+    stz mLaunchNext
+  ;  stz mSpeedTracker + 1
     rts
 
 draw
@@ -229,27 +259,35 @@ draw
 
 drawMissle0
     #moveMacro icbm0, mLineData, origX0, origY0, destX0, destY0, icbmActve0
+    jsr drawMissle
     rts
 drawMissle1
     #moveMacro icbm1, mLineData, origX1, origY1, destX1, destY1, icbmActve1
+    jsr drawMissle
     rts
 drawMissle2
     #moveMacro icbm2, mLineData, origX2, origY2, destX2, destY2, icbmActve2
+    jsr drawMissle
     rts
 drawMissle3
     #moveMacro icbm3, mLineData, origX3, origY3, destX3, destY3, icbmActve3
+    jsr drawMissle
     rts
 drawMissle4
     #moveMacro icbm4, mLineData, origX4, origY4, destX4, destY4, icbmActve4
+    jsr drawMissle
     rts
 drawMissle5
     #moveMacro icbm5, mLineData, origX5, origY5, destX5, destY5, icbmActve5
+    jsr drawMissle
     rts
 drawMissle6
     #moveMacro icbm6, mLineData, origX6, origY6, destX6, destY6, icbmActve6
+    jsr drawMissle
     rts
 drawMissle7
     #moveMacro icbm7, mLineData, origX7, origY7, destX7, destY7, icbmActve7
+    jsr drawMissle
     rts
 setupRandomPath
 _tryAgain
@@ -449,6 +487,12 @@ newAttack
     ;202 - 2 * wave_number ; sta mydirection
     rts
 
+;a lo
+;b hi
+setSpeed
+    sta mSpeed
+    stx mSpeed + 1
+    rts
 .endsection
 .section variables
 icbm0
@@ -651,7 +695,9 @@ frameTrack
 mrandXStart
     .byte $00, $00
 
-mSpeedWaves
+mSpeed
+    .byte $00, $00
+mSpeedTracker
     .byte $00, $00
 mOkToMove
     .byte $00

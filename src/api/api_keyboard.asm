@@ -22,13 +22,6 @@ _delay
 
 keyboardAnykey
     lda mKeyboardDelay
-    cmp #0
-    beq _setKey
-    rts
-_setKey
-    lda #1
-    sta mAnyKey
-    lda #10
     sta mKeyboardDelay
     lda #15
     sta mKeyboardResetAnyKey
@@ -40,6 +33,7 @@ keyboardPressed
     jsr set_s_pressed
     jsr set_d_pressed
     jsr set_l_pressed
+    jsr set_F1_pressed
     jsr set_space_pressed
     rts
 keyboardReleased
@@ -48,6 +42,7 @@ keyboardReleased
     jsr set_s_released
     jsr set_d_released
     jsr set_l_released
+    jsr set_F1_released
     jsr set_space_released
     rts
 resetControls
@@ -150,6 +145,19 @@ set_w_pressed
     #keyPressMacro mKeyW, 'w'
     rts
 
+set_f1_pressed
+    #keyPressMacro mKeyF1, $81
+    rts
+
+set_f1_released
+    lda mKeyRelease
+    cmp #$81
+    beq _yes
+    rts
+_yes
+    stz mKeyF1
+    rts
+
 set_w_released
     lda mKeyRelease
     cmp #'w'
@@ -223,6 +231,16 @@ isDPressed
  _yes
     clc
     rts
+
+isF1Pressed
+    lda mKeyF1
+    cmp #1
+    beq _yes
+    sec
+    rts
+ _yes
+    clc
+    rts
 .endsection
 
 .section variables
@@ -244,5 +262,7 @@ mKeyD
 mKeyL
     .byte $00
 mKeySP
+    .byte $00
+mKeyF1
     .byte $00
 .endsection

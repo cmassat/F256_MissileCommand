@@ -3,6 +3,7 @@ plane .namespace
 init
     lda #0
     sta planeActve
+    sta mWait
 
     lda #SPRITENUMBER_PLANE1
     jsr setSpriteNumber
@@ -22,12 +23,17 @@ init
     jsr setSpriteAddress
     rts
 
+demo
+    jsr drawPlane
+    rts
 
 draw
     lda (POINTER_ACTIVE)
     cmp #0
     bne _move
 
+    lda #1
+    sta (POINTER_ACTIVE)
     jsr setupRandomPath
 
     jsr getOriginX
@@ -56,10 +62,9 @@ draw
 
     jsr lineInit
 
-    jsr linestep
+   ; jsr linestep
    ; jsr putPixel
-    lda #1
-    sta (POINTER_ACTIVE)
+
 
 _saveLineData
     ;save line data for later
@@ -100,8 +105,14 @@ _setLineDatagetPixel
     cmp #0
     beq _ok
     jsr getOriginx
-    cmp #$FA
-    bcs _deactivte
+
+    cmp #<320 + 32
+    bcs _checkHi
+    bra _ok
+_checkHi
+    txa
+    cmp #>320 + 32
+    bcs _deactivate
 
 _ok
     lda #SPRITENUMBER_PLANE1
@@ -139,7 +150,11 @@ _ok
 
     jmp _saveLineData
     rts
-_deactivte
+_deactivate
+    jsr deactivate
+    rts
+
+deactivate
     lda #0
     sta (POINTER_ACTIVE)
     lda #SPRITENUMBER_PLANE1
@@ -149,8 +164,31 @@ _deactivte
     lda #SPRITENUMBER_PLANE2
     jsr setSpriteNumber
     jsr hideSprite
-    rts
 
+    lda #0
+    ldx #0
+    jsr setSpriteX
+    jsr setSpriteY
+
+    ldy #0
+_loop
+    lda #0
+    sta (POINTER_PLANE),y
+    iny
+    cpy lineDataLength
+    bne _loop
+
+    lda #0
+    sta planeActve
+    sta planeFrame
+    sta origX
+    sta origY
+    sta destX
+    sta destY
+
+    lda #waitFrames
+    sta mWait
+    rts
 planeMacro .macro
     lda <#\1
     sta POINTER_plane
@@ -191,20 +229,43 @@ planeMacro .macro
     sta POINTER_FRAME
     lda #>\8
     sta POINTER_FRAME + 1
-    jsr draw
+
 .endmacro
 drawPlane
     phy
     phx
     pha
+    lda mWait
+    cmp #0
+    bne _wait
     #planeMacro mplaneMissle, mLineData, origX, origY, destX, destY, planeActve, planeFrame
+    jsr draw
+    jsr collision.handlePlane
+    bcc _deactivate
+    bra _end
+_deactivate
+    jsr deactivate
+    bra _end
+_wait
+    dec mWait
+_end
     pla
     plx
     ply
     rts
 
+getX
+    lda mplaneMissle + 14
+    ldx mplaneMissle + 15
+    rts
+
+getY
+    lda mplaneMissle + 16
+    ldx mplaneMissle + 17
+    rts
+
 setupRandomPath
-    lda #32
+    lda #1
     ldx #00
     jsr setOrginX
     jsr generateOriginY
@@ -265,7 +326,12 @@ spiteCalc
     .byte $00, $00
 mrandYStart
     .byte $00, $00
+
+mWait
+    .byte $0
+waitFrames = 120
 wave0 = 2
 wave1 = 5
+
 .endsection
 .endnamespace

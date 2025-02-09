@@ -7,7 +7,7 @@ debug
     sta MMU_IO_CTRL
 
     ldy #17
-    lda POINTER_EXP + 1
+    lda icbm.mSpeedTracker + 1
     lsr
     lsr
     lsr
@@ -17,7 +17,7 @@ debug
     sta $C000
 
     ldy #17
-    lda POINTER_EXP + 1
+    lda icbm.mSpeedTracker + 1
     and #$0F
     tay
     lda mHex, y
@@ -25,7 +25,7 @@ debug
 
 
     ldy #16
-    lda POINTER_EXP
+    lda icbm.mSpeedTracker
     lsr
     lsr
     lsr
@@ -35,7 +35,7 @@ debug
     sta $C002
 
      ldy #16
-    lda POINTER_EXP
+    lda icbm.mSpeedTracker
     and #$0F
      tay
     lda mHex, y

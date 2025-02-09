@@ -311,6 +311,22 @@ _loop
 .endsection
 
 .section variables
+black = 00
+white = 01
+red = 02
+cyan = 03
+violet = 04
+green = 05
+blue = 06
+yellow = 07
+lt_brown = 08
+dk_brown = 09
+pink = 10
+dk_grey = 11
+md_grey = 12
+lt_green = 13
+lt_purple = 14
+lt_grey = 15
 mVideoCtrl
     .byte $00
 
@@ -326,7 +342,7 @@ mColorPalette
 .byte $67,$b6,$67,$00 ;03 cyan
 .byte $96,$3f,$8b,$00 ;04 violet
 .byte $49,$a0,$55,$00 ;05 green
-.byte $8d,$31,$40,$00 ;06 purple
+.byte $ff,$00,$00,$00 ;06 blue
 .byte $72,$ce,$bf,$00 ;07 yellow
 .byte $29,$54,$8b,$00 ;08 lt brown
 .byte $00,$42,$57,$00 ;09 dk brown

@@ -1,6 +1,8 @@
 .section code 
 initGame
+
     jsr clearScreenMemory
+    jsr loadDefaultPalette
     jsr state.init
     jsr splash.init
     jsr menu.init
