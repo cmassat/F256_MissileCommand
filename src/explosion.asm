@@ -125,7 +125,7 @@ _updateFrame
     sta (POINTER_EXP),y;
 
     lda (POINTER_EXP),y
-    cmp #15
+    cmp #TIME_PER_FRAME
     bcs _deactivate
 
 _drawAnimation
@@ -316,7 +316,7 @@ PX = 1
 PY = 3
 FRAME = 5
 TIMER = 6
-TIME_PER_FRAME = 15
+TIME_PER_FRAME = 13
 
 expTable
  .word exp0

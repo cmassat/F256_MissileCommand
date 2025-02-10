@@ -28,6 +28,12 @@ reset
     sta icbmFrame5
     sta icbmFrame6
     sta icbmFrame7
+
+    lda #$ff
+    sta mMaxLaunch
+
+    stz mLaunchCount
+    stz mTotalLaunch
     rts
 
 
@@ -62,7 +68,7 @@ _setLineDatagetPixel
     lda (POINTER_ICBM),y
     sta (POINTER_TX),y
     iny
-    cpy #$19
+    cpy lineDataLength
     bne _setLineDatagetPixel
 
     jsr linestep
@@ -73,13 +79,9 @@ _setLineDatagetPixel
     rts
 
 deactivate
-    ;jsr getX
-    ;jsr setOrginX
-    ;jsr getY
-    ;jsr setOrginY
     jsr linestep
     jsr getPixel
-    ;sta mDebug
+
 
     cmp #$11
     beq _turnOff
@@ -137,6 +139,11 @@ _turnOff
     rts
 
 initMissle
+    lda mTotalLaunch
+    cmp mMaxLaunch
+    bcc _okToLaunch
+    rts
+_okToLaunch
     lda mLaunchNext
     cmp #0
     bne _activate
@@ -144,11 +151,8 @@ initMissle
     lda mLaunchCount
     cmp #4
     bcc _activate
-
-
     ;check if we sould wait for next wave
     jsr checkWait
-
     cpx #0
     beq _nextMissels
     rts
@@ -158,6 +162,7 @@ _nextMissels
     sta mLaunchNext
 _activate
     inc mLaunchCount
+    inc mTotalLaunch
     jsr setupRandomPath
     jsr lineInit
     jsr putPixel
@@ -165,6 +170,7 @@ _activate
     jsr putPixel
     lda #1
     sta (POINTER_ACTIVE)
+
     clc
     rts
 
@@ -226,7 +232,7 @@ _move
     jsr draw
     stz mOkToMove
     stz mLaunchNext
-     ply
+    ply
     plx
     pla
     rts
@@ -245,7 +251,7 @@ play
     lda  mSpeedTracker + 1
     cmp #0
     bne _move
-       ply
+    ply
     plx
     pla
     rts
@@ -254,7 +260,7 @@ _move
     cmp  mSpeed + 1
     beq _okToMove_reset
     bcc _okToMove
-       ply
+    ply
     plx
     pla
     rts
@@ -266,7 +272,7 @@ _okToMove
     stz mOkToMove
     stz mLaunchNext
   ;  stz mSpeedTracker + 1
-     ply
+    ply
     plx
     pla
     rts
@@ -404,25 +410,7 @@ _tryAgain
     jsr getRandom
     and #%00000001
     stz mrandXStart + 1
-;_checkOver320
-;    lda mrandXStart + 1
-;    cmp #1
-;    beq _checkLo
-;    bcs _tryAgain
-;    bcc _checkMin
-;    lda r_seed
-;    asl
-;    sta r_seed
-;    rts
-;_checkLo
-;    lda mrandXStart
-;    cmp <#300
-;    bcs _tryAgain
-;    lda r_seed
-;    asl
-;    sta r_seed
-;    rts
-;_checkMin
+
     lda mrandXStart
     cmp #$50
     bcc _tryAgain
@@ -551,6 +539,43 @@ getY
     ply
     rts
 
+setMaxLaunch
+    sta mMaxLaunch
+    rts
+
+isWaveOver
+    lda mTotalLaunch
+    cmp mMaxLaunch
+    bcs _waitAllDeactive
+    sec
+    rts
+_waitAllDeactive
+    lda icbmActve0
+    cmp #1
+    beq _stillActive
+    lda icbmActve1
+    cmp #1
+    beq _stillActive
+    lda icbmActve3
+    cmp #1
+    beq _stillActive
+    lda icbmActve4
+    cmp #1
+    beq _stillActive
+    lda icbmActve5
+    cmp #1
+    beq _stillActive
+    lda icbmActve6
+    cmp #1
+    beq _stillActive
+    lda icbmActve7
+    cmp #1
+    beq _stillActive
+    clc
+    rts
+_stillActive
+    sec
+    rts
 .endsection
 .section variables
 icbm0
@@ -766,6 +791,10 @@ mLaunchCount
 mCurrentWave
     .byte $00
 mLaunchNext
-    .byte $0
+    .byte $00
+mMaxLaunch
+    .byte $00
+mTotalLaunch
+    .byte $00
 .endsection
 .endnamespace

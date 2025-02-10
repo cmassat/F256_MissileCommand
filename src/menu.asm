@@ -121,7 +121,6 @@ begin
     jsr setupBitmap1
     jsr setLayers
 
-    jsr debug
     jsr cities.demo
 
     #showSpriteMacro 51, SPRITE_LETTER_D, 80, 200

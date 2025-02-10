@@ -61,6 +61,47 @@ _end
     sta MMU_IO_CTRL
     rts
 
+;a char
+;x col
+;y row
+drawChar
+    pha
+    lda #<mlineTable
+    sta POINTER_TXT
+    lda #>mlineTable + 1
+    sta POINTER_TXT + 1
+findLine
+    cpy #0
+    beq _writeCharacter
+_findLine
+    dey
+    clc
+    lda POINTER_TXT
+    adc #2
+    sta POINTER_TXT
+    lda POINTER_TXT + 1
+    adc #0
+    sta POINTER_TXT + 1
+    bra _findLine
+_writeCharacter
+    txa
+    clc
+    adc POINTER_TXT
+    sta POINTER_TXT
+    lda POINTER_TXT + 1
+    adc #0
+    sta POINTER_TXT + 1
+
+    lda #2
+    sta MMU_IO_CTRL
+    pla
+    clc
+    adc #48
+    sta (POINTER_TXT)
+    lda #0
+    sta MMU_IO_CTRL
+
+    rts
 
 ;a foreground color
 ;b background color
@@ -124,8 +165,6 @@ _end
     lda #0
     sta MMU_IO_CTRL
     rts
-
-
 
 mlineTable
     .word $C000 ;+ (40 * 0)

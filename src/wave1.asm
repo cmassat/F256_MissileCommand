@@ -13,6 +13,7 @@ handle
     bcc _ok
     rts
 _ok
+
     lda mState
     cmp #0
     beq _setup
@@ -20,6 +21,8 @@ _ok
     beq _info
     cmp #statePlay
     beq _play
+    cmp #stateWaveOver
+    beq _waveOver
     rts
 _setup
     jsr setup
@@ -31,8 +34,23 @@ _info
 _play
     jsr play
     rts
+_waveOver
+    jsr waveOver
+    rts
 
 play
+    jsr icbm.isWaveOver
+    bcs _continue
+    lda #stateWaveOver
+    sta mState
+    rts
+_continue
+    jsr score.handle
+    ;set max ICBM for Wave
+    ldy mCurrentWave
+    lda mIcbmNumber, y
+    jsr icbm.setMaxLaunch
+
     jsr site.draw
     jsr icbm.play
     jsr abm.play
@@ -58,11 +76,15 @@ setSpeed
     beq _setWave0
     rts
 _setWave0
-    lda #127
+    lda #14
     ldx #1
     jsr icbm.setSpeed
-
     rts
+
+waveOver
+    jsr explosion.play
+    rts
+
 
 setup
     jsr setSpeed
@@ -73,8 +95,7 @@ setup
     ldx #0
     ldy #0
     jsr setBackgroundColor
-  ;  jsr setBitmapLayer0
-  ;  jsr setBitmapLayer1
+
     jsr clearVideo
     jsr clearScreenMemory
     jsr setBitmapLayer0
@@ -155,6 +176,7 @@ setupBitmap1
 stateSetup = 0
 stateInfo = 1
 statePlay = 2
+stateWaveOver = 3
 mState
     .byte $00
 mCurrentWave
@@ -170,5 +192,8 @@ mPoints
     .text '0123456789012345678901234567890123456789'
 mDelayTimer
     .byte $00, $00
+
+mIcbmNumber
+    .byte 12,15, 18, 12,16, 14,17,10,13,16,19,12,14,16,18,14,16,18,20
 .endsection
 .endnamespace

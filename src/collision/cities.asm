@@ -93,7 +93,6 @@ handleCities
     lda  #16
     sta mhitTracker
 _loop
-    jsr debug
     lda mhitTracker
     cmp #0
     beq _end
