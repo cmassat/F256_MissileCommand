@@ -58,7 +58,7 @@ setSpeed
     beq _setWave0
     rts
 _setWave0
-    lda #14
+    lda #127
     ldx #1
     jsr icbm.setSpeed
 

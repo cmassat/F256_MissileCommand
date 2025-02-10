@@ -28,36 +28,94 @@ demo
     #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
 rts
 init
-     #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
+    #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
     #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1
     #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2
     #showSpriteMacro 60, SPRITE_CITY, cityX3, cityY3
     #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4
     #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
+
+    lda #1
+    sta mCityActive0
+    sta mCityActive1
+    sta mCityActive2
+    sta mCityActive3
+    sta mCityActive4
+    sta mCityActive5
     rts
+
 play
     pha
     phx
     phy
-   ; #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
-   ; #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1
-   ; #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2
-   ; #showSpriteMacro 60, SPRITE_CITY, cityX3, cityY3
-   ; #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4
-   ; #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
-
-   jsr collision.handleCities
-   jsr cityColission0
-   jsr cityColission1
-   jsr cityColission2
-   jsr cityColission3
-   jsr cityColission4
-   jsr cityColission5
+    jsr collision.handleCities
+    jsr handleCities
     ply
     plx
     pla
     rts
 
+
+handleCities
+    jsr handleCity0
+    jsr handleCity1
+    jsr handleCity2
+    jsr handleCity3
+    jsr handleCity4
+    jsr handleCity5
+    rts
+handleCity0
+    lda mCityActive0
+    cmp #1
+    bne _end
+    jsr cityColission0
+_end
+    rts
+
+
+handleCity1
+    lda mCityActive1
+    cmp #1
+    bne _end
+    jsr cityColission1
+_end
+    rts
+
+
+handleCity2
+    lda mCityActive2
+    cmp #1
+    bne _end
+    jsr cityColission2
+_end
+    rts
+
+
+handleCity3
+    lda mCityActive3
+    cmp #1
+    bne _end
+    jsr cityColission3
+_end
+    rts
+
+
+handleCity4
+    lda mCityActive4
+    cmp #1
+    bne _end
+    jsr cityColission4
+_end
+    rts
+
+
+handleCity5
+    lda mCityActive5
+    cmp #1
+    bne _end
+    jsr cityColission5
+_end
+    rts
 
 cityColission0
     jsr collision.isCity0Hit
@@ -76,6 +134,7 @@ _yes
     lda #63
     jsr setSpriteNumber
     jsr hideSprite
+    stz mCityActive0
     rts
 
 cityColission1
@@ -93,6 +152,7 @@ _yes
     lda #62
     jsr setSpriteNumber
     jsr hideSprite
+    stz mCityActive1
     rts
 
 cityColission2
@@ -110,6 +170,7 @@ _yes
     lda #61
     jsr setSpriteNumber
     jsr hideSprite
+    stz mCityActive2
     rts
 
 cityColission3
@@ -127,6 +188,7 @@ _yes
     lda #60
     jsr setSpriteNumber
     jsr hideSprite
+    stz mCityActive3
     rts
 
 cityColission4
@@ -144,6 +206,7 @@ _yes
     lda #59
     jsr setSpriteNumber
     jsr hideSprite
+    stz mCityActive4
     rts
 
 cityColission5
@@ -161,6 +224,7 @@ _yes
     lda #58
     jsr setSpriteNumber
     jsr hideSprite
+    stz mCityActive5
     rts
 .endsection
 .section variables
@@ -191,5 +255,20 @@ cityBmpY2 = 250 - 32 + 8
 cityBmpY3 = 247 - 32 + 8
 cityBmpY4 = 244 - 32 + 8
 cityBmpY5 = 250 - 32 + 8
+
+mCityActive0
+    .byte $00
+mCityActive1
+    .byte $00
+mCityActive2
+    .byte $00
+mCityActive3
+    .byte $00
+mCityActive4
+    .byte $00
+mCityActive5
+    .byte $00
+mCityActive6
+    .byte $00
 .endsection
 .endnamespace

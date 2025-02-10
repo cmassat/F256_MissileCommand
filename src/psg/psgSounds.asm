@@ -1,9 +1,12 @@
 psg  .namespace
+.include "abm.asm"
 .section code
+
 handle
     jsr explosion
     jsr a
     jsr pulse
+    jsr abm
     rts
 
 playExplosion
@@ -118,8 +121,6 @@ _turnOff
     jsr psg_2_volume_left
     stz mPulseTimer
     rts
-
-
 
 playA
     lda #127

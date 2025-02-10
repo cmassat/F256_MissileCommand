@@ -7,7 +7,7 @@ debug
     sta MMU_IO_CTRL
 
     ldy #17
-    lda mVideoLayerCtrl01
+    lda explosion.mFrame
     lsr
     lsr
     lsr
@@ -17,7 +17,7 @@ debug
     sta $C000
 
     ldy #17
-    lda mVideoLayerCtrl01
+    lda explosion.mFrame
     and #$0F
     tay
     lda mHex, y
@@ -25,7 +25,7 @@ debug
 
 
     ldy #16
-    lda collision.mCityHit1
+    lda explosion.mActive
     lsr
     lsr
     lsr
@@ -35,13 +35,13 @@ debug
     sta $C002
 
      ldy #16
-    lda collision.mCityHit1
+    lda explosion.mActive
     and #$0F
      tay
     lda mHex, y
     sta $C003
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda collision.mCityHit2
+    lda explosion.exp1
     lsr
     lsr
     lsr
@@ -50,14 +50,14 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda collision.mCityHit2
+    lda explosion.exp1
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80
 
 
-    lda collision.mCityHit3
+    lda explosion.exp2
     lsr
     lsr
     lsr
@@ -66,7 +66,7 @@ debug
     lda mHex, y
     sta $C002 + 80
 
-    lda  collision.mCityHit3
+    lda  explosion.exp2
     and #$0F
     tay
     lda mHex, y

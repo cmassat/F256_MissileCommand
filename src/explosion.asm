@@ -217,6 +217,9 @@ _resetExplosion
     rts
 
 start
+    pha
+    phx
+    phy
     lda #<expTable
     sta POINTER_SRC
     lda #>expTable
@@ -260,6 +263,9 @@ _setNext
     sta POINTER_EXP + 1
     bra _find
 _end
+    ply
+    plx
+    pla
     rts
 _activate
     lda #1
@@ -287,6 +293,9 @@ _activate
     ldy #TIMER
     lda #0
     sta (POINTER_EXP),y
+    ply
+    plx
+    pla
     rts
 
 setX
@@ -317,9 +326,8 @@ expTable
  .word exp4
  .word exp5
  .word exp6
-expTableEND
  .word exp7
-
+ expTableEND
 
 exp0
 mActive ; 0

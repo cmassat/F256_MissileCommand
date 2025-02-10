@@ -278,7 +278,7 @@ _activate
     jsr putPixel
     lda #1
     sta (POINTER_ACTIVE)
-   ; jsr psg.playABM
+    jsr psg.playABM
     jsr lineToAbm
     rts
 
