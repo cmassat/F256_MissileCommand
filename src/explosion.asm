@@ -320,6 +320,7 @@ TIME_PER_FRAME = 13
 
 expTable
  .word exp0
+
  .word exp1
  .word exp2
  .word exp3
@@ -327,7 +328,7 @@ expTable
  .word exp5
  .word exp6
  .word exp7
- expTableEND
+expTableEND
 
 exp0
 mActive ; 0
@@ -383,11 +384,14 @@ exp6
     .byte $00
 
 exp7
-    .byte $00
-    .byte $00, $00
-    .byte $00, $00
-    .byte $00
-    .byte $00
+    .BYTE $00,$00
+    .BYTE $00,$00
+    .BYTE $00,$00
+    .BYTE $00,$00
+    .BYTE $00,$00
+    .BYTE $00,$00
+    .BYTE $00,$00
+    .BYTE $00,$00
 
 explosionX
     .byte $00, $00

@@ -289,9 +289,9 @@ PY:    .BYTE 0,0
 X_REG: .BYTE 0,0
 Y_REG: .BYTE 0,0  ; Yc
 
-temp
+TEMP
     .byte $00,$00
-reversePlots
-    .byte $00,$00
+; reversePlots
+;     .byte $00,$00
 
 .endnamespace

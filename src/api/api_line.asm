@@ -568,11 +568,12 @@ getPixel
 	adc #>$a000
 	sta POINTER_LINE + 1
 
+
 	lda (POINTER_LINE)
-
-
-
-
+	sta m_temp_pixel
+	lda #5
+	sta $d
+	lda m_temp_pixel
 
 ;	pla
 	plx
@@ -642,7 +643,8 @@ clearPixel
 	lda #112
 	sta (POINTER_LINE)
 
-
+	lda #5
+	sta $d
 	ply
 	plx
 	pla
@@ -709,7 +711,8 @@ putPixel
 	sta POINTER_LINE + 1
 	lda mPixelColor
 	sta (POINTER_LINE)
-
+	lda #5
+	sta $d
 
 	ply
 	plx
@@ -811,7 +814,8 @@ lineDataLength
 	.byte mLineDateEnd - mLineData
 mPixel
 	.byte $00, $00, $00
-
+m_temp_pixel
+	.byte $00
 mPixelColor
 	.byte $00
 mLineOffset

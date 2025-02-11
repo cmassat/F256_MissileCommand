@@ -81,18 +81,21 @@ _setLineDatagetPixel
 deactivate
     jsr linestep
     jsr getPixel
-
-
-    cmp #$11
+    cmp #$20
     beq _turnOff
     cmp #EXPLOSION_CLR
-    beq _turnOff
+    beq _turnOffAddPoints
     jsr getY
     cmp #230
     bcs _turnOff
     rts
+_turnOffAddPoints
+    lda #$25
+    jsr add2score
+
+
 _turnOff
-    jsr psg.playExplosion
+
     jsr getOriginX
     dec mLaunchCount
     lda #0
@@ -136,6 +139,7 @@ _turnOff
     jsr do_line
     lda #112
     jsr setPixelColor
+    jsr psg.playExplosion
     rts
 
 initMissle

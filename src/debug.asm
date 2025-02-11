@@ -3,45 +3,45 @@ debug
     phy
     phx
     pha
-    lda #2
-    sta MMU_IO_CTRL
+     lda #2
+     sta MMU_IO_CTRL
 
-    ldy #17
-    lda icbm.mMaxLaunch
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C000
+    ; ldy #17
+    ; lda icbm.mMaxLaunch
+    ; lsr
+    ; lsr
+    ; lsr
+    ; lsr
+    ; tay
+    ; lda mHex, y
+    ; sta $C000
 
-    ldy #17
-    lda icbm.mMaxLaunch
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C001
+    ; ldy #17
+    ; lda icbm.mMaxLaunch
+    ; and #$0F
+    ; tay
+    ; lda mHex, y
+    ; sta $C001
 
 
-    ldy #16
-    lda icbm.mTotalLaunch
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C002
+    ; ldy #16
+    ; lda icbm.mTotalLaunch
+    ; lsr
+    ; lsr
+    ; lsr
+    ; lsr
+    ; tay
+    ; lda mHex, y
+    ; sta $C002
 
-     ldy #16
-    lda icbm.mTotalLaunch
-    and #$0F
-     tay
-    lda mHex, y
-    sta $C003
+    ;  ldy #16
+    ; lda icbm.mTotalLaunch
+    ; and #$0F
+    ;  tay
+    ; lda mHex, y
+    ; sta $C003
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda explosion.exp1
+    lda psg.mBonusCityflip
     lsr
     lsr
     lsr
@@ -50,14 +50,14 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda explosion.exp1
+    lda psg.mBonusCityflip
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80
 
 
-    lda explosion.exp2
+    lda POINTER_TXT
     lsr
     lsr
     lsr
@@ -66,14 +66,14 @@ debug
     lda mHex, y
     sta $C002 + 80
 
-    lda  explosion.exp2
+    lda POINTER_TXT
     and #$0F
     tay
     lda mHex, y
     sta $C003 + 80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ldx #17
-    lda collision.mCityHit4
+    lda m_score_2
     lsr
     lsr
     lsr
@@ -83,7 +83,7 @@ debug
     sta $C000 + 80+ 80
 
      ldx #17
-    lda collision.mCityHit4
+    lda m_score_2
     and #$0F
     tay
     lda mHex, y

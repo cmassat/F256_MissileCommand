@@ -13,7 +13,7 @@ _run
 
     jsr splash.handle
     jsr menu.handle
-    jsr wave1.handle
+    jsr waves.handle
     jsr psg.handle
     inc r_seed
     ply

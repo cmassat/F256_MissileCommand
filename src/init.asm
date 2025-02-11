@@ -1,14 +1,14 @@
 .section code 
 initGame
 
-    ;jsr psg.init
+    jsr initPsg
     jsr clearScreenMemory
     jsr clearLayers
     jsr loadDefaultPalette
     jsr state.init
     jsr splash.init
     jsr menu.init
-    jsr wave1.init
+    jsr waves.init
     jsr icbm.init
     jsr cruise.init
     jsr plane.init

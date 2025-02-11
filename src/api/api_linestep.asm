@@ -597,9 +597,10 @@ getPixel
 	sta POINTER_LINE + 1
 
 	lda (POINTER_LINE)
-
-
-
+	sta m_temp_pixel
+	lda #5
+	sta $d
+	lda m_temp_pixel
 
 
 ;	pla
@@ -669,7 +670,8 @@ putPixel
 	lda #112
 	sta (POINTER_LINE)
 
-
+	lda #5
+	sta $d
 	ply
 	plx
 	pla

@@ -19,6 +19,7 @@ showSpriteMacro .macro spriteNum, spriteAddr, x, y
     jsr showSprite
 
 .endmacro
+
 demo
     #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
     #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1
@@ -226,6 +227,17 @@ _yes
     jsr hideSprite
     stz mCityActive5
     rts
+
+getReamainingTotal
+    lda mCityActive0
+    clc
+    adc mCityActive1
+    adc mCityActive2
+    adc mCityActive3
+    adc mCityActive4
+    adc mCityActive5
+    rts
+
 .endsection
 .section variables
 cityX0 = 80

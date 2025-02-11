@@ -70,19 +70,24 @@ drawChar
     sta POINTER_TXT
     lda #>mlineTable + 1
     sta POINTER_TXT + 1
-findLine
-    cpy #0
-    beq _writeCharacter
+    sty mRowFind
 _findLine
-    dey
+    lda mRowFind
+    cmp #0
+    beq _writeCharacter
+
+    lda mRowFind
+    sec
+    sbc #1
+    sta mRowFind
     clc
-    lda POINTER_TXT
-    adc #2
-    sta POINTER_TXT
-    lda POINTER_TXT + 1
-    adc #0
-    sta POINTER_TXT + 1
-    bra _findLine
+    ;lda POINTER_TXT
+    ;adc #2
+    ;sta POINTER_TXT
+    ;lda POINTER_TXT + 1
+    ;adc #0
+    ;sta POINTER_TXT + 1
+    ;bra _findLine
 _writeCharacter
     txa
     clc
@@ -92,15 +97,12 @@ _writeCharacter
     adc #0
     sta POINTER_TXT + 1
 
-    lda #2
-    sta MMU_IO_CTRL
+    ;lda #2
+    ;sta MMU_IO_CTRL
     pla
-    clc
-    adc #48
-    sta (POINTER_TXT)
-    lda #0
-    sta MMU_IO_CTRL
-
+    ;sta (POINTER_TXT)
+    ;lda #0
+    ;sta MMU_IO_CTRL
     rts
 
 ;a foreground color
@@ -188,4 +190,7 @@ mlineTable
     .word $C000 + (40 * 18)
     .word $C000 + (40 * 19)
     .word $C000 + (40 * 20)
+
+mRowFind
+    .byte $00
 

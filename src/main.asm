@@ -16,7 +16,7 @@ start
 .include "init.asm"
 .include "psg/psgSounds.asm"
 .include "score.asm"
-.include "wave1.asm"
+.include "waves.asm"
 .include "icbm.asm"
 .include "cruise.asm"
 .include "plane.asm"

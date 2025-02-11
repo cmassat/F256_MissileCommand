@@ -12,15 +12,24 @@ init
     ldy #`SPRITE_REDICLE
     jsr setSpriteAddress
     jsr showSprite
-
-    stz mAbmCount
+    jsr reset
 
     ply
     plx
     pla
     rts
 
-
+reset
+    pha
+    phx
+    phy
+    lda #20
+    sta mTotalAbm
+    stz mAbmCount
+    ply
+    plx
+    pla
+    rts
 handle
     jsr handleFire
     jsr draw
@@ -387,6 +396,9 @@ initMacro .macro
     sta POINTER_ACTIVE + 1
 .endmacro
 
+getReaminingTotal
+    lda mTotalAbm
+    rts
 .endsection
 .section variables
 abm0
@@ -585,6 +597,8 @@ destY7 .byte $00, $00
 mAbmCount
     .byte $00
 mFireDelay
+    .byte $00
+mTotalAbm
     .byte $00
 .endsection
 .endnamespace
