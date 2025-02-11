@@ -1,6 +1,7 @@
 .section code 
 initGame
 
+
     jsr initPsg
     jsr clearScreenMemory
     jsr clearLayers
@@ -15,7 +16,7 @@ initGame
     jsr saucer.init
     jsr abm.init
     jsr explosion.init
-
-  ;  stz $D6E0
+    jsr loadFont
+    stz $D6E0   ;hide mouse
     rts 
 .endsection

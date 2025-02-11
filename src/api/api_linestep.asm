@@ -31,95 +31,6 @@ setDestY
     STA (POINTER_LINE),y
     rts
 
-; ; getOriginX
-; ; 	lda ls_x1
-; ;     ldx ls_x1 + 1
-; ; ;     rts
-
-; ; getOriginY
-; ;     lda ls_y1
-; ;     ldx ls_y1 + 1
-; ;     rts
-; setAi
-;     lda ls_ai
-;     ldx ls_ai + 1
-;     rts
-
-; setBi
-;     lda ls_bi
-;     ldx ls_bi + 1
-;     rts
-; setD
-;     lda ls_d
-;     ldx ls_d + 1
-;     rts
-
-; setDx
-;     lda ls_dx
-;     ldx ls_dx + 1
-;     rts
-
-; setDy
-;     lda ls_dy
-;     ldx ls_dy + 1
-;     rts
-; setSteep
-;     sta mSteepLs
-;     rts
-
-; setXDir
-; 	sta mXdir
-; 	rts
-
-; setYDir
-; 	sta mYdir
-; 	rts
-
-; getDestX
-; 	lda ls_x2
-;     ldx ls_x2 + 1
-;     rts
-
-
-; getDestY
-;     lda ls_y2
-;     ldx ls_y2 + 1
-;     rts
-
-; getAi
-; 	lda ls_ai
-;     ldx ls_ai + 1
-;     rts
-; getBi
-;     lda ls_bi
-;     ldx ls_bi + 1
-;     rts
-
-; getD
-;     lda ls_d
-;     ldx ls_d + 1
-;     rts
-; getDx
-;     lda ls_dx
-;     ldx ls_dx + 1
-;     rts
-; getDy
-;     lda ls_dy
-;     ldx ls_dy + 1
-;     rts
-
-; getSteep
-;     lda mSteepLs
-;     rts
-
-; getXDir
-; 	lda mXdir
-; 	rts
-
-; getYDir
-; 	lda mYdir
-; 	rts
-
 calcXDir
     ldy #idxSourceX
     iny
@@ -602,7 +513,6 @@ getPixel
 	sta $d
 	lda m_temp_pixel
 
-
 ;	pla
 	plx
 	ply
@@ -806,7 +716,6 @@ mLineOffset
 lDirZer = 0
 lDirNeg = 1
 lDirPos = 2
-
 
 mDWeight
     .byte $00

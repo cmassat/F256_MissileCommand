@@ -23,7 +23,12 @@ clearExtMem
     sta $d
     rts
 
-
+initMMU
+    lda #$b3
+    sta MMU_MEM_CTRL
+    lda #5
+    sta $d
+    rts
 clearMemory
     pha
     lda #$b3

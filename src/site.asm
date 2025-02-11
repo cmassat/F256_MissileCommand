@@ -5,6 +5,9 @@ handle
     jsr draw
     rts
 draw
+     pha
+    phx
+    phy
      stz $D6E0
     lda m_mouse_x_pos
     ldx m_mouse_x_pos + 1
@@ -17,15 +20,15 @@ draw
     jsr getDivResult
     sta TEMP_X
     stx TEMP_X + 1
-
+;
     lda m_mouse_y_pos
     ldx m_mouse_y_pos + 1
     jsr setNum
-
+;
     lda #2
     ldx #0
     jsr setDen
-
+;
     jsr getDivResult
     sta TEMP_Y
     stx TEMP_Y + 1
@@ -41,7 +44,7 @@ draw
     sta TEMP_X + 1
 
 
-    lda TEMP_Y
+     lda TEMP_Y
     clc
     adc #32 - 8
     sta TEMP_Y
@@ -50,19 +53,21 @@ draw
     adc #0
     sta TEMP_Y + 1
 
-    lda #SPRITENUMBER_REDICLE
-    jsr setSpriteNumber
-
-    lda TEMP_X
-    ldx TEMP_X + 1
-    jsr setSpriteX
-
-    lda TEMP_Y
-    ldx TEMP_Y + 1
-    jsr setSpriteY
-
-    jsr showSprite
-
+     lda #SPRITENUMBER_REDICLE
+     jsr setSpriteNumber
+;
+     lda TEMP_X
+     ldx TEMP_X + 1
+     jsr setSpriteX
+;
+     lda TEMP_Y
+     ldx TEMP_Y + 1
+     jsr setSpriteY
+;
+     jsr showSprite
+    ply
+    plx
+    pla
     rts
 .endsection
 .section variables

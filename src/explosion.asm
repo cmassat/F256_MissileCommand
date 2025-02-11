@@ -193,14 +193,13 @@ dissolve
     tax
     pla
     jsr circle.setCenterY
-;
+
+    lda #0
+    jsr setPixelColor
      ldy #FRAME
      lda (POINTER_EXP),y
     jsr circle.setRadius
     jsr circle.activate
-
-    lda #0
-    jsr setPixelColor
     jsr circle.doCircle
     lda #115
     jsr setPixelColor
@@ -284,7 +283,6 @@ _activate
     iny
     lda explosionY + 1
     sta (POINTER_EXP),y
-
 
     ldy #FRAME
     lda #0

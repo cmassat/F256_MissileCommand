@@ -40,6 +40,6 @@ setDen
 	rts
 
 getDivResult
-	lda $DDE14
+	lda $DE14
 	ldx $DE15
 	rts

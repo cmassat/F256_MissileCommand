@@ -45,7 +45,6 @@ _waveOver
     rts
 
 play
-
     jsr icbm.isWaveOver
     bcs _continue
     lda #stateWaveOver
@@ -62,6 +61,8 @@ play
     jsr drawText
 
     jsr resetBonusScore
+    jsr clearScreenMemory
+
     rts
 _continue
     jsr score.handle
@@ -103,13 +104,14 @@ _setWave0
 
 waveOver
     jsr explosion.play
-
-
     jsr score.handle
     lda mBonusTrackerAbm
     cmp #0
-    beq _showCityBonus
-    jsr showAbmBonus
+    bne showAbmBonus
+    lda mBonusTrackerCityies
+    cmp #0
+    bne _showCityBonus
+    jsr icbm.reset
     rts
 _showCityBonus
     jsr showCityBonus
@@ -168,7 +170,7 @@ _showOnScreen
     lda >#$C000 + (40 * 12 + 11)
     sta POINTER_TXT + 1
     ldy mBonusIdx
-    lda #'1'
+    lda #0
     sta (POINTER_TXT), y
     lda #0
     sta MMU_IO_CTRL
@@ -238,10 +240,14 @@ _showOnScreen
     lda >#$C000 + (40 * 13 + 11)
     sta POINTER_TXT + 1
     ldy mBonusIdx
-    lda #'1'
+    lda #1
+    sta (POINTER_TXT), y
+    iny
+    lda #2
     sta (POINTER_TXT), y
     lda #0
     sta MMU_IO_CTRL
+    inc mBonusIdx
     inc mBonusIdx
     rts
 

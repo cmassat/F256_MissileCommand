@@ -95,9 +95,9 @@ _turnOffAddPoints
 
 
 _turnOff
-
-    jsr getOriginX
     dec mLaunchCount
+   ; jsr getOriginX
+
     lda #0
     sta (POINTER_ACTIVE)
 
@@ -754,21 +754,21 @@ destY6 .byte $00, $00
 
 
 icbm7
-     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
+.word $0 ;dx
+    .word $0  ; dy 2
+    .word $0  ; xi 4
+    .word $0  ; yi 6
+    .word $0 ; ai 8
+    .word $0 ; bi 10
+    .word $0 ; decision' 12
     ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
-    .byte $0
-    .byte $00
-    .byte $00
+    .word $0 ; currentx 14
+    .word $0 ; currenty
+    .word $0 ; destX
+    .word $0 ; destY
+    .byte $0  ; steep
+    .byte $00 ; dir
+    .byte $00 ;dir
 icbmActve7 .byte $0
 icbmFrame7 .byte $0
 icbmDestX7 .byte $00,$00

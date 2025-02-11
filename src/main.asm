@@ -25,6 +25,7 @@ start
 .include "site.asm"
 .include "explosion.asm"
 .include "cities.asm"
+.include "font.asm"
 .include "collision/collision.asm"
 .include "debug.asm"
 main

@@ -130,7 +130,7 @@ _yes
     lda <#cityBmpY0
     ldx #>cityBmpY0
     jsr explosion.setY
-    jsr explosion.start
+    ;jsr explosion.start
 
     lda #63
     jsr setSpriteNumber
@@ -149,7 +149,7 @@ _yes
     lda <#cityBmpY1
     ldx #>cityBmpY1
     jsr explosion.setY
-    jsr explosion.start
+    ;jsr explosion.start
     lda #62
     jsr setSpriteNumber
     jsr hideSprite
@@ -167,7 +167,7 @@ _yes
     lda <#cityBmpY2
     ldx #>cityBmpY2
     jsr explosion.setY
-    jsr explosion.start
+    ;jsr explosion.start
     lda #61
     jsr setSpriteNumber
     jsr hideSprite
@@ -185,7 +185,7 @@ _yes
     lda <#cityBmpY3
     ldx >#cityBmpY3
     jsr explosion.setY
-    jsr explosion.start
+    ;jsr explosion.start
     lda #60
     jsr setSpriteNumber
     jsr hideSprite
@@ -203,7 +203,7 @@ _yes
     lda <#cityBmpY4
     ldx #>cityBmpY4
     jsr explosion.setY
-    jsr explosion.start
+    ;jsr explosion.start
     lda #59
     jsr setSpriteNumber
     jsr hideSprite
@@ -221,7 +221,7 @@ _yes
     lda <#cityBmpY5
     ldx #>cityBmpY5
     jsr explosion.setY
-    jsr explosion.start
+    ;jsr explosion.start
     lda #58
     jsr setSpriteNumber
     jsr hideSprite

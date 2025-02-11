@@ -158,36 +158,7 @@ plot4
     jsr PlotPixel
     rts
 ;;;reverse
-
-whileLoop
-    lda Y_POS + 1
-    cmp X_POS + 1
-    beq _checkLo
-    bcs _ok
-_notOk
-    sec
-    rts
-_checkLo
-    lda Y_POS
-    cmp X_POS
-  ;  beq _notOk
-    bcc _notOk
-_ok
-    clc
-    rts
-doCircle
-    jsr plotCircle
-_loop
-    jsr whileLoop
-    bcc _ok
-    rts
-_ok
-    jsr plotCircle
-
-    lda D+1
-    cmp #0
-    bmi _negDecision
-
+posDecision
    lda X_POS
    sec
    sbc Y_POS
@@ -231,9 +202,8 @@ _ok
    lda X_POS + 1
    adc #0
    sta X_POS + 1
-    bra _loop
     rts
-_negDecision
+negDecision
     lda X_POS
     sta TEMP
     lda X_POS + 1
@@ -265,7 +235,41 @@ _negDecision
     lda X_POS + 1
     adc #0
     sta X_POS + 1
-    jmp _loop
+    rts
+whileLoop
+    lda Y_POS + 1
+    cmp X_POS + 1
+    beq _checkLo
+    bcs _ok
+_notOk
+    sec
+    rts
+_checkLo
+    lda Y_POS
+    cmp X_POS
+  ;  beq _notOk
+    bcc _notOk
+_ok
+    clc
+    rts
+doCircle
+    jsr plotCircle
+_loop
+    jsr whileLoop
+    bcc _ok
+    rts
+_ok
+    jsr plotCircle
+    lda D+1
+    cmp #0
+    bmi _negDecision
+
+    jsr posDecision
+    bra _loop
+    rts
+_negDecision
+    jsr negDecision
+    bra _loop
     rts
 ; Subroutine to plot a pixel at (PX, PY)
 PlotPixel:
