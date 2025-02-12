@@ -41,7 +41,7 @@ debug
     ; lda mHex, y
     ; sta $C003
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda psg.mBonusCityflip
+    lda waves.mState
     lsr
     lsr
     lsr
@@ -50,7 +50,7 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda psg.mBonusCityflip
+    lda waves.mState
     and #$0F
     tay
     lda mHex, y

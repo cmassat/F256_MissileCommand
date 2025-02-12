@@ -1,6 +1,7 @@
 cities .namespace
 .section code
 showSpriteMacro .macro spriteNum, spriteAddr, x, y
+
     lda #\spriteNum
     jsr setSpriteNumber
 
@@ -17,25 +18,18 @@ showSpriteMacro .macro spriteNum, spriteAddr, x, y
     ldx >#\y
     jsr setSpriteY
     jsr showSprite
-
 .endmacro
 
 demo
-    #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
-    #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1
-    #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2
-    #showSpriteMacro 60, SPRITE_CITY, cityX3, cityY3
-    #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4
-    #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
-rts
-init
-    #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0
-    #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1
-    #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2
-    #showSpriteMacro 60, SPRITE_CITY, cityX3, cityY3
-    #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4
-    #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5
+    #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0, mCityActive0
+    #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1, mCityActive1
+    #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2, mCityActive2
+    #showSpriteMacro 60, SPRITE_CITY, cityX3, cityY3, mCityActive3
+    #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4, mCityActive4
+    #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5, mCityActive5
+    rts
 
+init
     lda #1
     sta mCityActive0
     sta mCityActive1
@@ -43,6 +37,40 @@ init
     sta mCityActive3
     sta mCityActive4
     sta mCityActive5
+    jsr resetCities
+    rts
+
+resetCities
+    lda mCityActive0
+    cmp #1
+    bne _checkCity1
+    #showSpriteMacro 63, SPRITE_CITY, cityX0, cityY0, mCityActive0
+_checkCity1
+    lda mCityActive1
+    cmp #1
+    bne _checkCity2
+    #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1, mCityActive1
+_checkCity2
+    lda mCityActive2
+    cmp #1
+    bne _checkCity3
+    #showSpriteMacro 61, SPRITE_CITY, cityX2, cityY2, mCityActive2
+_checkCity3
+    lda mCityActive3
+    cmp #1
+    bne _checkCity4
+    #showSpriteMacro 60, SPRITE_CITY, cityX3, cityY3, mCityActive3
+_checkCity4
+    lda mCityActive4
+    cmp #1
+    bne _checkCity5
+    #showSpriteMacro 59, SPRITE_CITY, cityX4, cityY4, mCityActive4
+_checkCity5
+    lda mCityActive5
+    cmp #1
+    bne _end
+    #showSpriteMacro 58, SPRITE_CITY, cityX5, cityY5, mCityActive5
+_end
     rts
 
 play
@@ -123,15 +151,6 @@ cityColission0
     bcc _yes
     rts
 _yes
-
-    lda <#cityBmpX0
-    ldx #>cityBmpX0
-    jsr explosion.setX
-    lda <#cityBmpY0
-    ldx #>cityBmpY0
-    jsr explosion.setY
-    ;jsr explosion.start
-
     lda #63
     jsr setSpriteNumber
     jsr hideSprite
@@ -143,13 +162,6 @@ cityColission1
     bcc _yes
     rts
 _yes
-    lda <#cityBmpX1
-    ldx #>cityBmpX1
-    jsr explosion.setX
-    lda <#cityBmpY1
-    ldx #>cityBmpY1
-    jsr explosion.setY
-    ;jsr explosion.start
     lda #62
     jsr setSpriteNumber
     jsr hideSprite
@@ -161,13 +173,6 @@ cityColission2
     bcc _yes
     rts
 _yes
-     lda <#cityBmpX2
-    ldx #>cityBmpX2
-    jsr explosion.setX
-    lda <#cityBmpY2
-    ldx #>cityBmpY2
-    jsr explosion.setY
-    ;jsr explosion.start
     lda #61
     jsr setSpriteNumber
     jsr hideSprite
@@ -179,13 +184,6 @@ cityColission3
     bcc _yes
     rts
 _yes
-    lda <#cityBmpX3
-    ldx >#cityBmpX3
-    jsr explosion.setX
-    lda <#cityBmpY3
-    ldx >#cityBmpY3
-    jsr explosion.setY
-    ;jsr explosion.start
     lda #60
     jsr setSpriteNumber
     jsr hideSprite
@@ -197,13 +195,6 @@ cityColission4
     bcc _yes
     rts
 _yes
-    lda <#cityBmpX4
-    ldx #>cityBmpX4
-    jsr explosion.setX
-    lda <#cityBmpY4
-    ldx #>cityBmpY4
-    jsr explosion.setY
-    ;jsr explosion.start
     lda #59
     jsr setSpriteNumber
     jsr hideSprite
@@ -215,13 +206,6 @@ cityColission5
     bcc _yes
     rts
 _yes
-    lda <#cityBmpX5
-    ldx #>cityBmpX5
-    jsr explosion.setX
-    lda <#cityBmpY5
-    ldx #>cityBmpY5
-    jsr explosion.setY
-    ;jsr explosion.start
     lda #58
     jsr setSpriteNumber
     jsr hideSprite

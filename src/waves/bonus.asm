@@ -1,52 +1,6 @@
-waves .namespace
 .section code
 
-init
-    stz mCurrentWave
-    stz mState
-    jsr reset
-    rts
-
-reset
-    lda #waveFrameDelay
-    sta mWaveFrameDelay
-    stz mBonusIdx
-    rts
-
-handle
-     lda #state.wave1
-    jsr state.is
-    bcc _ok
-    rts
-_ok
-
-    lda mState
-    cmp #0
-    beq _setup
-    cmp #stateInfo
-    beq _info
-    cmp #statePlay
-    beq _play
-    cmp #stateWaveOver
-    beq _waveOver
-    rts
-_setup
-    jsr setup
-    rts
-_info
-    jsr info
-    dec mDelayTimer
-    rts
-_play
-    jsr play
-    rts
-_waveOver
-    jsr waveOver
-    rts
-
-play
-    jsr icbm.isWaveOver
-    bcs _continue
+initBonusStuff
     lda #stateWaveOver
     sta mState
     jsr abm.getReaminingTotal
@@ -63,43 +17,10 @@ play
     jsr resetBonusScore
     jsr clearScreenMemory
 
-    rts
-_continue
-    jsr score.handle
+    lda #60
+    sta mBonusFrameDelay
 
-    ;set max ICBM for Wave
-    ldy mCurrentWave
-    lda mIcbmNumber, y
-    jsr icbm.setMaxLaunch
 
-    jsr site.draw
-    jsr icbm.play
-    jsr abm.play
-    jsr explosion.play
-    jsr cities.play
-
-    rts
-
-info
-    jsr cities.init
-    lda mDelayTimer
-    cmp #0
-    beq _next
-    rts
-_next
-    jsr clearScreenMemory
-    inc mState
-    rts
-
-setSpeed
-    lda mCurrentWave
-    cmp #0
-    beq _setWave0
-    rts
-_setWave0
-    lda #14
-    ldx #1
-    jsr icbm.setSpeed
     rts
 
 waveOver
@@ -107,16 +28,27 @@ waveOver
     jsr score.handle
     lda mBonusTrackerAbm
     cmp #0
-    bne showAbmBonus
+    bne _showAbmBonus
     lda mBonusTrackerCityies
     cmp #0
     bne _showCityBonus
+    bra _checkExtraCity
     jsr icbm.reset
+    jsr reset
+
+
+    lda #8
+    jsr clearExtMem
     rts
 _showCityBonus
     jsr showCityBonus
     rts
-
+_showAbmBonus
+    jsr showAbmBonus
+    rts
+_checkExtraCity
+    jsr checkExtraCity
+    rts
 showAbmBonus
     lda mBonusTrackerAbm
     cmp #0
@@ -135,9 +67,9 @@ _addAbmBonus
     rts
 _showOnScreen
     jsr psg.playBonus
-    lda #$25
+    lda #$5
     jsr add2BonusScore
-    lda #$25
+    lda #$5
     jsr add2Score
     dec mBonusTrackerAbm
     lda #waveFrameDelay
@@ -251,123 +183,49 @@ _showOnScreen
     inc mBonusIdx
     rts
 
-setup
-    jsr setSpeed
-    jsr icbm.reset
-    jsr hideAllSprites
+checkExtraCity
+    lda #stateBonusOverDelay
+    sta mState
+    jsr getScoreDigit4
+    cmp mExtraCityTracker
+    bne _addExtraCity
+    rts
+_addExtraCity
+    jsr psg.playBonusCity
+    rts
+
+bonusOverDelay
+    lda mBonusFrameDelay
+    cmp #0
+    beq _end
+    dec mBonusFrameDelay
+    jsr getRandom
+    tay
+    jsr getRandom
+    tax
+    jsr getRandom
+    jsr setBackgroundColor
+    rts
+_end
+    lda #stateStart
+    sta mState
+    jsr clearScreenMemory
 
     lda #0
     ldx #0
     ldy #0
     jsr setBackgroundColor
 
-    jsr clearVideo
-    jsr clearScreenMemory
-    jsr setBitmapLayer0
-    jsr enableText
-    jsr enableGrafix
-    jsr enableSprite
-    jsr enableBitmap
-    jsr setVideo
-    jsr clearExtMem
-
-    jsr setDoubleText
-    lda #<mStartMessage
-    ldx #>mStartMessage
-    ldy #10
-    jsr drawText
-
-    lda #<mPoints
-    ldx #>mPoints
-    ldy #12
-    jsr drawText
-
-    lda #blue
-    ldx #black
-    ldy #10
-    jsr setColorByLine
-
-    lda #blue
-    ldx #black
-    ldy #12
-    jsr setColorByLine
-
-
-
-    jsr psg.playPulse
-
-    lda #127
-    sta mDelayTimer
-    sta mDelayTimer + 1
-    ;jsr showBitmap
-
-
-   ; jsr setupBitmap0
-  ;  jsr setupBitmap0
-    inc mState
-    rts
-
-
-
-setupBitmap0
-    lda #0
-    jsr setBitmapNumber
-
-
-    lda #<BITMAP_START
-    ldx #>BITMAP_START
-    ldy #`BITMAP_START
-    jsr setBitmapAddress
-
-
-    jsr setBitmapClut0
-    jsr showBitmap
-    rts
-
-setupBitmap1
-     lda #1
-    jsr setBitmapNumber
-    lda #<$20000
-    ldx #>$20000
-    ldy #`$20000
-    jsr setBitmapAddress
-
-    jsr setBitmapClut0
-
-    jsr showBitmap
+    jsr reset
+    jsr icbm.reset
+    jsr abm.reset
+    jsr explosion.reset
+    inc mCurrentWave
+    jsr  psg.playBonusCity
     rts
 .endsection
+
 .section variables
-waveFrameDelay = 20
-stateSetup = 0
-stateInfo = 1
-statePlay = 2
-stateWaveOver = 3
-mNumbers
-  .byte '0','1','2','3','4','5','6','7','8','9'
-mState
-    .byte $00
-mCurrentWave
-    .byte $00
-mLaunchY
-    .byte $00
-mStartMessage
-    .text '                Player 1'
-    .byte $00
-mPoints
-    .text '               1 X POINTS'
-    .byte $00
-    .text '0123456789012345678901234567890123456789'
-    .byte $00
-mBonus
-    .text '           Bonus Points'
-    .byte $00
-
-mDelayTimer
-    .byte $00, $00
-
-mIcbmNumber
-    .byte 12,15, 18, 12,16, 14,17,10,13,16,19,12,14,16,18,14,16,18,20
 mBonusTrackerAbm
     .byte $00
 mBonusTrackerCityies
@@ -376,5 +234,11 @@ mWaveFrameDelay
     .byte $00
 mBonusIdx
     .byte $00
+mBonusFrameDelay
+    .byte $00
+mExtraCityTracker
+    .byte $00
+mBonus
+    .text '           Bonus Points'
+    .byte $00
 .endsection
-.endnamespace

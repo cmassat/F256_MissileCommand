@@ -107,6 +107,11 @@ draw7
     rts
 
 fire
+    lda mTotalAbm
+    cmp #0
+    bne _okToFire
+    rts
+_okToFire
     lda abmActve0
     beq _abm0
     lda abmActve1
@@ -126,27 +131,35 @@ fire
     rts
 _abm0
     jsr intAbm0
+    dec mTotalAbm
     rts
 _abm1
     jsr intAbm1
+    dec mTotalAbm
     rts
 _abm2
     jsr intAbm2
+    dec mTotalAbm
     rts
 _abm3
     jsr intAbm3
+    dec mTotalAbm
     rts
 _abm4
     jsr intAbm4
+    dec mTotalAbm
     rts
 _abm5
     jsr intAbm5
+    dec mTotalAbm
     rts
 _abm6
     jsr intAbm6
+    dec mTotalAbm
     rts
 _abm7
     jsr intAbm7
+    dec mTotalAbm
     rts
 
 

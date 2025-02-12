@@ -13,7 +13,7 @@ playPulse
     ldx #>PSG_5D_SHRP
     jsr psg_2_freq_left
 
-    lda #$f
+    lda #$0
     sta mAVol
     jsr psg_2_volume_left
 

@@ -1,7 +1,9 @@
 .section code 
 initGame
 
-
+    jsr hideAllSprites
+    jsr clearExtMem
+    jsr cities.init
     jsr initPsg
     jsr clearScreenMemory
     jsr clearLayers

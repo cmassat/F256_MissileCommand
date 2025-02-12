@@ -16,7 +16,7 @@ start
 .include "init.asm"
 .include "psg/psgSounds.asm"
 .include "score.asm"
-.include "waves.asm"
+.include "waves/waves.asm"
 .include "icbm.asm"
 .include "cruise.asm"
 .include "plane.asm"
@@ -56,12 +56,12 @@ mydirection
 *=$10000
 mBitmapData
  *=$1F000
-     .binary "../assets/bitmap.bin"
-
+mBitmapStart
+;.binary "../assets/bitmap.bin"
 *=$24000
 mBitmapStatic
 *=$33000
-mStaticBmp
+mStaticBmpStart
     .binary "../assets/bitmap.bin"
 mSpriteData
     .binary "../assets/sprite.bin"

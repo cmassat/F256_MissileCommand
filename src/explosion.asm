@@ -5,6 +5,11 @@ handle
     rts
 
 init
+   jsr reset
+    rts
+
+
+reset
     lda #0
     sta exp0
     sta exp1
@@ -15,7 +20,6 @@ init
     sta exp6
     sta exp7
     rts
-
 demo
     pha
     phx

@@ -1,6 +1,6 @@
 .section code
 
-cityHit .macro cityX, cityY, hit
+cityHit .macro cityX, cityY, hit, bmpX, bmpY
     lda \hit
     cmp #0
     bne _next
@@ -32,6 +32,15 @@ cityHit .macro cityX, cityY, hit
 _hit
     lda #1
     sta \hit
+
+    lda <#\bmpX
+    ldx #>\bmpX
+    jsr explosion.setX
+    lda <#\bmpY
+    ldx #>\bmpY
+    jsr explosion.setY
+    jsr explosion.start
+    jsr psg.playExplosion
 
 _next
 .endmacro
@@ -112,23 +121,23 @@ _end
     rts
 
 checkCity0
-    #cityHit  cityX0, cityY0, mCityHit0
+    #cityHit  cityX0, cityY0, mCityHit0, cities.cityBmpX0, cities.cityBmpY0
     rts
 
 checkCity1
-    #cityHit  cityX1, cityY1, mCityHit1
+    #cityHit  cityX1, cityY1, mCityHit1, cities.cityBmpX1, cities.cityBmpY1
     rts
 checkCity2
-    #cityHit  cityX2, cityY2, mCityHit2
+    #cityHit  cityX2, cityY2, mCityHit2, cities.cityBmpX2, cities.cityBmpY2
     rts
 checkCity3
-    #cityHit  cityX3, cityY3, mCityHit3
+    #cityHit  cityX3, cityY3, mCityHit3, cities.cityBmpX3, cities.cityBmpY3
     rts
 checkCity4
-    #cityHit  cityX4, cityY4, mCityHit4
+    #cityHit  cityX4, cityY4, mCityHit4, cities.cityBmpX4, cities.cityBmpY4
     rts
 checkCity5
-    #cityHit  cityX5, cityY5, mCityHit5
+    #cityHit  cityX5, cityY5, mCityHit5, cities.cityBmpX5, cities.cityBmpY5
     rts
 
 isCity0Hit

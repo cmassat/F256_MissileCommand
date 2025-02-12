@@ -161,7 +161,7 @@ begin
     rts
 
 demo
-    jsr debug
+
     jsr isF1Pressed
     bcs _playDemo
     jsr state.next
