@@ -117,8 +117,8 @@ begin
     jsr setBitmapLayer0
     jsr setupBitmap0
 
-    jsr setBitmapLayer1
-    jsr setupBitmap1
+   ; jsr setBitmapLayer1
+   ; jsr setupBitmap1
     jsr setLayers
 
     jsr cities.demo
@@ -169,7 +169,7 @@ demo
 _playDemo
     jsr icbm.demo
    ; jsr site.draw
-    jsr cruise.demo
+ ;   jsr cruise.demo
     ;jsr plane.demo
   ;  jsr abm.handle
   ;  jsr explosion.handle

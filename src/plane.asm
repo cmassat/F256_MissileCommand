@@ -74,7 +74,7 @@ _loop
     lda (POINTER_TX),y
     sta (POINTER_PLANE),y
     iny
-    cpy lineDataLength
+    cpy mlineDataLength
     bne _loop
 
     rts
@@ -96,7 +96,7 @@ _setLineDatagetPixel
     lda (POINTER_plane),y
     sta (POINTER_TX),y
     iny
-    cpy lineDataLength
+    cpy mlineDataLength
     bne _setLineDatagetPixel
 
     jsr linestep
@@ -175,7 +175,7 @@ _loop
     lda #0
     sta (POINTER_PLANE),y
     iny
-    cpy lineDataLength
+    cpy mlineDataLength
     bne _loop
 
     lda #0

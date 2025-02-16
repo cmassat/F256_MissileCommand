@@ -13,7 +13,7 @@ cityHit .macro cityX, cityY, hit, bmpX, bmpY
     sta \cityX + 1
     lda \cityX
     ldx \cityX + 1
-    jsr setOrginX
+;    jsr setOrginX
 
     lda \cityY
 
@@ -24,7 +24,7 @@ cityHit .macro cityX, cityY, hit, bmpX, bmpY
  ;   adc #0
    ; sta \cityY + 1
 
-    jsr setOrginY
+   ; jsr setOrginY
     jsr getPixel
     cmp #MISSLE_CLR
     beq _hit
@@ -33,14 +33,14 @@ _hit
     lda #1
     sta \hit
 
-    lda <#\bmpX
-    ldx #>\bmpX
-    jsr explosion.setX
-    lda <#\bmpY
-    ldx #>\bmpY
-    jsr explosion.setY
-    jsr explosion.start
-    jsr psg.playExplosion
+    ;lda <#\bmpX
+    ;ldx #>\bmpX
+    ;jsr explosion.setX
+    ;lda <#\bmpY
+    ;ldx #>\bmpY
+    ;jsr explosion.setY
+  ;  jsr explosion.start
+    ;jsr psg.playExplosion
 
 _next
 .endmacro

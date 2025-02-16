@@ -191,7 +191,9 @@ checkExtraCity
     bne _addExtraCity
     rts
 _addExtraCity
+    sta mExtraCityTracker
     jsr psg.playBonusCity
+
     rts
 
 bonusOverDelay
@@ -205,6 +207,7 @@ bonusOverDelay
     tax
     jsr getRandom
     jsr setBackgroundColor
+    jsr clearScreenMemory
     rts
 _end
     lda #stateStart

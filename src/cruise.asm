@@ -64,7 +64,7 @@ _loop
     lda (POINTER_TX),y
     sta (POINTER_CRUISE),y
     iny
-    cpy lineDataLength
+    cpy mLineDataLength
     bne _loop
 
     rts
@@ -86,7 +86,7 @@ _setLineDatagetPixel
     lda (POINTER_CRUISE),y
     sta (POINTER_TX),y
     iny
-    cpy lineDataLength
+    cpy mlineDataLength
     bne _setLineDatagetPixel
 
     jsr linestep
@@ -145,59 +145,59 @@ cruiseMacro .macro
 
 .endmacro
 drawCruiseMissle
-    phy
-    phx
-    pha
-    #cruiseMacro mCruiseMissle, mLineData, origX, origY, destX, destY, cruiseActve, cruiseFrame
-    jsr draw
-    jsr collision.handlecruise
-    bcc _deactivate
-    jsr isYMax
-    bcc _deactivate
-    bra _end
-_deactivate
-    jsr deactivate
-    bra _end
-_wait
-    dec mWait
-_end
-    pla
-    plx
-    ply
+;     phy
+;     phx
+;     pha
+;     #cruiseMacro mCruiseMissle, mLineData, origX, origY, destX, destY, cruiseActve, cruiseFrame
+;     jsr draw
+;     jsr collision.handlecruise
+;     bcc _deactivate
+;     jsr isYMax
+;     bcc _deactivate
+;     bra _end
+; _deactivate
+;     jsr deactivate
+;     bra _end
+; _wait
+;     dec mWait
+; _end
+;     pla
+;     plx
+;     ply
     rts
 
-deactivate
-    lda #0
-    sta (POINTER_ACTIVE)
-    lda #SPRITENUMBER_CRUISE
-    jsr setSpriteNumber
-    jsr hideSprite
+; deactivate
+;     lda #0
+;     sta (POINTER_ACTIVE)
+;     lda #SPRITENUMBER_CRUISE
+;     jsr setSpriteNumber
+;     jsr hideSprite
 
-    lda #0
-    ldx #0
-    jsr setSpriteX
-    jsr setSpriteY
+;     lda #0
+;     ldx #0
+;     jsr setSpriteX
+;     jsr setSpriteY
 
-    ldy #0
-_loop
-    lda #0
-    sta (POINTER_CRUISE),y
-    iny
-    cpy lineDataLength
-    bne _loop
+;     ldy #0
+; _loop
+;     lda #0
+;     sta (POINTER_CRUISE),y
+;     iny
+;     cpy lineDataLength
+;     bne _loop
 
-    lda #0
-    sta cruiseActve
-    sta cruiseFrame
-    sta origX
-    sta origY
-    sta destX
-    sta destY
+;     lda #0
+;     sta cruiseActve
+;     sta cruiseFrame
+;     sta origX
+;     sta origY
+;     sta destX
+;     sta destY
 
-    lda #waitFrames
-    sta mWait
+;     lda #waitFrames
+;     sta mWait
 
-    rts
+;     rts
 setupRandomPath
     jsr generateOriginX
     lda mrandXStart

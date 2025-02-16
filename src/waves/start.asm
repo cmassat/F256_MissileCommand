@@ -27,6 +27,13 @@ start
     jsr displayPtMult
     rts
 _next
+    jsr reset
+    jsr icbm.reset
+    ;set max ICBM for Wave
+    ldy mCurrentWave
+    lda mIcbmNumber, y
+    jsr icbm.setMaxLaunch
+
     jsr clearScreenMemory
     lda #statePlay
     sta mState

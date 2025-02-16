@@ -1,3 +1,4 @@
+.section code
 setPixelColor
 	sta mPixelColor
 	rts
@@ -475,7 +476,7 @@ _loop
 	cmp #lDirZer
 	beq _checkEOLY
 _checkEOL
-	lda l_x1+1
+	lda l_x1 + 1
 	cmp l_x2 + 1
 	beq _checklo
 	bra _loop
@@ -506,7 +507,7 @@ _putLastPixel
    sta l_y1 + 1
 
    jsr putPixel
-    rts
+	rts
 
 getPixel
 	phy
@@ -786,6 +787,8 @@ _bank17
 	lda #17
 	ldx #18
 	rts
+.endsection
+.section variables
 mLineData
 l_dx .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
 l_dy .word $0  ; ZU - "dlugosc" y A
@@ -810,7 +813,7 @@ mYdir
 ;     .byte $00
 
 mLineDateEnd
-lineDataLength
+mLineDataLength
 	.byte mLineDateEnd - mLineData
 mPixel
 	.byte $00, $00, $00
@@ -838,3 +841,5 @@ lDirPos = 2
 lWeight1 = 0
 lWeightX = 2
 lWeightY= 3
+
+.endsection

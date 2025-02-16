@@ -40,8 +40,8 @@ debug
     ;  tay
     ; lda mHex, y
     ; sta $C003
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda waves.mState
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
+    lda icbm.mIcbmStartX0 + 1
     lsr
     lsr
     lsr
@@ -50,14 +50,14 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda waves.mState
+    lda icbm.mIcbmStartX0 + 1
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80
 
 
-    lda POINTER_TXT
+    lda icbm.mIcbmStartX0
     lsr
     lsr
     lsr
@@ -66,79 +66,110 @@ debug
     lda mHex, y
     sta $C002 + 80
 
-    lda POINTER_TXT
+    lda icbm.mIcbmStartX0
     and #$0F
     tay
     lda mHex, y
     sta $C003 + 80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ldx #17
-    lda m_score_2
+    lda icbm.mIcbmStartY0
     lsr
     lsr
     lsr
     lsr
     tay
     lda mHex, y
-    sta $C000 + 80+ 80
+    sta $C005 + 80
 
      ldx #17
-    lda m_score_2
+    lda icbm.mIcbmStartY0
     and #$0F
     tay
     lda mHex, y
-    sta $C001 + 80+ 80
+    sta $C006 + 80
 
 
-     ldx #16
-    lda collision.mCityHit5
+    ldx #16
+    lda icbm.mIcbmStartY0
     lsr
     lsr
     lsr
     lsr
     tay
     lda mHex, y
-    sta $C002 + 80+ 80
+    sta $C007 + 80
 
      ldx #16
-    lda collision.mCityHit5
+    lda icbm.mIcbmStartY0
     and #$0F
     tay
     lda mHex, y
-    sta $C003 + 80+ 80
+    sta $C008 + 80
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda explosion.exp6
+    lda icbm.mIcbmDestX0 + 1
     lsr
     lsr
     lsr
     lsr
     tay
     lda mHex, y
-    sta $C000 + 80+ 80+ 80
+    sta $C000 + 80 + 40
 
-    lda explosion.exp6
+    lda icbm.mIcbmDestX0 + 1
     and #$0F
     tay
     lda mHex, y
-    sta $C001 + 80+ 80+ 80
+    sta $C001 + 80 + 40
 
 
-    lda explosion.exp7
+    lda icbm.mIcbmDestX0
     lsr
     lsr
     lsr
     lsr
     tay
     lda mHex, y
-    sta $C002 + 80+ 80+ 80
+    sta $C002 + 80 + 40
 
-    lda explosion.exp7
+    lda icbm.mIcbmDestX0
     and #$0F
     tay
     lda mHex, y
-    sta $C003 + 80+ 80+ 80
+    sta $C003 + 80 + 40
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    lda icbm.mIcbmDestY0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C005 + 80 + 40
+
+    lda icbm.mIcbmDestY0
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C006 + 80 + 40
+
+
+    lda icbm.mIcbmDestY0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C007 + 80 + 40
+
+    lda icbm.mIcbmDestY0
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C008 + 80 + 40
 
     pla
     plx

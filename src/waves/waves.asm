@@ -15,49 +15,49 @@ reset
     sta mWaveFrameDelay
     stz mBonusIdx
 
-    ;copy ground
-    lda #1
-    sta $df00
+   ;;copy ground
+;    lda #1
+;    sta $df00
 
-    lda <#mStaticBmpStart
-    sta $df04
+;    lda <#mStaticBmpStart
+;    sta $df04
 
-    lda >#mStaticBmpStart
-    sta $df05
+;    lda >#mStaticBmpStart
+;    sta $df05
 
-    lda `#mStaticBmpStart
-    sta $df06
-
-
-    lda <#15360
-    sta $df0c
-    lda >#15360
-    sta $df0d
-    lda `#15360
-    sta $df0e
+;    lda `#mStaticBmpStart
+;    sta $df06
 
 
-    lda <#mBitmapStart
-    sta $df08
+;    lda <#15360
+;    sta $df0c
+;    lda >#15360
+;    sta $df0d
+;    lda `#15360
+;    sta $df0e
 
-    lda >#mBitmapStart
-    sta $df09
 
-    lda `#mBitmapStart
-    sta $df0a
+;    lda <#mBitmapStart
+;    sta $df08
 
-    lda $df00
-    ora #%10000000
-    sta $df00
-_wait
-    lda $df01
-    cmp #$80
-    beq _wait
+;    lda >#mBitmapStart
+;    sta $df09
+
+;    lda `#mBitmapStart
+;    sta $df0a
+
+;    lda $df00
+;    ora #%10000000
+;    sta $df00
+; _wait
+;     lda $df01
+;     cmp #$80
+;     beq _wait
 
     rts
 
 handle
-    jsr debug
+
      lda #state.wave1
     jsr state.is
     bcc _ok
@@ -93,17 +93,14 @@ _bonusOverDelay
     jsr bonusOverDelay
     rts
 play
-    jsr icbm.isWaveOver
+    ;jsr icbm.isWaveOver
     bcs _continue
     jsr initBonusStuff
     rts
 _continue
     jsr score.handle
 
-    ;set max ICBM for Wave
-    ldy mCurrentWave
-    lda mIcbmNumber, y
-    jsr icbm.setMaxLaunch
+
 
     jsr site.draw
     jsr icbm.play
@@ -120,7 +117,7 @@ setSpeed
     beq _setWave0
     rts
 _setWave0
-    lda #14
+    lda #127
     ldx #1
     jsr icbm.setSpeed
     rts

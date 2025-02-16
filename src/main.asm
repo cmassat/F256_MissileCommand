@@ -7,6 +7,11 @@
 
 .section code
 start
+    lda MMU_MEM_CTRL
+    sta memCtrl
+    lda $d
+    sta memBank5
+
     jmp main
 .include "api/include.asm"
 .include "events.asm"
@@ -44,6 +49,10 @@ _loop
 
 
 .section variables
+memCtrl
+    .byte $00
+memBank5
+    .byte $00
 mxdirection
     .byte $00
 mydirection
@@ -57,7 +66,7 @@ mydirection
 mBitmapData
  *=$1F000
 mBitmapStart
-;.binary "../assets/bitmap.bin"
+    .binary "../assets/bitmap.bin"
 *=$24000
 mBitmapStatic
 *=$33000

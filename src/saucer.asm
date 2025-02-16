@@ -60,7 +60,7 @@ _loop
     lda (POINTER_TX),y
     sta (POINTER_SAUCER),y
     iny
-    cpy lineDataLength
+    cpy mlineDataLength
     bne _loop
 
     rts
@@ -82,7 +82,7 @@ _setLineDatagetPixel
     lda (POINTER_SAUCER),y
     sta (POINTER_TX),y
     iny
-    cpy lineDataLength
+    cpy mlineDataLength
     bne _setLineDatagetPixel
 
     jsr linestep
