@@ -12,6 +12,7 @@ reset
     lda #$ff
     sta mMaxLaunch
     rts
+
 demo
     pha
     phx
@@ -42,6 +43,7 @@ _move
 
 play
     jsr draw
+
     rts
 
 draw
@@ -74,51 +76,105 @@ _deactivate
     sta mIcbmStatus0
     rts
 
+isLastMissle
+    lda POINTER_ICBM + 1
+    cmp #>icbmTableEnd
+    beq _checkLo
+    bra _no
+    rts
+_checkLo
+    lda POINTER_ICBM
+    cmp #<icbmTableEnd
+    bne _no
+    beq _yes
+    rts
+_no
+    sec
+    rts
+_yes
+    clc
+    rts
 initMissle
-    lda mIcbmStatus0
+    lda #<icbmTable
+    sta POINTER_ICBM_TBL
+    lda #>icbmTable
+    sta POINTER_ICBM_TBL + 1
+
+    ldy #0
+    lda (POINTER_ICBM_TBL),y
+    sta POINTER_ICBM ,y
+    iny
+    lda (POINTER_ICBM_TBL),y
+    sta POINTER_ICBM,y
+_checkIsActive
+    ldy #0
+    lda (POINTER_ICBM),y
     cmp #inactiveStatus
     beq _checkReady
+    cmp #vanishedStatus
+    beq _makeInactive
+_nextMissle
+   ; lda POINTER_ICBM
+   ; clc
+   ; adc #2
+   ; sta POINTER_ICBM
+;
+   ; lda POINTER_ICBM + 1
+   ; adc #0
+   ; sta POINTER_ICBM + 1
+;
+   ; lda (POINTER_ICBM)
+   ; cmp #inactiveStatus
+   ; beq _checkReady
+    ;jsr isLastMissle
+   ; bcs _checkIsActive
+    rts
+_makeInactive
+    ldy #0
+    lda #inactiveStatus
+    sta (POINTER_ICBM)
     rts
 _checkReady
     jsr isMissleReady
     bcc _activateMissle
+  ;  bra _nextMissle
     rts
 _activateMissle
     lda #activeStatus
-    sta mIcbmStatus0
+    sta (POINTER_ICBM)
 
-    ;start
-    jsr generateRandomX
-    sta mIcbmStartX0
-    stx mIcbmStartX0 + 1
-
-    lda >#$00
-    sta mIcbmStartY0
-
-    ;Dest
-    jsr generateRandomX
-    sta mIcbmDestX0
-    stx mIcbmDestX0 + 1
-
-    lda #maxY
-    sta mIcbmDestY0
+    jsr _setCoordinates
 
     ;init path
     ;set start
-    lda mIcbmStartX0
-    ldx mIcbmStartX0 + 1
+    ldy #offsetStartX
+    lda (POINTER_ICBM),y
+    pha
+    iny
+    lda (POINTER_ICBM),y
+    tax
+    pla
     jsr setOrginX
 
-    lda mIcbmStartY0
+    ldy #offsetStartY
+    lda (POINTER_ICBM),y
     ldx #0
     jsr setOrginY
 
     ;set dest
-    lda mIcbmDestX0
-    ldx mIcbmDestX0 + 1
+    ldy #offsetDestX
+    lda (POINTER_ICBM), y
+    pha
+    iny
+    lda (POINTER_ICBM), y
+    tax
+    pla
     jsr setDestX
 
-    lda mIcbmDestY0
+
+
+    ldy #offsetDestY
+    lda (POINTER_ICBM), y
     ldx #0
     jsr setDestY
 
@@ -126,10 +182,53 @@ _activateMissle
     jsr linestep
     lda #2
     jsr setPixelColor
-    jsr putPixel
-
+   ; jsr do_line
+    ;jsr putPixel
+    jsr debug
     jsr saveLineData
+    inc mLaunchCount
+   ; bra _nextMissle
     rts
+
+_setCoordinates
+     ;start
+    ldy #offsetStartX
+    jsr generateRandomX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ; lda #$4c
+    ; sta (POINTER_ICBM), y
+    ; iny
+    ; lda #0
+    ; sta (POINTER_ICBM), y
+
+    ; ldy #offsetStartY
+    ; lda >#$00
+    ; sta (POINTER_ICBM), y
+
+    ;Dest
+    jsr generateRandomX
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ;lda <#$113
+    ;sta (POINTER_ICBM), y
+    ;iny
+    ;lda >#$113
+    ;sta (POINTER_ICBM), y
+
+    ldy #offsetDestY
+    lda #maxY
+    sta (POINTER_ICBM), y
+    rts
+
+
 
 deactivate
     lda mIcbmStatus0
@@ -137,12 +236,11 @@ deactivate
     beq _deactivate
     rts
 _deactivate
-    lda #0
-    jsr setPixelColor
-
     lda mIcbmStartX0
     ldx mIcbmStartX0 + 1
     jsr setOrginX
+
+
 
     lda mIcbmStartY0
     ldx #0
@@ -155,11 +253,33 @@ _deactivate
     lda mIcbmDestY0
     ldx #0
     jsr setDestY
-
+    lda #0
+    jsr setPixelColor
     jsr do_line
 
-    lda #inactiveStatus
+
+    lda #vanishedStatus
     sta mIcbmStatus0
+    jsr resetLineData
+    rts
+
+resetLineData
+    lda <#mLineData
+    sta POINTER_SRC
+    lda >#mLineData
+    sta POINTER_SRC + 1
+
+    lda <#mIcbmPathData0
+    sta POINTER_DST
+    lda >#mIcbmPathData0
+    sta POINTER_DST + 1
+    ldy #0
+_saveLineData
+    lda #0
+    sta (POINTER_DST),y
+    iny
+    cpy #offsetlineData
+    bcc _saveLineData
     rts
 
 saveLineData
@@ -177,7 +297,7 @@ _saveLineData
     lda (POINTER_SRC),y
     sta (POINTER_DST),y
     iny
-    cpy #19
+    cpy #offsetlineData
     bcc _saveLineData
     rts
 
@@ -200,7 +320,6 @@ _setLineData
     bcc _setLineData
     rts
 
-
 ;A register is current y
 isMissilePastYPos
     cmp mLaunchYPos
@@ -212,7 +331,11 @@ _yes
     rts
 
 areAllMissilesPastY
-    lda mIcbmCurrentY0
+    ldx #0
+    lda mIcbmStatus0, x
+    jsr isMissilePastYPos
+    bcs _no
+    lda mIcbmStatus1, x
     jsr isMissilePastYPos
     bcs _no
     bra _yes
@@ -235,7 +358,6 @@ _no
 _yes
     clc
     rts
-
 
 generateRandomX
 _tryAgain
@@ -298,7 +420,6 @@ setMaxLaunch
     sta mMaxLaunch
     rts
 
-
 .endsection
 .section variables
 maxY = 225
@@ -306,6 +427,13 @@ icbm_lengh = icbm0_end - icbm0
 inactiveStatus = 00
 activeStatus = 01
 deactivateStatus = 02
+vanishedStatus = 03
+
+offsetStartX = mIcbmStartX0 - mIcbmStatus0
+offsetStartY = mIcbmStartY0 - mIcbmStatus0
+offsetDestX = mIcbmDestX0 - mIcbmStatus0
+offsetDestY = mIcbmDestY0 - mIcbmStatus0
+offsetlineData = mIcbmStatus1 - mIcbmPathData0
 
 icbmTable
     .word mIcbmStatus0

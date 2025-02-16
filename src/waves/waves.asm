@@ -100,7 +100,7 @@ play
 _continue
     jsr score.handle
 
-
+    jsr icbm.reset
 
     jsr site.draw
     jsr icbm.play
