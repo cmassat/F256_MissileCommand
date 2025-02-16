@@ -43,48 +43,67 @@ _move
 
 play
     jsr draw
-
+    jsr debug
     rts
 
 draw
     jsr initMissle
-    jsr moveMissile0
+    jsr moveMissile
     jsr deactivate
     rts
 
-moveMissile0
-    lda mIcbmStatus0
+moveMissile
+    jsr setFirstMissle
+_checkMissile
+    lda (POINTER_ICBM)
     cmp #activeStatus
     beq _move
+_getNextMissle
+    jsr setNextMissle
+    jsr isLastMissle
+    bcc _end
+    bra _checkMissile
+_end
     rts
 _move
+    lda POINTER_ICBM
+    clc
+    adc #offsetlineData
+    sta POINTER_ICBM_LINE
+
+    lda POINTER_ICBM + 1
+    adc #0
+    sta POINTER_ICBM_LINE + 1
+
     lda #2
     jsr setPixelColor
     jsr setLineData
-    ;jsr do_line
+
     jsr linestep
     jsr putPixel
     jsr saveLineData
     jsr getOriginY
-    sta mIcbmCurrentY0
-
+    ldy #offsetCurrentY
+    sta (POINTER_ICBM) ,y
     cmp #maxY
     bcs _deactivate
+    bcc _getNextMissle
     rts
 _deactivate
     lda #deactivateStatus
-    sta mIcbmStatus0
+    sta (POINTER_ICBM)
+    bra _getNextMissle
     rts
 
 isLastMissle
-    lda POINTER_ICBM + 1
-    cmp #>icbmTableEnd
+    lda POINTER_ICBM_TBL + 1
+    cmp >#icbmTableEnd
     beq _checkLo
     bra _no
     rts
 _checkLo
-    lda POINTER_ICBM
-    cmp #<icbmTableEnd
+    lda POINTER_ICBM_TBL
+    cmp <#icbmTableEnd
     bne _no
     beq _yes
     rts
@@ -94,7 +113,7 @@ _no
 _yes
     clc
     rts
-initMissle
+setFirstMissle
     lda #<icbmTable
     sta POINTER_ICBM_TBL
     lda #>icbmTable
@@ -106,7 +125,32 @@ initMissle
     iny
     lda (POINTER_ICBM_TBL),y
     sta POINTER_ICBM,y
-_checkIsActive
+    rts
+
+setNextMissle
+    lda POINTER_ICBM_TBL
+    clc
+    adc #2
+    sta POINTER_ICBM_TBL
+
+    lda POINTER_ICBM_TBL + 1
+    adc #0
+    sta POINTER_ICBM_TBL + 1
+
+    ldy #0
+    lda (POINTER_ICBM_TBL),y
+    sta POINTER_ICBM ,y
+    iny
+    lda (POINTER_ICBM_TBL),y
+    sta POINTER_ICBM,y
+    rts
+
+initMissle
+    ;get first missle
+    jsr setFirstMissle
+    ;check if missle is inactive and
+    ;activate if OK
+_checkStatus
     ldy #0
     lda (POINTER_ICBM),y
     cmp #inactiveStatus
@@ -114,32 +158,32 @@ _checkIsActive
     cmp #vanishedStatus
     beq _makeInactive
 _nextMissle
-   ; lda POINTER_ICBM
-   ; clc
-   ; adc #2
-   ; sta POINTER_ICBM
-;
-   ; lda POINTER_ICBM + 1
-   ; adc #0
-   ; sta POINTER_ICBM + 1
-;
-   ; lda (POINTER_ICBM)
-   ; cmp #inactiveStatus
-   ; beq _checkReady
-    ;jsr isLastMissle
-   ; bcs _checkIsActive
+    jsr setNextMissle
+    jsr isLastMissle
+    bcc _end
+    bra _checkStatus
+_end
     rts
 _makeInactive
-    ldy #0
     lda #inactiveStatus
     sta (POINTER_ICBM)
+    bra _nextMissle
     rts
 _checkReady
-    jsr isMissleReady
-    bcc _activateMissle
+    ;jsr isMissleReady
+    ;bcc _activateMissle
   ;  bra _nextMissle
-    rts
+   ; rts
 _activateMissle
+    lda POINTER_ICBM
+    clc
+    adc #offsetlineData
+    sta POINTER_ICBM_LINE
+
+    lda POINTER_ICBM + 1
+    adc #0
+    sta POINTER_ICBM_LINE + 1
+
     lda #activeStatus
     sta (POINTER_ICBM)
 
@@ -171,8 +215,6 @@ _activateMissle
     pla
     jsr setDestX
 
-
-
     ldy #offsetDestY
     lda (POINTER_ICBM), y
     ldx #0
@@ -184,10 +226,10 @@ _activateMissle
     jsr setPixelColor
    ; jsr do_line
     ;jsr putPixel
-    jsr debug
+
     jsr saveLineData
     inc mLaunchCount
-   ; bra _nextMissle
+    bra _nextMissle
     rts
 
 _setCoordinates
@@ -199,15 +241,6 @@ _setCoordinates
     txa
     sta (POINTER_ICBM), y
 
-    ; lda #$4c
-    ; sta (POINTER_ICBM), y
-    ; iny
-    ; lda #0
-    ; sta (POINTER_ICBM), y
-
-    ; ldy #offsetStartY
-    ; lda >#$00
-    ; sta (POINTER_ICBM), y
 
     ;Dest
     jsr generateRandomX
@@ -217,50 +250,72 @@ _setCoordinates
     txa
     sta (POINTER_ICBM), y
 
-    ;lda <#$113
-    ;sta (POINTER_ICBM), y
-    ;iny
-    ;lda >#$113
-    ;sta (POINTER_ICBM), y
-
     ldy #offsetDestY
     lda #maxY
     sta (POINTER_ICBM), y
     rts
 
-
-
 deactivate
-    lda mIcbmStatus0
+    jsr setFirstMissle
+_checkStatus
+    lda (POINTER_ICBM)
     cmp #deactivateStatus
     beq _deactivate
+_getNextMissle
+    jsr setNextMissle
+    jsr isLastMissle
+    bcc _end
+    bra _checkStatus
+_end
     rts
 _deactivate
-    lda mIcbmStartX0
-    ldx mIcbmStartX0 + 1
+    ldy #offsetStartX
+    lda (POINTER_ICBM), y
+    pha
+    iny
+    lda (POINTER_ICBM), y
+    tax
+    pla
     jsr setOrginX
 
-
-
-    lda mIcbmStartY0
+    ldy #offsetStartY
+    lda (POINTER_ICBM), y
     ldx #0
     jsr setOrginY
 
-    lda mIcbmDestX0
-    ldx mIcbmDestX0 + 1
+
+    ldy #offsetDestX
+    lda (POINTER_ICBM), y
+    pha
+    iny
+    lda (POINTER_ICBM), y
+    tax
+    pla
     jsr setDestX
 
-    lda mIcbmDestY0
+    ldy #offsetDestY
+    lda (POINTER_ICBM), y
     ldx #0
     jsr setDestY
+
+    lda POINTER_ICBM
+    clc
+    adc #offsetlineData
+    sta POINTER_ICBM_LINE
+
+    lda POINTER_ICBM + 1
+    adc #0
+    sta POINTER_ICBM_LINE + 1
+
     lda #0
     jsr setPixelColor
     jsr do_line
 
-
     lda #vanishedStatus
-    sta mIcbmStatus0
+    sta (POINTER_ICBM)
     jsr resetLineData
+    dec mLaunchCount
+    bra _getNextMissle
     rts
 
 resetLineData
@@ -269,16 +324,12 @@ resetLineData
     lda >#mLineData
     sta POINTER_SRC + 1
 
-    lda <#mIcbmPathData0
-    sta POINTER_DST
-    lda >#mIcbmPathData0
-    sta POINTER_DST + 1
     ldy #0
 _saveLineData
     lda #0
-    sta (POINTER_DST),y
+    sta (POINTER_ICBM_LINE),y
     iny
-    cpy #offsetlineData
+    cpy #lineDataLength
     bcc _saveLineData
     rts
 
@@ -288,35 +339,26 @@ saveLineData
     lda >#mLineData
     sta POINTER_SRC + 1
 
-    lda <#mIcbmPathData0
-    sta POINTER_DST
-    lda >#mIcbmPathData0
-    sta POINTER_DST + 1
     ldy #0
 _saveLineData
     lda (POINTER_SRC),y
-    sta (POINTER_DST),y
+    sta (POINTER_ICBM_LINE),y
     iny
-    cpy #offsetlineData
+    cpy #lineDataLength
     bcc _saveLineData
     rts
 
 setLineData
-    lda <#mIcbmPathData0
-    sta POINTER_SRC
-    lda >#mIcbmPathData0 + 1
-    sta POINTER_SRC + 1
-
     lda <#mLineData
     sta POINTER_DST
     lda >#mLineData + 1
     sta POINTER_DST + 1
     ldy #0
 _setLineData
-    lda (POINTER_SRC),y
+    lda (POINTER_ICBM_LINE),y
     sta (POINTER_DST),y
     iny
-    cpy #19
+    cpy #lineDataLength
     bcc _setLineData
     rts
 
@@ -433,7 +475,10 @@ offsetStartX = mIcbmStartX0 - mIcbmStatus0
 offsetStartY = mIcbmStartY0 - mIcbmStatus0
 offsetDestX = mIcbmDestX0 - mIcbmStatus0
 offsetDestY = mIcbmDestY0 - mIcbmStatus0
-offsetlineData = mIcbmStatus1 - mIcbmPathData0
+offsetlineData = mIcbmPathData0 - mIcbmStatus0
+lineDataLength = mIcbmStatus1 - mIcbmPathData0
+icbmDataLength = mIcbmStatus1 - mIcbmStatus0
+offsetCurrentY = mIcbmCurrentY0 - mIcbmStatus0
 
 icbmTable
     .word mIcbmStatus0

@@ -41,7 +41,7 @@ debug
     ; lda mHex, y
     ; sta $C003
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
-    lda icbm.mIcbmStartX0 + 1
+    lda icbm.mIcbmStatus0
     lsr
     lsr
     lsr
@@ -50,14 +50,14 @@ debug
     lda mHex, y
     sta $C000 + 80
 
-    lda icbm.mIcbmStartX0 + 1
+    lda icbm.mIcbmStatus0
     and #$0F
     tay
     lda mHex, y
     sta $C001 + 80
 
 
-    lda icbm.mIcbmStartX0
+    lda icbm.mIcbmStatus1
     lsr
     lsr
     lsr
@@ -66,7 +66,7 @@ debug
     lda mHex, y
     sta $C002 + 80
 
-    lda icbm.mIcbmStartX0
+    lda icbm.mIcbmStatus1
     and #$0F
     tay
     lda mHex, y
