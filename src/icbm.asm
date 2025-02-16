@@ -6,7 +6,6 @@ init
     stz  mSpeedTracker + 1
     stz mLaunchNext
     stz mLaunchCount
-   ; jsr newAttack
     rts
 
 reset
@@ -42,49 +41,11 @@ _move
     rts
 
 play
-;      pha
-;     phx
-;     phy
-;     lda mSpeedTracker
-;     clc
-;     adc mSpeed
-;     sta mSpeedTracker
-;     lda mSpeedTracker + 1
-;     adc #0
-;     sta mSpeedTracker + 1
-;     lda  mSpeedTracker + 1
-;     cmp #0
-;     bne _move
-;     ply
-;     plx
-;     pla
-;     rts
-; _move
-;     lda  mSpeedTracker + 1
-;     cmp  mSpeed + 1
-;     beq _okToMove_reset
-;     bcc _okToMove
-;     ply
-;     plx
-;     pla
-;     rts
-; _okToMove_reset
-;     stz mSpeedTracker + 1
-; _okToMove
-;     inc mOkToMove
-;     jsr draw
-;     stz mOkToMove
-;     stz mLaunchNext
-;   ;  stz mSpeedTracker + 1
-;     ply
-    ; plx
-    ; pla
     jsr draw
     rts
 
 draw
-    jsr debug
-    jsr initMissle0
+    jsr initMissle
     jsr moveMissile0
     jsr deactivate
     rts
@@ -98,11 +59,13 @@ _move
     lda #2
     jsr setPixelColor
     jsr setLineData
+    ;jsr do_line
     jsr linestep
     jsr putPixel
     jsr saveLineData
     jsr getOriginY
     sta mIcbmCurrentY0
+
     cmp #maxY
     bcs _deactivate
     rts
@@ -111,7 +74,7 @@ _deactivate
     sta mIcbmStatus0
     rts
 
-initMissle0
+initMissle
     lda mIcbmStatus0
     cmp #inactiveStatus
     beq _checkReady
@@ -128,7 +91,8 @@ _activateMissle
     jsr generateRandomX
     sta mIcbmStartX0
     stx mIcbmStartX0 + 1
-    lda #0
+
+    lda >#$00
     sta mIcbmStartY0
 
     ;Dest
@@ -173,14 +137,15 @@ deactivate
     beq _deactivate
     rts
 _deactivate
-     lda #0
+    lda #0
     jsr setPixelColor
+
     lda mIcbmStartX0
     ldx mIcbmStartX0 + 1
     jsr setOrginX
 
     lda mIcbmStartY0
-    lda #0
+    ldx #0
     jsr setOrginY
 
     lda mIcbmDestX0
@@ -345,6 +310,7 @@ deactivateStatus = 02
 icbmTable
     .word mIcbmStatus0
     .word mIcbmStatus1
+icbmTableEnd
 
 mIcbmStatus0
     .byte $0

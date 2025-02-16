@@ -652,9 +652,6 @@ clearPixel
 	rts
 
 putPixel
-	pha
-	phx
-	phy
 	lda #<320
 	ldx #>320
 	jsr setMulA
@@ -712,13 +709,10 @@ putPixel
 	sta POINTER_LINE + 1
 	lda mPixelColor
 	sta (POINTER_LINE)
+
 	lda #5
 	sta $d
-
-	ply
-	plx
-	pla
-  rts
+  	rts
 
 ;POINTER_LINE = $B4
 getBank
