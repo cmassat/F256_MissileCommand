@@ -29,7 +29,7 @@ handlecruiseTL
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr cruise.getY
     clc
@@ -41,7 +41,7 @@ handlecruiseTL
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -60,7 +60,7 @@ handlecruiseTR
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr cruise.getY
     clc
@@ -72,7 +72,7 @@ handlecruiseTR
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -91,7 +91,7 @@ handlecruiseBR
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr cruise.getY
     clc
@@ -103,7 +103,7 @@ handlecruiseBR
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -122,7 +122,7 @@ handlecruiseBL
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr cruise.getY
     clc
@@ -134,7 +134,7 @@ handlecruiseBL
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -153,7 +153,7 @@ handlecruiseMiddle
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
 
 
@@ -167,7 +167,7 @@ handlecruiseMiddle
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec

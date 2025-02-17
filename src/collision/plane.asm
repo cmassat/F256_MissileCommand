@@ -29,7 +29,7 @@ handlePlaneTL
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr plane.getY
     clc
@@ -41,7 +41,7 @@ handlePlaneTL
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -60,7 +60,7 @@ handlePlaneTR
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr plane.getY
     clc
@@ -72,7 +72,7 @@ handlePlaneTR
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -91,7 +91,7 @@ handlePlaneBR
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr plane.getY
     clc
@@ -103,7 +103,7 @@ handlePlaneBR
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -122,7 +122,7 @@ handlePlaneBL
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr plane.getY
     clc
@@ -134,7 +134,7 @@ handlePlaneBL
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec
@@ -153,7 +153,7 @@ handlePlaneMiddle
     tax
     pla
     jsr setOrginX
-    sta mDebug
+
 
     jsr plane.getY
     clc
@@ -165,7 +165,7 @@ handlePlaneMiddle
     pla
     jsr setOrginY
     jsr getPixel
-    sta mDebug + 1
+
     cmp #EXPLOSION_CLR
     beq _hit
     sec

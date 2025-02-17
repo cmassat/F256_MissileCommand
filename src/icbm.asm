@@ -4,15 +4,32 @@ init
     jsr reset
     stz  mSpeedTracker
     stz  mSpeedTracker + 1
-    stz mLaunchNext
     stz mLaunchCount
     rts
 
 reset
     lda #$ff
     sta mMaxLaunch
+    stz mOkToMove
+  ;  stz mLaunchCount
+;     jsr setFirstMissle
+;     ldx #0
+; _clearRound
+;     ldy #0
+; _clearMissle
+;     lda #0
+;     sta (POINTER_ICBM),y
+;     iny
+;     cpy #icbmDataLength
+;     bne _clearMissle
+;     inx
+;     cpx #7
+;     bcc _nextIcbm
+;     rts
+; _nextIcbm
+;     jsr setNextMissle
+;     bra _clearRound
     rts
-
 demo
     pha
     phx
@@ -32,18 +49,17 @@ demo
     rts
 _move
     stz mSpeedTracker + 1
-    inc mOkToMove
+   ; inc mOkToMove
     jsr draw
-    stz mOkToMove
-    stz mLaunchNext
+  ;  stz mOkToMove
     ply
     plx
     pla
     rts
 
 play
-    jsr draw
-    jsr debug
+    jsr demo
+   ; jsr debug
     rts
 
 draw
@@ -113,7 +129,11 @@ _no
 _yes
     clc
     rts
+
 setFirstMissle
+    pha
+    phx
+    phy
     lda #<icbmTable
     sta POINTER_ICBM_TBL
     lda #>icbmTable
@@ -125,9 +145,15 @@ setFirstMissle
     iny
     lda (POINTER_ICBM_TBL),y
     sta POINTER_ICBM,y
+    ply
+    plx
+    pla
     rts
 
 setNextMissle
+    pha
+    phx
+    phy
     lda POINTER_ICBM_TBL
     clc
     adc #2
@@ -143,6 +169,9 @@ setNextMissle
     iny
     lda (POINTER_ICBM_TBL),y
     sta POINTER_ICBM,y
+    ply
+    plx
+    pla
     rts
 
 initMissle
@@ -170,10 +199,10 @@ _makeInactive
     bra _nextMissle
     rts
 _checkReady
-    ;jsr isMissleReady
-    ;bcc _activateMissle
-  ;  bra _nextMissle
-   ; rts
+    jsr isMissleReady
+    bcc _activateMissle
+    bra _nextMissle
+    rts
 _activateMissle
     lda POINTER_ICBM
     clc
@@ -372,15 +401,11 @@ _yes
     clc
     rts
 
-areAllMissilesPastY
-    ldx #0
-    lda mIcbmStatus0, x
-    jsr isMissilePastYPos
-    bcs _no
-    lda mIcbmStatus1, x
-    jsr isMissilePastYPos
-    bcs _no
-    bra _yes
+
+isMissleActive
+    cmp #activeStatus
+    beq _yes
+    rts
 _no
     sec
     rts
@@ -388,16 +413,106 @@ _yes
     clc
     rts
 
+areAllMissilesPastY
+    lda mIcbmStatus0
+    cmp #activeStatus
+    bne _check1
+    ldx #offsetCurrentY
+    lda mIcbmStatus0, x
+    jsr isMissilePastYPos
+    bcs _no
+_check1
+    lda mIcbmStatus1
+    cmp #activeStatus
+    bne _check2
+    ldx #offsetCurrentY
+    lda mIcbmStatus1, x
+    jsr isMissilePastYPos
+    bcs _no
+_check2
+    lda mIcbmStatus2
+    cmp #activeStatus
+    bne _check3
+    lda mIcbmStatus2, x
+    jsr isMissilePastYPos
+    bcs _no
+_check3
+    lda mIcbmStatus3
+    cmp #activeStatus
+    bne _check4
+    lda mIcbmStatus3, x
+    jsr isMissilePastYPos
+    bcs _no
+_check4
+    lda mIcbmStatus4
+    cmp #activeStatus
+    bne _check5
+    lda mIcbmStatus4, x
+    jsr isMissilePastYPos
+    bcs _no
+_check5
+    lda mIcbmStatus5
+    cmp #activeStatus
+    bne _check6
+    lda mIcbmStatus5, x
+    jsr isMissilePastYPos
+    bcs _no
+_check6
+    lda mIcbmStatus6
+    cmp #activeStatus
+    bne _check7
+    lda mIcbmStatus6, x
+    jsr isMissilePastYPos
+    bcs _no
+_check7
+    lda mIcbmStatus7
+    cmp #activeStatus
+    bne _yes
+    lda mIcbmStatus7, x
+    jsr isMissilePastYPos
+    bcs _no
+    bra _yes
+    rts
+_no
+    lda #1
+    sta mDebug
+    sec
+
+    rts
+_yes
+    lda #0
+    sta mDebug
+    clc
+    rts
+
 isMissleReady
+    phy
+    phx
+    pha
+    lda mLaunchCount
+    cmp #5
+    bne _ok
+    lda #1
+    sta mOkToMove
+_ok
     lda mLaunchCount
     cmp #4
     bcc _yes
+    lda mOkToMove
+    cmp #1
+    beq _yes
     jsr areAllMissilesPastY
     bcc _yes
 _no
+    pla
+    plx
+    ply
     sec
     rts
 _yes
+    pla
+    plx
+    ply
     clc
     rts
 
@@ -434,29 +549,7 @@ setSpeed
     sta mSpeed
     stx mSpeed + 1
     rts
-getX
-    phy
-    ldy #14
-    lda (POINTER_ICBM), y
-    pha
-    iny
-    lda (POINTER_ICBM), y
-    tax
-    pla
-    ply
-    rts
 
-getY
-    phy
-    ldy #16
-    lda (POINTER_ICBM), y
-    pha
-    iny
-    lda (POINTER_ICBM), y
-    tax
-    pla
-    ply
-    rts
 
 setMaxLaunch
     sta mMaxLaunch
@@ -483,6 +576,12 @@ offsetCurrentY = mIcbmCurrentY0 - mIcbmStatus0
 icbmTable
     .word mIcbmStatus0
     .word mIcbmStatus1
+    .word mIcbmStatus2
+    .word mIcbmStatus3
+    .word mIcbmStatus4
+    .word mIcbmStatus5
+    .word mIcbmStatus6
+    .word mIcbmStatus7
 icbmTableEnd
 
 mIcbmStatus0
@@ -535,164 +634,140 @@ mIcbmStatus1
     .byte $00
     .byte $00
 
-icbm1
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+mIcbmStatus2
+    .byte $0
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-icbmActve1 .byte $0
-origX1 .word $00
-origY1 .word $00
-destX1 .word $00
-destY1 .word $00
 
-icbm2
-     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+mIcbmStatus3
+    .byte $0
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-icbmActve2 .byte $0
-origX2 .word $00
-origY2 .word $00
-destX2 .word $00
-destY2 .word $00
 
-icbm3
-     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+mIcbmStatus4
+    .byte $0
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-icbmActve3 .byte $0
-origX3 .word $00
-origY3 .word $00
-destX3 .word $00
-destY3 .word $00
 
-icbm4
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+mIcbmStatus5
+    .byte $0
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-icbmActve4 .byte $0
-origX4 .word $00
-origY4 .word $00
-destX4 .word $00
-destY4 .word $00
 
-icbm5
-     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+mIcbmStatus6
+    .byte $0
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-icbmActve5 .byte $0
-origX5 .word $00
-origY5 .word $00
-destX5 .word $00
-destY5 .word $00
 
-icbm6
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+
+mIcbmStatus7
+    .byte $0
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .byte $00, $00
+    .byte $00
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-    .byte $00
-icbmActve6 .byte $0
-icbmFrame6 .byte $0
-icbmDestX6 .byte $00,$00
-origX6 .byte $00, $00
-origY6 .byte $00, $00
-destX6 .byte $00, $00
-destY6 .byte $00, $00
 
 
-icbm7
-.word $0 ;dx
-    .word $0  ; dy 2
-    .word $0  ; xi 4
-    .word $0  ; yi 6
-    .word $0 ; ai 8
-    .word $0 ; bi 10
-    .word $0 ; decision' 12
-    ;poin.byte $0 ;
-    .word $0 ; currentx 14
-    .word $0 ; currenty
-    .word $0 ; destX
-    .word $0 ; destY
-    .byte $0  ; steep
-    .byte $00 ; dir
-    .byte $00 ;dir
-icbmActve7 .byte $0
-origX7 .word $00
-origY7 .word $00
-destX7 .word $00
-destY7 .word $00
 icbm_end
 frameTrack
     .byte $00
@@ -705,20 +780,18 @@ mSpeed
 mSpeedTracker
     .byte $00, $00
 mOkToMove
-    .byte $00
+     .byte $00
 mLaunchWait
     .byte 100, $00
 mLaunchCount
     .byte $00
 mCurrentWave
     .byte $00
-mLaunchNext
-    .byte $00
 mMaxLaunch
     .byte $00
 mTotalLaunch
     .byte $00
 mLaunchYPos
-    .byte $00
+    .byte $64
 .endsection
 .endnamespace

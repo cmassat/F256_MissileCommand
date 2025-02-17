@@ -20,7 +20,6 @@ showSpriteMacro .macro spriteNum, spriteAddr, x, y
 .endmacro
 .section code
 handle
-
     lda #state.menu
     jsr state.is
     bcc _ok
@@ -165,6 +164,7 @@ demo
     jsr isF1Pressed
     bcs _playDemo
     jsr state.next
+  ;  jsr icbm.reset
     rts
 _playDemo
     jsr icbm.demo
