@@ -15,6 +15,7 @@ reset
     sta mWaveFrameDelay
     stz mBonusIdx
 
+  ;  jsr icbm.reset
    ;;copy ground
 ;    lda #1
 ;    sta $df00
@@ -93,15 +94,12 @@ _bonusOverDelay
     jsr bonusOverDelay
     rts
 play
-    ;jsr icbm.isWaveOver
+    jsr icbm.isWaveOver
     bcs _continue
     jsr initBonusStuff
     rts
 _continue
     jsr score.handle
-
-    jsr icbm.reset
-
     jsr site.draw
     jsr icbm.play
     jsr abm.play
@@ -110,21 +108,54 @@ _continue
 
     rts
 
-
 setSpeed
     lda mCurrentWave
     cmp #0
     beq _setWave0
+    cmp #1
+    beq _setWave1
+    cmp #2
+    beq _setWave2
+    cmp #3
+    beq _setWave3
+    cmp #4
+    beq _setWave4
+    cmp #5
+    beq _setWave5
     rts
 _setWave0
     lda #14
     ldx #1
     jsr icbm.setSpeed
     rts
+_setWave1
+    lda #20
+    ldx #1
+    jsr icbm.setSpeed
+    rts
+_setWave2
+    lda #34
+    ldx #1
+    jsr icbm.setSpeed
+    rts
+_setWave3
+    lda #58
+    ldx #1
+    jsr icbm.setSpeed
+    rts
+_setWave4
+    lda #96
+    ldx #1
+    jsr icbm.setSpeed
+_setWave5
+    lda #160
+    ldx #1
+    jsr icbm.setSpeed
+    rts
 
 setup
     jsr setSpeed
-    jsr icbm.reset
+   ; jsr icbm.reset
     jsr hideAllSprites
 
     lda #0

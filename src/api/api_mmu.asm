@@ -15,8 +15,8 @@ clearExtMem
     jsr clearMemory
     lda #15
     jsr clearMemory
-   ; lda #16
-   ; jsr clearMemory
+    lda #16
+    jsr clearMemory
     rts
 
 initMMU

@@ -28,7 +28,7 @@ start
     rts
 _next
     jsr reset
-    jsr icbm.reset
+   ; jsr icbm.reset
     ;set max ICBM for Wave
     ldy mCurrentWave
     lda mIcbmNumber, y

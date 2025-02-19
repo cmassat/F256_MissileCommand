@@ -16,6 +16,7 @@ initBonusStuff
 
     jsr resetBonusScore
     jsr clearScreenMemory
+    jsr clearExtMem
 
     lda #60
     sta mBonusFrameDelay
@@ -33,7 +34,7 @@ waveOver
     cmp #0
     bne _showCityBonus
     bra _checkExtraCity
-    jsr icbm.reset
+   ; jsr icbm.reset
     jsr reset
 
 
@@ -224,6 +225,7 @@ _end
     jsr abm.reset
     jsr explosion.reset
     inc mCurrentWave
+    jsr setSpeed
     jsr  psg.playBonusCity
     rts
 .endsection

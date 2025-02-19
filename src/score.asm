@@ -17,19 +17,19 @@ handle
     phx
     pha
     jsr getScoreDigit0
-    #writeScoreMacro $c00d + (1 * 40)
-    jsr getScoreDigit1
-    #writeScoreMacro $c00c + (1 * 40)
-     jsr getScoreDigit2
-    #writeScoreMacro $c00b + (1 * 40)
-    jsr getScoreDigit3
-    #writeScoreMacro $c00a + (1 * 40)
-    jsr getScoreDigit4
     #writeScoreMacro $c009 + (1 * 40)
-    jsr getScoreDigit5
+    jsr getScoreDigit1
     #writeScoreMacro $c008 + (1 * 40)
-    jsr getScoreDigit6
+     jsr getScoreDigit2
     #writeScoreMacro $c007 + (1 * 40)
+    jsr getScoreDigit3
+    #writeScoreMacro $c006 + (1 * 40)
+    jsr getScoreDigit4
+    #writeScoreMacro $c005 + (1 * 40)
+    jsr getScoreDigit5
+    #writeScoreMacro $c004 + (1 * 40)
+    jsr getScoreDigit6
+    #writeScoreMacro $c003 + (1 * 40)
     pla
     plx
     ply

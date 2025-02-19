@@ -5,30 +5,32 @@ init
     stz  mSpeedTracker
     stz  mSpeedTracker + 1
     stz mLaunchCount
+    lda #$ff
+    sta mMaxLaunch
     rts
 
 reset
-    lda #$ff
-    sta mMaxLaunch
     stz mOkToMove
-  ;  stz mLaunchCount
-;     jsr setFirstMissle
-;     ldx #0
-; _clearRound
-;     ldy #0
-; _clearMissle
-;     lda #0
-;     sta (POINTER_ICBM),y
-;     iny
-;     cpy #icbmDataLength
-;     bne _clearMissle
-;     inx
-;     cpx #7
-;     bcc _nextIcbm
-;     rts
-; _nextIcbm
-;     jsr setNextMissle
-;     bra _clearRound
+    stz mTotalLaunch
+    stz mLaunchCount
+
+    ldx #0
+    jsr setFirstMissle
+_loopOUter
+    ldy #0
+_loop
+    lda #0
+    sta (POINTER_ICBM),y
+    iny
+    cpy #icbmDataLength
+    bne _loop
+    inx
+    cpx #8
+    bne _nextMissle
+    rts
+_nextMissle
+    jsr setNextMissle
+    bra _loopOUter
     rts
 demo
     pha
@@ -49,17 +51,32 @@ demo
     rts
 _move
     stz mSpeedTracker + 1
-   ; inc mOkToMove
     jsr draw
-  ;  stz mOkToMove
     ply
     plx
     pla
     rts
 
 play
-    jsr demo
-   ; jsr debug
+    lda mSpeedTracker + 1
+    cmp mSpeed + 1
+    bne _continue
+    stz mSpeedTracker + 1
+_continue
+    lda mSpeedTracker
+    clc
+    adc mSpeed
+    sta mSpeedTracker
+    lda mSpeedTracker + 1
+    adc #0
+    sta mSpeedTracker + 1
+
+    lda mSpeedTracker + 1
+    cmp #1
+    beq _move1
+    rts
+_move1
+    jsr draw
     rts
 
 draw
@@ -96,8 +113,13 @@ _move
     jsr setLineData
 
     jsr linestep
+    jsr getPixel
+    cmp #EXPLOSION_CLR
+    beq _explode
     jsr putPixel
     jsr saveLineData
+
+
     jsr getOriginY
     ldy #offsetCurrentY
     sta (POINTER_ICBM) ,y
@@ -105,6 +127,10 @@ _move
     bcs _deactivate
     bcc _getNextMissle
     rts
+_explode
+    lda #$25
+    jsr add2score
+    jsr psg.playExplosion
 _deactivate
     lda #deactivateStatus
     sta (POINTER_ICBM)
@@ -175,6 +201,10 @@ setNextMissle
     rts
 
 initMissle
+    jsr areAnyMissilesLeft
+    bcc _initMore
+    rts
+_initMore
     ;get first missle
     jsr setFirstMissle
     ;check if missle is inactive and
@@ -255,7 +285,7 @@ _activateMissle
     jsr setPixelColor
    ; jsr do_line
     ;jsr putPixel
-
+    inc mTotalLaunch
     jsr saveLineData
     inc mLaunchCount
     bra _nextMissle
@@ -340,7 +370,7 @@ _deactivate
     jsr setPixelColor
     jsr do_line
 
-    lda #vanishedStatus
+    lda #inactiveStatus
     sta (POINTER_ICBM)
     jsr resetLineData
     dec mLaunchCount
@@ -548,8 +578,59 @@ _returnValues
 setSpeed
     sta mSpeed
     stx mSpeed + 1
+
+    stz mSpeedTracker
+    stz mSpeedTracker + 1
+    rts
+isWaveOver
+    jsr areAnyMissilesLeft
+    bcs _checkAllInactive
+    sec
+    rts
+_checkAllInactive
+
+    lda mIcbmStatus0
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus1
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus2
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus3
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus4
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus5
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus6
+    cmp #inactiveStatus
+    bne _no
+    lda mIcbmStatus7
+    cmp #inactiveStatus
+    bne _no
+    bra _yes
+    rts
+_no
+    sec
+    rts
+_yes
+    clc
     rts
 
+areAnyMissilesLeft
+    lda mTotalLaunch
+    cmp mMaxLaunch
+    bcc _yes
+    sec
+    rts
+_yes
+    clc
+    rts
 
 setMaxLaunch
     sta mMaxLaunch

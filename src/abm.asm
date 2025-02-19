@@ -23,7 +23,7 @@ reset
     pha
     phx
     phy
-    lda #20
+    lda #30
     sta mTotalAbm
     stz mAbmCount
     ply
@@ -37,6 +37,12 @@ handle
 
 
 play
+    jsr handleFire
+    jsr draw
+    jsr handleFire
+    jsr draw
+    jsr handleFire
+    jsr draw
     jsr handleFire
     jsr draw
     rts
