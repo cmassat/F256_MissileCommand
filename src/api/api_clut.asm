@@ -43,7 +43,126 @@ clutInc
     sta (POINTER_CLUT_DEST)
     stz  MMU_IO_CTRL
 
+    rts
 
+missleColor
+    lda #CLUT_IO
+    sta MMU_IO_CTRL
+
+    lda #<CLUT_0_ADDR + (EXPLOSION_CLR * 4)
+    sta POINTER_CLUT_DEST
+
+    lda #>CLUT_0_ADDR + (EXPLOSION_CLR * 4)
+    sta POINTER_CLUT_DEST   + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #5
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #10
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #15
+    sta (POINTER_CLUT_DEST)
+    stz  MMU_IO_CTRL
+    rts
+
+IcbmColor
+     pha
+    lda #CLUT_IO
+    sta MMU_IO_CTRL
+
+    lda #<CLUT_0_ADDR + (MISSLE_CLR * 4)
+    sta POINTER_CLUT_DEST
+
+    lda #>CLUT_0_ADDR + (MISSLE_CLR * 4)
+    sta POINTER_CLUT_DEST   + 1
+
+    tya
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    txa
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    pla
+    sta (POINTER_CLUT_DEST)
+    stz  MMU_IO_CTRL
+    rts
+
+
+abmColor
+    pha
+    lda #CLUT_IO
+    sta MMU_IO_CTRL
+
+    lda #<CLUT_0_ADDR + (ABM_CLR * 4)
+    sta POINTER_CLUT_DEST
+
+    lda #>CLUT_0_ADDR + (ABM_CLR * 4)
+    sta POINTER_CLUT_DEST   + 1
+
+    tya
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    txa
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    pla
+    sta (POINTER_CLUT_DEST)
+    stz  MMU_IO_CTRL
     rts
 
 clut_load_0
@@ -270,7 +389,21 @@ _clut_row3
     sta MMU_IO_CTRL
     rts
 
+setColor
+    sta mRed
+    stx mGreen
+    sty mBlue
+    rts
+
 .section variables
+mRed
+    .byte $00
+mGreen
+    .byte $00
+mBlue
+    .byte $00
+
+
 mColor1
     .byte $00
 mclut

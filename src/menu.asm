@@ -19,6 +19,10 @@ showSpriteMacro .macro spriteNum, spriteAddr, x, y
 
 .endmacro
 .section code
+reset
+    stz mState
+    rts
+
 handle
     lda #state.menu
     jsr state.is
@@ -121,7 +125,7 @@ begin
     jsr setLayers
 
     jsr cities.demo
-
+    jsr clearTextScreen
     #showSpriteMacro 51, SPRITE_LETTER_D, 80, 200
     #showSpriteMacro 50, SPRITE_LETTER_E, 80 + 16, 200
     #showSpriteMacro 49, SPRITE_LETTER_F, 80 + 32, 200
@@ -156,6 +160,7 @@ begin
     lda #60
     sta mArrowBlink
 
+
     jsr nextState
     rts
 
@@ -164,13 +169,13 @@ demo
     jsr isF1Pressed
     bcs _playDemo
     jsr state.next
-  ;  jsr icbm.reset
+   jsr icbm.reset
     rts
 _playDemo
     jsr icbm.demo
    ; jsr site.draw
- ;   jsr cruise.demo
-    ;jsr plane.demo
+  ;  jsr cruise.demo
+    jsr plane.demo
   ;  jsr abm.handle
   ;  jsr explosion.handle
 

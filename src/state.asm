@@ -17,7 +17,9 @@ is
 _yes
     clc
     rts
-
+setState
+    sta mState
+    rts
 next
     inc mState
     rts
@@ -26,6 +28,7 @@ next
 splash = 0
 menu = 1
 wave1 = 2
+gameOver = 3
 
 mState
     .byte $00

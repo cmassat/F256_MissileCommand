@@ -11,6 +11,9 @@ writeScoreMacro .macro
     lda #0
     sta MMU_IO_CTRL
 .endmacro
+init
+    jsr resetScore
+    rts
 
 handle
     phy
@@ -34,11 +37,44 @@ handle
     plx
     ply
     rts
-init
-    jsr resetScore
+
+
+addScore
+    phx
+    sta mscore
+    ldx #0
+_addMore
+    lda mscore
+    jsr add2score
+    inx
+    cpx mPtMultiplier
+    bcc _addMore
+    plx
     rts
+
+addBonus
+    phx
+    sta mscore
+    ldx #0
+_addMore
+    lda mscore
+    jsr add2BonusScore
+    inx
+    cpx mPtMultiplier
+    bcc _addMore
+    plx
+    rts
+
+setPointMultiplier
+    sta mPtMultiplier
+    rts
+
 .endsection
 .section variables
+mscore
+    .byte $00
+mPtMultiplier
+    .byte $00
 mNumbers
   .byte '0','1','2','3','4','5','6','7','8','9'
 .endsection

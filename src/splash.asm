@@ -83,6 +83,17 @@ setup
     #printletter 12, SPRITE_LETTER_D, 32 + 100 + (6* 16), 48 + 120 - 32
     jsr psg.playPulse
     inc mState
+
+    jsr setDoubleText
+    lda <#mHitSpace
+    ldx >#mHitSpace
+    ldy #20
+    jsr drawText
+
+    lda #dk_brown
+    ldx #black
+    ldy #20
+    jsr setColorByLine
     rts
 
 init
@@ -106,6 +117,9 @@ begin = 0
 statewait = 1
 mState
     .byte $00
-
+mHitSpace
+    .text '         Press Space To Continue'
+    .byte $00
+    .text '0123456789012345678901234567890123456789'
 .endsection
 .endnamespace

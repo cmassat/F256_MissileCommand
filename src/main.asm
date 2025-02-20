@@ -31,6 +31,7 @@ start
 .include "explosion.asm"
 .include "cities.asm"
 .include "font.asm"
+.include "gameover.asm"
 .include "collision/collision.asm"
 .include "debug.asm"
 main

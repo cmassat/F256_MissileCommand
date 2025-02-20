@@ -3,8 +3,8 @@
 initBonusStuff
     lda #stateWaveOver
     sta mState
-    jsr abm.getReaminingTotal
-    sta mBonusTrackerAbm
+
+    ;sta mBonusTrackerAbm
 
     jsr cities.getReamainingTotal
     sta mBonusTrackerCityies
@@ -14,7 +14,7 @@ initBonusStuff
     ldy #10
     jsr drawText
 
-    jsr resetBonusScore
+    ;jsr resetBonusScore
     jsr clearScreenMemory
     jsr clearExtMem
 
@@ -27,7 +27,8 @@ initBonusStuff
 waveOver
     jsr explosion.play
     jsr score.handle
-    lda mBonusTrackerAbm
+    jsr plane.reset
+    jsr abm.getReaminingTotal
     cmp #0
     bne _showAbmBonus
     lda mBonusTrackerCityies
@@ -51,7 +52,7 @@ _checkExtraCity
     jsr checkExtraCity
     rts
 showAbmBonus
-    lda mBonusTrackerAbm
+    jsr abm.getReaminingTotal
     cmp #0
     bne _addAbmBonus
     rts
@@ -69,10 +70,10 @@ _addAbmBonus
 _showOnScreen
     jsr psg.playBonus
     lda #$5
-    jsr add2BonusScore
+    jsr score.addBonus
     lda #$5
-    jsr add2Score
-    dec mBonusTrackerAbm
+    jsr score.addScore
+    jsr abm.removeAbm
     lda #waveFrameDelay
     sta mWaveFrameDelay
     lda #2
@@ -82,25 +83,34 @@ _showOnScreen
     sta POINTER_TXT
     lda >#$C000 + (40 * 12 + 5)
     sta POINTER_TXT + 1
+
     ldy #0
+    jsr getBonusScoreDigit3
+    tax
+    lda mNumbers, x
+    sta (POINTER_TXT),y
+
+    iny
     jsr getBonusScoreDigit2
     tax
     lda mNumbers, x
     sta (POINTER_TXT),y
+
     iny
     jsr getBonusScoreDigit1
     tax
     lda mNumbers, x
     sta (POINTER_TXT),y
     iny
+
     jsr getBonusScoreDigit0
     tax
     lda mNumbers, x
     sta (POINTER_TXT),y
     iny
-    lda <#$C000 + (40 * 12 + 11)
+    lda <#$C000 + (40 * 12 + 10)
     sta POINTER_TXT
-    lda >#$C000 + (40 * 12 + 11)
+    lda >#$C000 + (40 * 12 + 10)
     sta POINTER_TXT + 1
     ldy mBonusIdx
     lda #0
@@ -108,7 +118,7 @@ _showOnScreen
     lda #0
     sta MMU_IO_CTRL
     inc mBonusIdx
-    lda mBonusTrackerAbm
+    jsr abm.getReaminingTotal
     cmp #0
     beq _resetIdx
     rts
@@ -116,6 +126,7 @@ _resetIdx
     stz mBonusIdx
     jsr resetBonusScore
     rts
+
 showCityBonus
     lda mBonusTrackerCityies
     cmp #0
@@ -135,13 +146,13 @@ _addBonus
 _showOnScreen
     jsr psg.playBonus
     lda #$99
-    jsr add2BonusScore
+    jsr score.addBonus
     lda #$01
-    jsr add2BonusScore
+    jsr score.addBonus
     lda #$99
-    jsr add2Score
+    jsr score.addScore
     lda #$01
-    jsr add2Score
+    jsr score.addScore
     dec mBonusTrackerCityies
     lda #waveFrameDelay
     sta mWaveFrameDelay
@@ -153,6 +164,11 @@ _showOnScreen
     lda >#$C000 + (40 * 13 + 5)
     sta POINTER_TXT + 1
     ldy #0
+    jsr getBonusScoreDigit3
+    tax
+    lda mNumbers, x
+    sta (POINTER_TXT),y
+    iny
     jsr getBonusScoreDigit2
     tax
     lda mNumbers, x
@@ -182,6 +198,12 @@ _showOnScreen
     sta MMU_IO_CTRL
     inc mBonusIdx
     inc mBonusIdx
+    lda mBonusTrackerCityies
+    cmp #0
+    beq _reset
+    rts
+_reset
+    jsr resetBonusScore
     rts
 
 checkExtraCity
@@ -225,14 +247,14 @@ _end
     jsr abm.reset
     jsr explosion.reset
     inc mCurrentWave
+    jsr icbm.decMaxY
     jsr setSpeed
-    jsr  psg.playBonusCity
+    jsr psg.playBonusCity
     rts
 .endsection
 
 .section variables
-mBonusTrackerAbm
-    .byte $00
+
 mBonusTrackerCityies
     .byte $00
 mWaveFrameDelay

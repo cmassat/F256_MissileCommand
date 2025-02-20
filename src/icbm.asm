@@ -1,19 +1,21 @@
 icbm .namespace
 .section code
 init
-    jsr reset
+
     stz  mSpeedTracker
     stz  mSpeedTracker + 1
     stz mLaunchCount
     lda #$ff
     sta mMaxLaunch
+     jsr reset
     rts
 
 reset
     stz mOkToMove
     stz mTotalLaunch
     stz mLaunchCount
-
+    lda #$64
+    sta mLaunchYPos
     ldx #0
     jsr setFirstMissle
 _loopOUter
@@ -31,6 +33,24 @@ _loop
 _nextMissle
     jsr setNextMissle
     bra _loopOUter
+
+    stz frameTrack
+    stz mrandX
+    stz mrandX + 1
+    stz mrandY
+    stz mSpeed
+    stz mSpeed + 1
+    stz mSpeedTracker
+    stz mSpeedTracker + 1
+    stz mOkToMove
+    stz mLaunchWait
+    stz mLaunchWait + 1
+    stz mLaunchCount
+    stz mCurrentWave
+    stz mMaxLaunch
+    stz mTotalLaunch
+    lda $64
+    sta mLaunchYPos
     rts
 demo
     pha
@@ -73,13 +93,17 @@ _continue
 
     lda mSpeedTracker + 1
     cmp #1
-    beq _move1
+    bcs _move1
     rts
 _move1
     jsr draw
+    lda mSpeedTracker + 1
+    cmp mSpeed + 1
+    bcc _continue
     rts
 
 draw
+
     jsr initMissle
     jsr moveMissile
     jsr deactivate
@@ -108,7 +132,7 @@ _move
     adc #0
     sta POINTER_ICBM_LINE + 1
 
-    lda #2
+    lda #MISSLE_CLR
     jsr setPixelColor
     jsr setLineData
 
@@ -129,7 +153,7 @@ _move
     rts
 _explode
     lda #$25
-    jsr add2score
+    jsr score.addScore
     jsr psg.playExplosion
 _deactivate
     lda #deactivateStatus
@@ -263,7 +287,7 @@ _activateMissle
     lda (POINTER_ICBM),y
     ldx #0
     jsr setOrginY
-
+_setDest
     ;set dest
     ldy #offsetDestX
     lda (POINTER_ICBM), y
@@ -290,6 +314,9 @@ _activateMissle
     inc mLaunchCount
     bra _nextMissle
     rts
+_targetCity
+    jsr targetCity
+    rts
 
 _setCoordinates
      ;start
@@ -313,6 +340,136 @@ _setCoordinates
     lda #maxY
     sta (POINTER_ICBM), y
     rts
+targetCity
+    jsr getRandom
+    cmp #42
+    bcc _city0
+    cmp #84
+    bcc _city1
+    cmp #126
+    bcc _city2
+    cmp #168
+    bcc _city3
+    cmp #210
+    bcc _city4
+    cmp #255
+    bcc _city5
+    rts
+_city5
+    jsr city5
+    rts
+_city0
+    bra _city5
+    lda cities.mCityActive0
+    cmp #cities.activeStatus
+    bne _city1
+    jsr cities.get0
+    phy
+    ldy #offsetDestX
+    lda #80
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    lda #0
+    sta (POINTER_ICBM), y
+
+    ply
+    tya
+    ldy #offsetDestY
+    lda #cities.cityY0
+    sta (POINTER_ICBM), y
+
+    rts
+_city1
+    lda cities.mCityActive1
+    cmp #cities.activeStatus
+    bne _city2
+    jsr cities.get1
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+_city2
+     lda cities.mCityActive2
+    cmp #cities.activeStatus
+    bne _city3
+    jsr cities.get2
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+_city3
+    lda cities.mCityActive3
+    cmp #cities.activeStatus
+    bne _city4
+    jsr cities.get3
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+_city4
+    lda cities.mCityActive4
+    cmp #cities.activeStatus
+    bne _city5
+    jsr cities.get4
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+city5
+    lda cities.mCityActive5
+    cmp #cities.activeStatus
+    bne _end
+    jsr cities.get5
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+_end
+     ;Dest
+    rts
+
+
 
 deactivate
     jsr setFirstMissle
@@ -569,8 +726,23 @@ _checkLo
     bra _returnValues
     rts
 _returnValues
+    jsr _checkMinX
+_returnOk
     lda mrandX
     ldx mrandX + 1
+    rts
+
+_checkMinX
+    lda mrandX + 1
+    cmp #1
+    bcc _checkLoMin
+    bra _returnOk
+    rts
+_checkLoMin
+    lda mrandX
+    cmp #80 - 32
+    bcc _tryAgain
+    bra _returnOk
     rts
 
 ;a lo
@@ -636,6 +808,18 @@ setMaxLaunch
     sta mMaxLaunch
     rts
 
+decMaxY
+    lda mLaunchYPos
+    cmp #10
+    bcs _continue
+    rts
+_continue
+    lda mLaunchYPos
+    sec
+    sbc #$10
+    sta mLaunchYPos
+    rts
+
 .endsection
 .section variables
 maxY = 225
@@ -664,6 +848,9 @@ icbmTable
     .word mIcbmStatus6
     .word mIcbmStatus7
 icbmTableEnd
+
+icbmCount
+    .byte $00
 
 mIcbmStatus0
     .byte $0
@@ -876,3 +1063,4 @@ mLaunchYPos
     .byte $64
 .endsection
 .endnamespace
+

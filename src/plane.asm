@@ -26,7 +26,30 @@ init
 demo
     jsr drawPlane
     rts
+reset
+    lda #SPRITENUMBER_PLANE1
+    jsr setSpriteNumber
+    jsr hideSprite
 
+    lda #SPRITENUMBER_PLANE2
+    jsr setSpriteNumber
+    jsr hideSprite
+
+    lda #<mplaneMissle
+    sta POINTER_PLANE
+
+    lda #>mplaneMissle
+    sta POINTER_PLANE + 1
+
+    ldy #0
+_loop
+    lda #0
+    sta (POINTER_PLANE),y
+    iny
+    cpy #planeDataLength
+    bne _loop
+
+    rts
 draw
     lda (POINTER_ACTIVE)
     cmp #0
@@ -329,6 +352,8 @@ mrandYStart
 
 mWait
     .byte $0
+mPlaneDataLength
+planeDataLength = mPlaneDataLength - mplaneMissle
 waitFrames = 120
 wave0 = 2
 wave1 = 5

@@ -23,8 +23,7 @@ reset
     pha
     phx
     phy
-    lda #30
-    sta mTotalAbm
+    jsr setAbm
     stz mAbmCount
     ply
     plx
@@ -37,6 +36,7 @@ handle
 
 
 play
+    jsr showAbm
     jsr handleFire
     jsr draw
     jsr handleFire
@@ -137,35 +137,35 @@ _okToFire
     rts
 _abm0
     jsr intAbm0
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm1
     jsr intAbm1
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm2
     jsr intAbm2
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm3
     jsr intAbm3
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm4
     jsr intAbm4
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm5
     jsr intAbm5
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm6
     jsr intAbm6
-    dec mTotalAbm
+    jsr removeAbm
     rts
 _abm7
     jsr intAbm7
-    dec mTotalAbm
+    jsr removeAbm
     rts
 
 
@@ -418,8 +418,64 @@ initMacro .macro
 getReaminingTotal
     lda mTotalAbm
     rts
+showAbm
+    lda #2
+    sta MMU_IO_CTRL
+    lda <#$C000 + (40 * 1 + 30)
+    sta POINTER_TXT
+    lda >#$C000 + (40 * 1 + 30)
+    sta POINTER_TXT + 1
+    ldy #0
+    jsr getAbmDigit1
+    tax
+    lda mNumbers, x
+    sta (POINTER_TXT),y
+    iny
+    jsr getAbmDigit0
+    tax
+    lda mNumbers, x
+    sta (POINTER_TXT),y
+
+    iny
+    lda #0
+    sta (POINTER_TXT),y
+    stz MMU_IO_CTRL
+    rts
+
+setAbm
+    sed
+    lda #$30
+    sta mTotalAbm
+    cld
+    rts
+
+removeAbm
+	sed
+	sec
+	lda mTotalAbm
+    sbc #$01
+	sta mTotalAbm
+	cld
+	rts
+
+getAbmDigit0
+
+    lda mTotalAbm
+	and #$0f
+
+	rts
+getAbmDigit1
+	lda mTotalAbm
+	lsr
+	lsr
+	lsr
+	lsr
+
+	rts
 .endsection
 .section variables
+mNumbers
+  .byte '0','1','2','3','4','5','6','7','8','9'
 abm0
     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
     .word $0  ; ZU - "dlugosc" y
@@ -618,7 +674,7 @@ mAbmCount
 mFireDelay
     .byte $00
 mTotalAbm
-    .byte $00
+    .byte $00, $00
 .endsection
 .endnamespace
 

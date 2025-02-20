@@ -18,6 +18,7 @@ initGame
     jsr saucer.init
     jsr abm.init
     jsr explosion.init
+    jsr gameOver.init
     jsr loadFont
     stz $D6E0   ;hide mouse
     rts 

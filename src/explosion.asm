@@ -35,6 +35,7 @@ play
     phx
     phy
     jsr drawExplosions
+    jsr missleColor
     ply
     plx
     pla
@@ -205,7 +206,7 @@ dissolve
     jsr circle.setRadius
     jsr circle.activate
     jsr circle.doCircle
-    lda #115
+    lda #EXPLOSION_CLR
     jsr setPixelColor
 
     ldy #FRAME

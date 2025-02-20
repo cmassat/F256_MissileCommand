@@ -12,6 +12,7 @@ rand_8
 	lda $D6A4
 	sta $D6A5
 	ldx $D6A5
+    lda $D6A4
 	RTS			; done
 
 getRandom

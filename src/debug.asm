@@ -7,7 +7,7 @@ debug
      sta MMU_IO_CTRL
 
 
-    lda icbm.mSpeed + 1
+    lda score.mPtMultiplier
     lsr
     lsr
     lsr
@@ -16,14 +16,14 @@ debug
     lda mHex, y
     sta $C000
 
-    lda icbm.mSpeed + 1
+    lda score.mPtMultiplier
     and #$0F
     tay
     lda mHex, y
     sta $C001
 
 
-    lda icbm.mSpeed
+    lda score.mPtMultiplier
     lsr
     lsr
     lsr
@@ -32,7 +32,7 @@ debug
     lda mHex, y
     sta $C002
 
-    lda icbm.mSpeed
+    lda score.mPtMultiplier
     and #$0F
     tay
     lda mHex, y
@@ -42,180 +42,180 @@ debug
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
-    lda waves.mCurrentWave
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C005
-
-    lda waves.mCurrentWave
-    and #$0F
-     tay
-    lda mHex, y
-    sta $C006
-
-
+;   lda waves.mCurrentWave
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C005
+;
+;   lda waves.mCurrentWave
+;   and #$0F
+;    tay
+;   lda mHex, y
+;   sta $C006
+;
+;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
-    ldx icbm.offsetCurrentY
-    lda icbm.mTotalLaunch
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C000 + 80
-
-    lda icbm.mTotalLaunch
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C001 + 80
-
-
-    lda icbm.mMaxLaunch
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C002 + 80
-
-    lda icbm.mMaxLaunch
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C003 + 80
+;   ldx icbm.offsetCurrentY
+;   lda icbm.mTotalLaunch
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C000 + 80
+;
+;   lda icbm.mTotalLaunch
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C001 + 80
+;
+;
+;   lda icbm.mMaxLaunch
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C002 + 80
+;
+;   lda icbm.mMaxLaunch
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C003 + 80
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda icbm.mIcbmStatus0
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C005 + 80
-
-    lda icbm.mIcbmStatus0
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C006 + 80
-
-    lda icbm.mIcbmStatus1
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C007 + 80
-
-    lda icbm.mIcbmStatus1
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C008 + 80
-
+;   lda icbm.mIcbmStatus0
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C005 + 80
+;
+;   lda icbm.mIcbmStatus0
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C006 + 80
+;
+;   lda icbm.mIcbmStatus1
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C007 + 80
+;
+;   lda icbm.mIcbmStatus1
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C008 + 80
+;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda icbm.mIcbmStatus2
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C000 + 80 + 40
-
-    lda icbm.mIcbmStatus2
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C001 + 80 + 40
-
-
-    lda icbm.mIcbmStatus3
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C002 + 80 + 40
-
-    lda icbm.mIcbmStatus3
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C003 + 80 + 40
+;   lda icbm.mIcbmStatus2
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C000 + 80 + 40
+;
+;   lda icbm.mIcbmStatus2
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C001 + 80 + 40
+;
+;
+;   lda icbm.mIcbmStatus3
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C002 + 80 + 40
+;
+;   lda icbm.mIcbmStatus3
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C003 + 80 + 40
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda icbm.mIcbmStatus4
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C005 + 80 + 40
-
-    lda icbm.mIcbmStatus4
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C006 + 80 + 40
-
-
-    lda icbm.mIcbmStatus5
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C007 + 80 + 40
+;   lda icbm.mIcbmStatus4
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C005 + 80 + 40
 ;
-    lda icbm.mIcbmStatus5
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C008 + 80 + 40
+;   lda icbm.mIcbmStatus4
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C006 + 80 + 40
+;
+;
+;   lda icbm.mIcbmStatus5
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C007 + 80 + 40
+;
+;   lda icbm.mIcbmStatus5
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C008 + 80 + 40
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    lda icbm.mIcbmStatus6
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C000 + 80 + (40 * 2)
-
-    lda icbm.mIcbmStatus6
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C001 + 80 + (40 * 2)
-
-
-    lda icbm.mIcbmStatus7
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C002 + 80 + (40 * 2)
-
-    lda icbm.mIcbmStatus7
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C003 + 80 + (40 * 2)
+;   lda icbm.mIcbmStatus6
+;   lsr
+;   lsr
+;   lsr
+;   lsr
+;   tay
+;   lda mHex, y
+;   sta $C000 + 80 + (40 * 2)
+;
+;   lda icbm.mIcbmStatus6
+;   and #$0F
+;   tay
+;   lda mHex, y
+;   sta $C001 + 80 + (40 * 2)
+;
+;
+;    lda icbm.mIcbmStatus7
+;    lsr
+;    lsr
+;    lsr
+;    lsr
+;    tay
+;    lda mHex, y
+;    sta $C002 + 80 + (40 * 2)
+;
+;    lda icbm.mIcbmStatus7
+;    and #$0F
+;    tay
+;    lda mHex, y
+;    sta $C003 + 80 + (40 * 2)
 ;
 ;    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;    lda icbm.mIcbmStatus5

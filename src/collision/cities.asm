@@ -13,19 +13,22 @@ cityHit .macro cityX, cityY, hit, bmpX, bmpY
     sta \cityX + 1
     lda \cityX
     ldx \cityX + 1
-;    jsr setOrginX
+    jsr setOrginX
 
     lda \cityY
-
- ;   clc
- ;   adc #1
-  ;  sta \cityY
+   ; clc
+   ; adc #1
+   ; sta \cityY
     ldx \cityY + 1
- ;   adc #0
+   ; adc #0
    ; sta \cityY + 1
 
-   ; jsr setOrginY
+     jsr setOrginY
+     lda #3
+     jsr setPixelColor
+  ;  jsr putPixel
     jsr getPixel
+
     cmp #MISSLE_CLR
     beq _hit
     bra _next
@@ -33,14 +36,17 @@ _hit
     lda #1
     sta \hit
 
-    ;lda <#\bmpX
-    ;ldx #>\bmpX
-    ;jsr explosion.setX
-    ;lda <#\bmpY
-    ;ldx #>\bmpY
-    ;jsr explosion.setY
-  ;  jsr explosion.start
-    ;jsr psg.playExplosion
+    lda <#\bmpX
+    ldx #>\bmpX
+    jsr explosion.setX
+    lda <#\bmpY
+    sec
+    sbc #8
+    ldx #>\bmpY
+    jsr explosion.setY
+
+    jsr explosion.start
+    jsr psg.playExplosion
 
 _next
 .endmacro
@@ -199,6 +205,16 @@ isCity5Hit
     rts
 _yes
     clc
+    rts
+
+initCityCollision
+    stz mhitTracker
+    stz mCityHit0
+    stz mCityHit1
+    stz mCityHit2
+    stz mCityHit3
+    stz mCityHit4
+    stz mCityHit5
     rts
 .endsection
 .section variables

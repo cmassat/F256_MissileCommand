@@ -168,6 +168,32 @@ _end
     sta MMU_IO_CTRL
     rts
 
+
+clearTextScreen
+    pha
+    phx
+    phy
+    lda #2
+    sta MMU_IO_CTRL
+    ldy #0
+_loop
+    lda #' '
+    sta $c000, y
+    sta $c000 + 200, y
+    sta $c000 + 400, y
+    sta $c000 + 600, y
+    sta $c000 + 800, y
+    iny
+    cpy #200
+    bne _loop
+
+    lda #0
+    sta MMU_IO_CTRL
+    ply
+    plx
+    pla
+    rts
+
 mlineTable
     .word $C000 ;+ (40 * 0)
     .word $C000 + (40 * 1)

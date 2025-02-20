@@ -4,9 +4,10 @@ waves .namespace
 .section code
 
 init
-    stz mCurrentWave
     stz mState
     stz mExtraCityTracker
+    lda #0
+    sta mCurrentWave
     jsr reset
     rts
 
@@ -14,52 +15,10 @@ reset
     lda #waveFrameDelay
     sta mWaveFrameDelay
     stz mBonusIdx
-
-  ;  jsr icbm.reset
-   ;;copy ground
-;    lda #1
-;    sta $df00
-
-;    lda <#mStaticBmpStart
-;    sta $df04
-
-;    lda >#mStaticBmpStart
-;    sta $df05
-
-;    lda `#mStaticBmpStart
-;    sta $df06
-
-
-;    lda <#15360
-;    sta $df0c
-;    lda >#15360
-;    sta $df0d
-;    lda `#15360
-;    sta $df0e
-
-
-;    lda <#mBitmapStart
-;    sta $df08
-
-;    lda >#mBitmapStart
-;    sta $df09
-
-;    lda `#mBitmapStart
-;    sta $df0a
-
-;    lda $df00
-;    ora #%10000000
-;    sta $df00
-; _wait
-;     lda $df01
-;     cmp #$80
-;     beq _wait
-
     rts
 
 handle
-
-     lda #state.wave1
+    lda #state.wave1
     jsr state.is
     bcc _ok
     rts
@@ -94,9 +53,22 @@ _bonusOverDelay
     jsr bonusOverDelay
     rts
 play
+    pha
+    phx
+    phy
+    ldy mCurrentWave
+    lda mPtMult, y
+    jsr score.setPointMultiplier
+    jsr cities.getReamainingTotal
+    cmp #0
+    beq _endGame
+
     jsr icbm.isWaveOver
     bcs _continue
     jsr initBonusStuff
+    ply
+    plx
+    pla
     rts
 _continue
     jsr score.handle
@@ -105,9 +77,18 @@ _continue
     jsr abm.play
     jsr explosion.play
     jsr cities.play
+    jsr plane.demo
 
+    ply
+    plx
+    pla
     rts
-
+_endGame
+    jsr state.next
+    ply
+    plx
+    pla
+    rts
 setSpeed
     lda mCurrentWave
     cmp #0
@@ -122,40 +103,40 @@ setSpeed
     beq _setWave4
     cmp #5
     beq _setWave5
+    bra _setWave5
     rts
 _setWave0
-    lda #14
+    lda #40
     ldx #1
     jsr icbm.setSpeed
     rts
 _setWave1
-    lda #20
+    lda #60
     ldx #1
     jsr icbm.setSpeed
     rts
 _setWave2
-    lda #34
+    lda #90
     ldx #1
     jsr icbm.setSpeed
     rts
 _setWave3
-    lda #58
+    lda #110
     ldx #1
     jsr icbm.setSpeed
     rts
 _setWave4
-    lda #96
+    lda #140
     ldx #1
     jsr icbm.setSpeed
 _setWave5
-    lda #160
+    lda #170
     ldx #1
     jsr icbm.setSpeed
     rts
 
 setup
     jsr setSpeed
-   ; jsr icbm.reset
     jsr hideAllSprites
 
     lda #0
@@ -230,12 +211,13 @@ mState
     .byte $00
 mCurrentWave
     .byte $00
-mLaunchY
-    .byte $00
-
+; mLaunchY
+;     .byte $00
 
 mIcbmNumber
-    .byte 12,15, 18, 12,16, 14,17,10,13,16,19,12,14,16,18,14,16,18,20
+    .byte 12,15, 18, 12,16, 14,17,10,13,16,19,12,14,16,18,14,16,18,20,20
+mIcbmSpeed
+    .byte 15,20,25,30,35,40
 
 
 .endsection

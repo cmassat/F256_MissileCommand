@@ -88,30 +88,32 @@ _check_lx_byte
 
 _check_ly_byte
     lda m_mouse_y_pos
-    cmp #<480
+    cmp #<400
     bcs _is_off_bottom
     rts
 
 _is_off_right
-    lda #<635
+    lda #<630
     sta m_mouse_x_pos 
-    lda #>635
+    lda #>630
     sta m_mouse_x_pos + 1
     rts 
 
 
 _is_off_left
-    stz m_mouse_x_pos
+    lda #10
+    sta m_mouse_x_pos
     stz m_mouse_x_pos + 1
     rts 
 _is_off_top
-    stz m_mouse_y_pos
+    lda #10
+    sta m_mouse_y_pos
     stz m_mouse_y_pos + 1
     rts 
 _is_off_bottom
-    lda <#475
+    lda <#400
     sta m_mouse_y_pos 
-    lda >#475
+    lda >#400
     sta m_mouse_y_pos + 1
     rts
 

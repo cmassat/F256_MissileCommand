@@ -15,6 +15,7 @@ _run
     jsr menu.handle
     jsr waves.handle
     jsr psg.handle
+    jsr gameOver.handle
     inc r_seed
     ply
     plx

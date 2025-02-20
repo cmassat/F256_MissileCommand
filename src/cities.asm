@@ -222,8 +222,50 @@ getReamainingTotal
     adc mCityActive5
     rts
 
+
+
+get0
+    lda #<cityX0 + 32
+    ldx #>cityX0 + 32
+    ldy #cityY0 - 32
+    rts
+
+get1
+    lda #<cityX1 - 16
+    ldx #>cityX1 - 16
+    ldy #cityY1 - 16
+    rts
+
+get2
+    lda #<cityX2 - 16
+    ldx #>cityX2 - 16
+    ldy #cityY2  - 16
+    rts
+
+get3
+    lda #<cityX3 - 16
+    ldx #>cityX3 - 16
+    ldy #cityY3  - 16
+    rts
+
+get4
+    lda #<cityX4 - 16
+    ldx #>cityX4 - 16
+    ldy #cityY4  - 16
+    rts
+
+
+get5
+    lda #<cityX5 - 16
+    ldx #>cityX5 - 16
+    ldy #cityY5  - 16
+    rts
+
+getYCoordinates
+    rts
 .endsection
 .section variables
+activeStatus = 1
 cityX0 = 80
 cityX1 = 115
 cityX2 = 144

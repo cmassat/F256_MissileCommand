@@ -130,6 +130,7 @@ getBonusScoreDigit3
 	lsr
 	lsr
 	rts
+
 getBonusScoreDigit4
 	lda m_bonus_score_2
 	and #$0f
