@@ -24,22 +24,28 @@ mousey
 checkButtonsClicked
     lda event.mouse.delta.buttons
     cmp #1
-    bne _skip
+    bne _rightBtn
+
+    lda #1
+    sta mLeftClicked
+    bra _saveSiteCoord
+    rts
+_rightBtn
+    cmp #2
+    bne _end
+    lda #1
+    sta mRightClicked
+_saveSiteCoord
     lda site.TEMP_X
     sta m_mouse_click_x
     lda site.TEMP_X + 1
     sta m_mouse_click_x + 1
 
-
     lda site.TEMP_Y
     sta m_mouse_click_y
     lda site.TEMP_Y + 1
     sta m_mouse_click_y + 1
-
-    lda #1
-    sta mLeftClicked
-    rts
-_skip
+_end
     rts
 
 handle_mouse
@@ -120,11 +126,20 @@ _is_off_bottom
 isLeftClick
     lda mLeftClicked
     bne _yes
-    stz mLeftClicked
     sec
     rts
 _yes
     stz mLeftClicked
+    clc
+    rts
+
+isRightClick
+    lda mRightClicked
+    bne _yes
+    sec
+    rts
+_yes
+    stz mRightClicked
     clc
     rts
 
@@ -209,5 +224,6 @@ m_mouse_click_y
 
 mLeftClicked
     .byte $0
-
+mRightClicked
+    .byte $0
 .endsection

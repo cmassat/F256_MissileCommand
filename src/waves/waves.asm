@@ -77,7 +77,7 @@ _continue
     jsr abm.play
     jsr explosion.play
     jsr cities.play
-    jsr plane.demo
+    ;jsr plane.demo
 
     ply
     plx
@@ -164,7 +164,7 @@ setup
     ;jsr showBitmap
    ; jsr setupBitmap0
   ;  jsr setupBitmap0
-    inc mState
+   inc mState
     jsr psg.playPulse
     rts
 

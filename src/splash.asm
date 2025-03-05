@@ -94,6 +94,15 @@ setup
     ldx #black
     ldy #20
     jsr setColorByLine
+
+    lda <#mVersion
+    ldx >#mVersion
+    ldy #19
+    jsr drawText
+    lda #red
+    ldx #black
+    ldy #19
+    jsr setColorByLine
     rts
 
 init
@@ -120,6 +129,10 @@ mState
 mHitSpace
     .text '         Press Space To Continue'
     .byte $00
-    .text '0123456789012345678901234567890123456789'
+
+mVersion
+    .text '         Version 00.00.01-a.1 '
+    .byte $00
+
 .endsection
 .endnamespace

@@ -224,45 +224,43 @@ getReamainingTotal
 
 
 
-get0
-    lda #<cityX0 + 32
-    ldx #>cityX0 + 32
-    ldy #cityY0 - 32
+getCoord0
+    lda #<cityBmpX0
+    ldx #>cityBmpX0
+    ldy #cityBmpY0
     rts
 
-get1
-    lda #<cityX1 - 16
-    ldx #>cityX1 - 16
-    ldy #cityY1 - 16
+getCoord1
+    lda #<cityBmpX1
+    ldx #>cityBmpX1
+    ldy #cityBmpY1
     rts
 
-get2
-    lda #<cityX2 - 16
-    ldx #>cityX2 - 16
-    ldy #cityY2  - 16
+getCoord2
+    lda #<cityBmpX2
+    ldx #>cityBmpX2
+    ldy #cityBmpY2
     rts
 
-get3
-    lda #<cityX3 - 16
-    ldx #>cityX3 - 16
-    ldy #cityY3  - 16
+getCoord3
+    lda #<cityBmpX3
+    ldx #>cityBmpX3
+    ldy #cityBmpY3
     rts
 
-get4
-    lda #<cityX4 - 16
-    ldx #>cityX4 - 16
-    ldy #cityY4  - 16
+getCoord4
+    lda #<cityBmpX4
+    ldx #>cityBmpX4
+    ldy #cityBmpY4
     rts
 
 
-get5
-    lda #<cityX5 - 16
-    ldx #>cityX5 - 16
-    ldy #cityY5  - 16
+getCoord5
+    lda #<cityBmpX5
+    ldx #>cityBmpX5
+    ldy #cityBmpY5
     rts
 
-getYCoordinates
-    rts
 .endsection
 .section variables
 activeStatus = 1

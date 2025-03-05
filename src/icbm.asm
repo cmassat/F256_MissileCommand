@@ -1,7 +1,6 @@
 icbm .namespace
 .section code
 init
-
     stz  mSpeedTracker
     stz  mSpeedTracker + 1
     stz mLaunchCount
@@ -14,6 +13,7 @@ reset
     stz mOkToMove
     stz mTotalLaunch
     stz mLaunchCount
+    jsr targetCity
     lda #$64
     sta mLaunchYPos
     ldx #0
@@ -49,13 +49,29 @@ _nextMissle
     stz mCurrentWave
     stz mMaxLaunch
     stz mTotalLaunch
+
+    lda #0
+    sta mTarget0
+    sta mTarget0 + 1
+    sta mTarget0 + 2
+    sta mTarget1
+    sta mTarget1 + 1
+    sta mTarget1 + 2
+    sta mTarget2
+    sta mTarget2 + 1
+    sta mTarget2 + 2
+    sta mTargetActive0
+    sta mTargetActive1
+    sta mTargetActive2
     lda $64
     sta mLaunchYPos
+
     rts
 demo
     pha
     phx
     phy
+
     lda mSpeedTracker
     clc
     adc #$14
@@ -297,7 +313,7 @@ _setDest
     tax
     pla
     jsr setDestX
-
+;
     ldy #offsetDestY
     lda (POINTER_ICBM), y
     ldx #0
@@ -314,10 +330,6 @@ _setDest
     inc mLaunchCount
     bra _nextMissle
     rts
-_targetCity
-    jsr targetCity
-    rts
-
 _setCoordinates
      ;start
     ldy #offsetStartX
@@ -326,7 +338,6 @@ _setCoordinates
     iny
     txa
     sta (POINTER_ICBM), y
-
 
     ;Dest
     jsr generateRandomX
@@ -339,137 +350,259 @@ _setCoordinates
     ldy #offsetDestY
     lda #maxY
     sta (POINTER_ICBM), y
+    jsr pickTarget
+    jsr pickBunker
     rts
+
+pickTarget
+    jsr targetCity0
+    jsr targetCity1
+    jsr targetCity2
+    rts
+
+targetCity0
+    lda <#mIcbmStatus0
+    cmp POINTER_ICBM
+    beq _checkHi
+    rts
+_checkHi
+    lda >#mIcbmStatus0
+    cmp POINTER_ICBM + 1
+    beq _targetCity0
+    rts
+_targetCity0
+    lda mTarget0
+    ldx mTarget0 + 1
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ldy #offsetDestY
+    lda mTarget0 + 2
+    sta (POINTER_ICBM), y
+    rts
+
+targetCity1
+    lda <#mIcbmStatus1
+    cmp POINTER_ICBM
+    beq _checkHi
+    rts
+_checkHi
+    lda >#mIcbmStatus1
+    cmp POINTER_ICBM + 1
+    beq _targetCity
+    rts
+_targetCity
+    lda mTarget1
+    ldx mTarget1 + 1
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ldy #offsetDestY
+    lda mTarget1 + 2
+    sta (POINTER_ICBM), y
+    rts
+
+targetCity2
+    lda <#mIcbmStatus2
+    cmp POINTER_ICBM
+    beq _checkHi
+    rts
+_checkHi
+    lda >#mIcbmStatus2
+    cmp POINTER_ICBM + 1
+    beq _targetCity
+    rts
+_targetCity
+    lda mTarget2
+    ldx mTarget2 + 1
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+
+    ldy #offsetDestY
+    lda mTarget2 + 2
+    sta (POINTER_ICBM), y
+    rts
+
+pickBunker
+    lda <#mIcbmStatus3
+    cmp POINTER_ICBM
+    beq _checkHi
+    rts
+_checkHi
+    lda >#mIcbmStatus3
+    cmp POINTER_ICBM + 1
+    beq _targetBunker
+    rts
+_targetBunker
+    jsr getRandom
+    cmp #85
+    bcc _bunkerCoord0
+    cmp #170
+    bcc _bunkerCoord1
+    bcs _bunkerCoord2
+    rts
+_bunkerCoord0
+    jsr abm.getBunkerCoord0
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+_bunkerCoord1
+    jsr abm.getBunkerCoord1
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+_bunkerCoord2
+    jsr abm.getBunkerCoord2
+    phy
+    ldy #offsetDestX
+    sta (POINTER_ICBM), y
+    iny
+    txa
+    sta (POINTER_ICBM), y
+    ply
+    tya
+    ldy #offsetDestY
+    sta (POINTER_ICBM), y
+    rts
+
+
+
+
 targetCity
+    lda #inactiveStatus
+    sta mTargetActive0
+    sta mTargetActive1
+    sta mTargetActive2
+    jsr locate3Cities
+    jsr locate3Cities
+    jsr locate3Cities
+    rts
+
+locate3Cities
     jsr getRandom
     cmp #42
-    bcc _city0
+    bcc _cityCoord0
     cmp #84
-    bcc _city1
+    bcc _cityCoord1
     cmp #126
-    bcc _city2
+    bcc _cityCoord2
     cmp #168
-    bcc _city3
+    bcc _cityCoord3
     cmp #210
-    bcc _city4
+    bcc _cityCoord4
     cmp #255
-    bcc _city5
+    bcc _cityCoord5
     rts
-_city5
-    jsr city5
+_cityCoord5
+    jsr cityCoordCoord5
     rts
-_city0
-    bra _city5
+_cityCoord0
     lda cities.mCityActive0
     cmp #cities.activeStatus
-    bne _city1
-    jsr cities.get0
-    phy
-    ldy #offsetDestX
-    lda #80
-    sta (POINTER_ICBM), y
-    iny
-    txa
-    lda #0
-    sta (POINTER_ICBM), y
-
-    ply
-    tya
-    ldy #offsetDestY
-    lda #cities.cityY0
-    sta (POINTER_ICBM), y
-
+    bne _cityCoord1
+    jsr cities.getCoord0
+    jsr activateTarget
     rts
-_city1
+_cityCoord1
     lda cities.mCityActive1
     cmp #cities.activeStatus
-    bne _city2
-    jsr cities.get1
-    phy
-    ldy #offsetDestX
-    sta (POINTER_ICBM), y
-    iny
-    txa
-    sta (POINTER_ICBM), y
-
-    ply
-    tya
-    ldy #offsetDestY
-    sta (POINTER_ICBM), y
+    bne _cityCoord2
+    jsr cities.getCoord1
+    jsr activateTarget
     rts
-_city2
+_cityCoord2
      lda cities.mCityActive2
     cmp #cities.activeStatus
-    bne _city3
-    jsr cities.get2
-    phy
-    ldy #offsetDestX
-    sta (POINTER_ICBM), y
-    iny
-    txa
-    sta (POINTER_ICBM), y
-
-    ply
-    tya
-    ldy #offsetDestY
-    sta (POINTER_ICBM), y
+    bne _cityCoord3
+    jsr cities.getCoord2
+    jsr activateTarget
     rts
-_city3
+_cityCoord3
     lda cities.mCityActive3
     cmp #cities.activeStatus
-    bne _city4
-    jsr cities.get3
-    phy
-    ldy #offsetDestX
-    sta (POINTER_ICBM), y
-    iny
-    txa
-    sta (POINTER_ICBM), y
-
-    ply
-    tya
-    ldy #offsetDestY
-    sta (POINTER_ICBM), y
+    bne _cityCoord4
+    jsr cities.getCoord3
+    jsr activateTarget
     rts
-_city4
+_cityCoord4
     lda cities.mCityActive4
     cmp #cities.activeStatus
-    bne _city5
-    jsr cities.get4
-    phy
-    ldy #offsetDestX
-    sta (POINTER_ICBM), y
-    iny
-    txa
-    sta (POINTER_ICBM), y
-
-    ply
-    tya
-    ldy #offsetDestY
-    sta (POINTER_ICBM), y
+    bne cityCoordCoord5
+    jsr cities.getCoord4
+    jsr activateTarget
     rts
-city5
+cityCoordCoord5
     lda cities.mCityActive5
     cmp #cities.activeStatus
     bne _end
-    jsr cities.get5
-    phy
-    ldy #offsetDestX
-    sta (POINTER_ICBM), y
-    iny
-    txa
-    sta (POINTER_ICBM), y
-
-    ply
-    tya
-    ldy #offsetDestY
-    sta (POINTER_ICBM), y
+    jsr cities.getCoord5
+    jsr activateTarget
     rts
 _end
-     ;Dest
     rts
 
-
+activateTarget
+    pha
+    lda mTargetActive0
+    cmp #inactiveStatus
+    bne _pHole1
+    pla
+    sta mTarget0
+    stx mTarget0 + 1
+    sty mTarget0 + 2
+    lda #activeStatus
+    sta mTargetActive0
+    rts
+_pHole1
+    lda mTargetActive1
+    cmp #inactiveStatus
+    bne _pHole2
+    pla
+    sta mTarget1
+    stx mTarget1 + 1
+    sty mTarget1 + 2
+    lda #activeStatus
+    sta mTargetActive1
+    rts
+_pHole2
+    lda mTargetActive2
+    cmp #inactiveStatus
+    bne _end
+    pla
+    sta mTarget2
+    stx mTarget2 + 1
+    sty mTarget2 + 2
+    lda #activeStatus
+    sta mTargetActive2
+    rts
+_end
+    pla
+    rts
 
 deactivate
     jsr setFirstMissle
@@ -879,7 +1012,6 @@ mIcbmPathData0
     .byte $0
     .byte $00
     .byte $00
-
 mIcbmStatus1
     .byte $0
     .byte $00
@@ -1061,6 +1193,19 @@ mTotalLaunch
     .byte $00
 mLaunchYPos
     .byte $64
+
+mTarget0
+    .byte $00,$00,$00
+mTargetActive0
+    .byte $00
+mTarget1
+    .byte $00,$00,$00
+mTargetActive1
+    .byte $00
+mTarget2
+    .byte $00,$00,$00
+mTargetActive2
+    .byte $00
 .endsection
 .endnamespace
 

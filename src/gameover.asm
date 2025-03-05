@@ -21,6 +21,12 @@ showGameOverMessage
     ldx >#mGameOVer
     ldy #10
     jsr drawText
+    jsr abm.setAbm
+
+    lda <#mGameOverSpace
+    ldx >#mGameOverSpace
+    ldy #12
+    jsr drawText
     jsr explosion.play
     jsr score.handle
     jsr isSpacePressed
@@ -36,7 +42,7 @@ _reset
     jsr icbm.init
     jsr cities.init
     jsr collision.initCityCollision
-
+    jsr resetScore
     rts
 
 init
@@ -48,7 +54,11 @@ stateInit = 0
 stateShowMessage = 1
 mState
     .byte $00
-mGameOVer
+mGameOver
     .text '              Game Over'
+    .byte $00
+mGameOverSpace
+    .text '        Hit Space To Continue'
+    .byte $00
 .endsection
 .endnamespace

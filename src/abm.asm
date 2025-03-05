@@ -25,6 +25,10 @@ reset
     phy
     jsr setAbm
     stz mAbmCount
+    lda #activeStatus
+    sta mBunkersActive0
+    sta mBunkersActive1
+    sta mBunkersActive2
     ply
     plx
     pla
@@ -45,6 +49,7 @@ play
     jsr draw
     jsr handleFire
     jsr draw
+    jsr showActiveBunkers
     rts
 
 handleFire
@@ -61,13 +66,21 @@ _end
 _ok
     jsr isLeftClick
     bcc _fireLeft
+    jsr isRightClick
+    bcc _fireRight
     rts
 _fireLeft
     lda #20
     sta mFireDelay
+    jsr fireCenter
     jsr fire
     rts
-
+_fireRight
+    lda #20
+    sta mFireDelay
+    jsr fireSide
+    jsr fire
+    rts
 draw
     jsr draw0
     jsr draw1
@@ -110,6 +123,31 @@ draw6
 draw7
     #initMacro abm7, mLineData, origX7, origY7, destX7, destY7, abmActve7
     jsr drawAbm
+    rts
+
+fireSide
+    jsr getMouseClickX
+   ; pha
+    txa
+    cmp #1
+    beq _setRightBunker
+    jsr getMouseClickX
+    sec
+    sbc #24
+    cmp #320/2
+    bcc _setLeftBunker
+_setRightBunker
+    lda #right
+    sta mBunkerSelect
+    rts
+_setLeftBunker
+    lda #left
+    sta mBunkerSelect
+    rts
+
+fireCenter
+     lda #center
+    sta mBunkerSelect
     rts
 
 fire
@@ -327,12 +365,13 @@ setupPath
     beq _setup
     rts
 _setup
-    lda <#160
-    ldx >#160
-    jsr setOrginX
-    lda <#220
-    ldx >#220
-    jsr setOrginY
+    ; lda <#160
+    ; ldx >#160
+    ; jsr setOrginX
+    ; lda <#220
+    ; ldx >#220
+    ; jsr setOrginY
+    jsr setOrigin
 
     jsr getMouseClickX
     sec
@@ -378,6 +417,39 @@ _setup
     sta (POINTER_DESTY),y
     rts
 
+setOrigin
+    lda mBunkerSelect
+    cmp #center
+    beq _center
+    cmp #right
+    beq _right
+    cmp #left
+    beq _left
+    rts
+_center
+    lda <#160
+    ldx >#160
+    jsr setOrginX
+    lda <#220
+    ldx >#220
+    jsr setOrginY
+    rts
+_right
+    lda <#300
+    ldx >#300
+    jsr setOrginX
+    lda <#bunkerY2 - 32 + 8
+    ldx >#bunkerY2 - 32 + 8
+    jsr setOrginY
+    rts
+_left
+    lda <#bunkerX0 - 32 + 8
+    ldx >#bunkerX0 - 32 + 8
+    jsr setOrginX
+    lda <#bunkerY0 - 32 + 8
+    ldx >#bunkerY0 - 32 + 8
+    jsr setOrginY
+    rts
 initMacro .macro
     lda <#\1
     sta POINTER_ABM
@@ -446,6 +518,10 @@ setAbm
     sed
     lda #$30
     sta mTotalAbm
+    lda #$10
+    sta mBunkerMissileCnt0
+    sta mBunkerMissileCnt1
+    sta mBunkerMissileCnt2
     cld
     rts
 
@@ -470,10 +546,128 @@ getAbmDigit1
 	lsr
 	lsr
 	lsr
-
 	rts
+
+showActiveBunkers
+    jsr bunker0
+    jsr bunker1
+    jsr bunker2
+    rts
+bunker0
+   ; lda mBunkersActive0
+   ; cmp #activeStatus
+   ; beq _showBunker0
+   ; lda #SPRITENUMBER_ABM0
+   ; jsr setSpriteNumber
+   ; jsr hideSprite
+   ; rts
+_showBunker0
+    lda #SPRITENUMBER_ABM0
+    jsr setSpriteNumber
+
+    lda <#SPRITE_ABM
+    ldx >#SPRITE_ABM
+    ldy `#SPRITE_ABM
+    jsr setSpriteAddress
+
+    lda <#bunkerX0
+    ldx >#bunkerX0
+    jsr setSpriteX
+
+    lda #bunkerY0
+    ldx #0
+    jsr setSpriteY
+
+    jsr showSprite
+    rts
+
+bunker1
+    ;lda mBunkersActive1
+    ;cmp #activeStatus
+    ;beq _showBunker1
+    ;lda #SPRITENUMBER_ABM1
+    ;jsr setSpriteNumber
+    ;jsr hideSprite
+    ;rts
+_showBunker1
+    lda #SPRITENUMBER_ABM1
+    jsr setSpriteNumber
+
+    lda <#SPRITE_ABM
+    ldx >#SPRITE_ABM
+    ldy `#SPRITE_ABM
+    jsr setSpriteAddress
+
+
+    lda <#bunkerX1
+    ldx >#bunkerX1
+    jsr setSpriteX
+
+    lda #bunkerY1
+    ldx #0
+    jsr setSpriteY
+
+    jsr showSprite
+    rts
+
+bunker2
+    ;lda mBunkersActive2
+    ;cmp #activeStatus
+    ;beq _showBunker2
+    ;lda #SPRITENUMBER_ABM2
+    ;jsr setSpriteNumber
+    ;jsr hideSprite
+    ;rts
+_showBunker2
+    lda #SPRITENUMBER_ABM2
+    jsr setSpriteNumber
+
+    lda <#SPRITE_ABM
+    ldx >#SPRITE_ABM
+    ldy `#SPRITE_ABM
+    jsr setSpriteAddress
+
+
+    lda <#bunkerX2
+    ldx >#bunkerX2
+    jsr setSpriteX
+
+    lda #bunkerY2
+    ldx #0
+    jsr setSpriteY
+
+    jsr showSprite
+    rts
+
+getBunkerCoord0
+    lda #<bunkerX0 - 32 + 8
+    ldx #>bunkerX0 - 32 + 8
+    ldy #bunkerY0 - 32 + 8
+    rts
+
+getBunkerCoord1
+    lda #<bunkerX1 - 32 + 8
+    ldx #>bunkerX1 - 32 + 8
+    ldy #bunkerY1 - 32 + 8
+    rts
+
+getBunkerCoord2
+    lda #<bunkerX2 - 32 + 8
+    ldx #>bunkerX2 - 32 + 8
+    ldy #bunkerY2 - 32 + 8
+    rts
+
 .endsection
 .section variables
+activeStatus = 1
+bunkerX0 = 50
+bunkerY0 = 242
+
+bunkerX1 = 179
+bunkerY1 = 250
+
+bunkerX2 = 328
+bunkerY2 = 242
 mNumbers
   .byte '0','1','2','3','4','5','6','7','8','9'
 abm0
@@ -675,6 +869,28 @@ mFireDelay
     .byte $00
 mTotalAbm
     .byte $00, $00
+mBunkersActive0
+    .byte $00
+mBunkersActive1
+    .byte $00
+mBunkersActive2
+    .byte $00
+mBunkerMissileCnt0
+    .byte $00
+mBunkerMissileCnt1
+    .byte $00
+mBunkerMissileCnt2
+    .byte $00
+
+
+mBunkerSelect
+    .byte $00
+
+
+center = 1
+left = 2
+right = 3
+
 .endsection
 .endnamespace
 

@@ -37,6 +37,7 @@ start
 
 
     jsr displayPtMult
+
     rts
 _next
     jsr reset

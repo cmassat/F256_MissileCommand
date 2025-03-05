@@ -46,7 +46,7 @@ _wait_for_event
 
  _dispatch
    ; Get the event's type
-   lda		event.type
+    lda	event.type
 
    ; Call the appropriate handler
     ; cmp	 #kernel.event.mouse.CLICKS
@@ -63,9 +63,7 @@ _wait_for_event
 
     cmp	 #kernel.event.mouse.DELTA
     beq	_mouse_moved
-
-
-   rts
+    rts
 _mouse_moved
     pha
     phx
@@ -74,29 +72,29 @@ _mouse_moved
     ply
     plx
     pla
-   rts
+    rts
 
 keyPressed
-     pha
+    pha
     phx
     phy
-   lda event.key.ascii
-   sta mKeyPress
-   jsr keyboardAnykey
-   jsr keyboardPressed
-     ply
+    lda event.key.ascii
+    sta mKeyPress
+    jsr keyboardAnykey
+    jsr keyboardPressed
+    ply
     plx
     pla
-   rts
+    rts
 
 keyReleased
-     pha
+    pha
     phx
     phy
     lda event.key.ascii
     sta mKeyRelease
     jsr keyboardReleased
-      ply
+    ply
     plx
     pla
     rts

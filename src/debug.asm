@@ -7,7 +7,7 @@ debug
      sta MMU_IO_CTRL
 
 
-    lda score.mPtMultiplier
+    lda icbm.mTarget2 + 1
     lsr
     lsr
     lsr
@@ -16,14 +16,15 @@ debug
     lda mHex, y
     sta $C000
 
-    lda score.mPtMultiplier
+    lda icbm.mTarget2 + 1
     and #$0F
     tay
     lda mHex, y
     sta $C001
 
 
-    lda score.mPtMultiplier
+
+    lda icbm.mTarget2
     lsr
     lsr
     lsr
@@ -32,7 +33,7 @@ debug
     lda mHex, y
     sta $C002
 
-    lda score.mPtMultiplier
+    lda icbm.mTarget2
     and #$0F
     tay
     lda mHex, y
@@ -42,21 +43,39 @@ debug
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
-;   lda waves.mCurrentWave
-;   lsr
-;   lsr
-;   lsr
-;   lsr
-;   tay
-;   lda mHex, y
-;   sta $C005
-;
-;   lda waves.mCurrentWave
-;   and #$0F
-;    tay
-;   lda mHex, y
-;   sta $C006
-;
+
+    ldx #icbm.offsetDestX
+    inx
+    lda icbm.mIcbmStatus2,x
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C005
+
+    lda icbm.mIcbmStatus2,x
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C006
+
+    dex
+    lda icbm.mIcbmStatus2,x
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C007
+
+    lda icbm.mIcbmStatus2,x
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C008
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
 ;   ldx icbm.offsetCurrentY

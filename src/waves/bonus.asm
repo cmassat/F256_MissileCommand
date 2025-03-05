@@ -34,7 +34,9 @@ waveOver
     lda mBonusTrackerCityies
     cmp #0
     bne _showCityBonus
+
     bra _checkExtraCity
+
    ; jsr icbm.reset
     jsr reset
 
@@ -50,6 +52,7 @@ _showAbmBonus
     rts
 _checkExtraCity
     jsr checkExtraCity
+    jsr icbm.targetCity
     rts
 showAbmBonus
     jsr abm.getReaminingTotal

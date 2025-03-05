@@ -69,6 +69,7 @@ setPointMultiplier
     sta mPtMultiplier
     rts
 
+
 .endsection
 .section variables
 mscore

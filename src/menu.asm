@@ -107,23 +107,23 @@ begin
     ; jsr setBitmapNumber
 
 
-     lda #<BITMAP_START
-     ldx #>BITMAP_START
-     ldy #`BITMAP_START
-     jsr setBitmapAddress
+;      lda #<BITMAP_START
+;      ldx #>BITMAP_START
+;      ldy #`BITMAP_START
+;      jsr setBitmapAddress
 
-     ;lda #0
-     ;jsr setBitmapClut
-     jsr showBitmap
-
-
+;      ;lda #0
+;     ;jsr setBitmapClut
+;    jsr showBitmap
+;
+;
     jsr setBitmapLayer0
     jsr setupBitmap0
-
+    ;
     jsr setBitmapLayer1
     jsr setupBitmap1
     jsr setLayers
-
+    ;
     jsr cities.demo
     jsr clearTextScreen
     #showSpriteMacro 51, SPRITE_LETTER_D, 80, 200
