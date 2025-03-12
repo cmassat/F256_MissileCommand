@@ -35,6 +35,9 @@ keyboardPressed
     jsr set_l_pressed
     jsr set_F1_pressed
     jsr set_space_pressed
+    jsr set_left_pressed
+    jsr set_right_pressed
+    jsr set_down_pressed
     rts
 keyboardReleased
     jsr set_w_released
@@ -44,6 +47,9 @@ keyboardReleased
     jsr set_l_released
     jsr set_F1_released
     jsr set_space_released
+    jsr set_left_released
+    jsr set_right_released
+    jsr set_down_released
     rts
 resetControls
     stz mKeyW
@@ -145,6 +151,79 @@ set_w_pressed
     #keyPressMacro mKeyW, 'w'
     rts
 
+
+; left arrow
+set_left_pressed
+    #keyPressMacro mKeyLeft, $02
+    rts
+
+set_left_released
+    lda mKeyRelease
+    cmp #$02
+    beq _yes
+    rts
+_yes
+    stz mKeyLeft
+    rts
+
+isLeftPressed
+    lda mKeyLeft
+    cmp #1
+    beq _yes
+    sec
+    rts
+ _yes
+    clc
+    rts
+
+; right arrow
+set_right_pressed
+    #keyPressMacro mKeyRight, $06
+    rts
+
+set_right_released
+     lda mKeyRelease
+    cmp #$06
+    beq _yes
+    rts
+_yes
+    stz mKeyRight
+    rts
+
+isRightPressed
+    lda mKeyRight
+    cmp #1
+    beq _yes
+    sec
+    rts
+ _yes
+    clc
+    rts
+
+; down arrow
+set_down_pressed
+    #keyPressMacro mKeyDown, $0E
+    rts
+
+set_down_released
+     lda mKeyRelease
+    cmp #$0E
+    beq _yes
+    rts
+_yes
+    stz mKeyDown
+    rts
+
+isDownPressed
+    lda mKeyDown
+    cmp #1
+    beq _yes
+    sec
+    rts
+ _yes
+    clc
+    rts
+
 set_f1_pressed
     #keyPressMacro mKeyF1, $81
     rts
@@ -166,7 +245,6 @@ set_w_released
 _yes
     stz mKeyW
     rts
-
 
 set_space_pressed
     #keyPressMacro mKeySP, $20
@@ -264,5 +342,11 @@ mKeyL
 mKeySP
     .byte $00
 mKeyF1
+    .byte $00
+mKeyLeft
+    .byte $00
+mKeyRight
+    .byte $00
+mKeyDown
     .byte $00
 .endsection

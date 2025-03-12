@@ -15,27 +15,38 @@ init_mouse
     rts 
 
 mousex
-    #mouse_find_cord event.mouse.delta.x, m_mouse_delta_x, m_mouse_x_pos
+    #mouse_find_cord evtMouseDx, m_mouse_delta_x, m_mouse_x_pos
     rts
 mousey
-    #mouse_find_cord event.mouse.delta.y, m_mouse_delta_y, m_mouse_y_pos
+    #mouse_find_cord evtMouseDy, m_mouse_delta_y, m_mouse_y_pos
     rts
 
 checkButtonsClicked
-    lda event.mouse.delta.buttons
+    lda evtMouseBtn
     cmp #1
     bne _rightBtn
 
     lda #1
     sta mLeftClicked
+    stz mRightClicked
     bra _saveSiteCoord
     rts
 _rightBtn
+    lda evtMouseBtn
     cmp #2
     bne _end
     lda #1
     sta mRightClicked
+    stz mLeftClicked
 _saveSiteCoord
+    jsr setCoordinates
+    rts
+_end
+   ; stz mRightClicked
+   ; stz mLeftClicked
+    rts
+
+setCoordinates
     lda site.TEMP_X
     sta m_mouse_click_x
     lda site.TEMP_X + 1
@@ -45,15 +56,15 @@ _saveSiteCoord
     sta m_mouse_click_y
     lda site.TEMP_Y + 1
     sta m_mouse_click_y + 1
-_end
     rts
-
 handle_mouse
     jsr mousex
     jsr mousey
     jsr adjust_off_screen
-    jsr checkButtonsClicked
-
+   ; jsr checkButtonsClicked
+    ;stz evtMouseBtn
+    stz evtMouseDx
+    stz evtMouseDy
 _plot_x 
     lda m_mouse_x_pos
     sta $D6E2
@@ -125,21 +136,25 @@ _is_off_bottom
 
 isLeftClick
     lda mLeftClicked
+    cmp #0
     bne _yes
     sec
     rts
 _yes
-    stz mLeftClicked
+ ;   stz mLeftClicked
+ ;   stz mRightClicked
     clc
     rts
 
 isRightClick
     lda mRightClicked
+    cmp #0
     bne _yes
     sec
     rts
 _yes
-    stz mRightClicked
+  ;  stz mRightClicked
+  ;  stz mLeftClicked
     clc
     rts
 
@@ -180,6 +195,19 @@ getMouseX
     ldx m_mouse_x_pos + 1
     rts
 
+getMouseBmpX
+    lda m_mouse_x_pos + 1
+    lsr
+    sta m_mouse_x_bmp_pos + 1
+    lda m_mouse_x_pos
+    ror
+    sta m_mouse_x_bmp_pos
+
+    lda m_mouse_x_bmp_pos
+    ldx m_mouse_x_bmp_pos + 1
+    rts
+
+
 getMouseY
     lda m_mouse_y_pos
     ldx m_mouse_y_pos + 1
@@ -209,6 +237,10 @@ m_mouse_x_pos
     .byte $00, $00
 m_mouse_y_pos 
     .byte $00, $00
+
+m_mouse_x_bmp_pos
+    .byte $00, $00
+
 
 m_mouse_bl
     .byte $00

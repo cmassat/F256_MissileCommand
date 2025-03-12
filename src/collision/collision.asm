@@ -8,5 +8,6 @@ handle
 .include "plane.asm"
 .include "cruise.asm"
 .include "cities.asm"
+.include "silos.asm"
 .endnamespace
 

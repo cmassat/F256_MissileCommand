@@ -170,6 +170,8 @@ demo
     bcs _playDemo
     jsr state.next
    jsr icbm.reset
+   jsr abm.reset
+   jsr collision.initSiloCollision
     rts
 _playDemo
     jsr icbm.demo

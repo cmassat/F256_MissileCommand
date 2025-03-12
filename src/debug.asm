@@ -7,7 +7,7 @@ debug
      sta MMU_IO_CTRL
 
 
-    lda icbm.mTarget2 + 1
+    lda m_mouse_x_bmp_pos + 1
     lsr
     lsr
     lsr
@@ -16,7 +16,7 @@ debug
     lda mHex, y
     sta $C000
 
-    lda icbm.mTarget2 + 1
+    lda m_mouse_x_bmp_pos + 1
     and #$0F
     tay
     lda mHex, y
@@ -24,7 +24,7 @@ debug
 
 
 
-    lda icbm.mTarget2
+    lda m_mouse_x_bmp_pos
     lsr
     lsr
     lsr
@@ -33,7 +33,7 @@ debug
     lda mHex, y
     sta $C002
 
-    lda icbm.mTarget2
+    lda m_mouse_x_bmp_pos
     and #$0F
     tay
     lda mHex, y
@@ -44,9 +44,7 @@ debug
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
 
-    ldx #icbm.offsetDestX
-    inx
-    lda icbm.mIcbmStatus2,x
+    lda abm.mBunkerSelect
     lsr
     lsr
     lsr
@@ -55,27 +53,27 @@ debug
     lda mHex, y
     sta $C005
 
-    lda icbm.mIcbmStatus2,x
+    lda abm.mBunkerSelect
     and #$0F
     tay
     lda mHex, y
     sta $C006
 
-    dex
-    lda icbm.mIcbmStatus2,x
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C007
+    ; dex
+    ; lda icbm.mIcbmStatus2,x
+    ; lsr
+    ; lsr
+    ; lsr
+    ; lsr
+    ; tay
+    ; lda mHex, y
+    ; sta $C007
 
-    lda icbm.mIcbmStatus2,x
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C008
+    ; lda icbm.mIcbmStatus2,x
+    ; and #$0F
+    ; tay
+    ; lda mHex, y
+    ; sta $C008
 ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
 ;   ldx icbm.offsetCurrentY

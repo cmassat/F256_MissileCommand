@@ -10,12 +10,13 @@ _run
     phx
     phy
     stz  mSOFSemaphore
-
+    jsr handle_mouse
     jsr splash.handle
     jsr menu.handle
     jsr waves.handle
     jsr psg.handle
     jsr gameOver.handle
+
     inc r_seed
     ply
     plx
@@ -68,7 +69,13 @@ _mouse_moved
     pha
     phx
     phy
-    jsr handle_mouse
+    ;jsr handle_mouse
+    lda event.mouse.delta.x
+    sta evtMouseDx
+    lda event.mouse.delta.y
+    sta evtMouseDy
+    lda event.mouse.delta.buttons
+    sta evtMouseBtn
     ply
     plx
     pla
@@ -172,6 +179,12 @@ v_sync
 mGameTicks
     .byte $00
 mGameSeconds
+    .byte $00
+evtMouseDx
+    .byte $00
+evtMouseDy
+    .byte $00
+evtMouseBtn
     .byte $00
 .endsection
 

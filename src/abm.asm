@@ -26,30 +26,140 @@ reset
     jsr setAbm
     stz mAbmCount
     lda #activeStatus
-    sta mBunkersActive0
-    sta mBunkersActive1
-    sta mBunkersActive2
+    sta mLeftSiloActive
+    sta mCenterSiloActive
+    sta mRightSiloActive
+    jsr collision.initSiloCollision
+
     ply
     plx
     pla
     rts
-handle
-    jsr handleFire
-    jsr draw
-    rts
-
 
 play
     jsr showAbm
-    jsr handleFire
-    jsr draw
-    jsr handleFire
-    jsr draw
-    jsr handleFire
-    jsr draw
-    jsr handleFire
-    jsr draw
+    jsr collision.handleSilos
     jsr showActiveBunkers
+    jsr showHideSilos
+
+    jsr handleFire
+    jsr draw
+    jsr draw
+    jsr draw
+    jsr draw
+
+    rts
+
+handleMouseClick
+    pha
+    phx
+    phy
+    lda evtMouseBtn
+    cmp #1
+    beq _picksilo
+    stz evtMouseBtn
+    stz mBunkerSelect
+    ply
+    plx
+    pla
+    sec
+    rts
+_picksilo
+    stz evtMouseBtn
+    jsr getMouseBmpX
+    cpx #1
+    bcs _rightSilo
+    cmp #106
+    bcc _leftSilo
+    bra _centerSilo
+    ply
+    plx
+    pla
+    sec
+    rts
+_rightSilo
+    jsr mouseRightSilo
+    ply
+    plx
+    pla
+    clc
+    rts
+_centerSilo
+    jsr mouseCentertSilo
+    ply
+    plx
+    pla
+    clc
+    rts
+_leftSilo
+    jsr mouseLeftSilo
+    ply
+    plx
+    pla
+    clc
+    rts
+
+mouseRightSilo
+    lda mRightSiloActive
+    cmp #activeStatus
+    bne _checkCenter
+
+    lda #right
+    sta mBunkerSelect
+    rts
+_checkCenter
+    lda mCenterSiloActive
+    cmp #activeStatus
+    bne _checkLeft
+    lda #center
+    sta mBunkerSelect
+    rts
+_checkLeft
+    lda #left
+    sta mBunkerSelect
+    rts
+
+mouseCentertSilo
+    lda mCenterSiloActive
+    cmp #activeStatus
+    bne _checkLeft
+
+    lda #center
+    sta mBunkerSelect
+    rts
+_checkLeft
+    jsr getMouseBmpX
+    cmp #160
+    bcs _checkRight
+    lda mLeftSiloActive
+    cmp #activeStatus
+    bne _checkRight
+    lda #left
+    sta mBunkerSelect
+    rts
+_checkRight
+    lda #right
+    sta mBunkerSelect
+    rts
+
+mouseLeftSilo
+    lda mLeftSiloActive
+    cmp #activeStatus
+    bne _checkCenter
+    lda #left
+    sta mBunkerSelect
+    rts
+_checkCenter
+    lda mCenterSiloActive
+    cmp #activeStatus
+    bne _checkRight
+    lda #left
+    sta mBunkerSelect
+    rts
+_checkRight
+    lda #right
+    sta mBunkerSelect
+_end
     rts
 
 handleFire
@@ -61,26 +171,51 @@ handleFire
     beq _end
     dec mFireDelay
     stz mLeftClicked
+    stz mRightClicked
+    stz evtMouseBtn
 _end
     rts
 _ok
-    jsr isLeftClick
+    jsr handleMouseClick
+    bcc _fireButton
+    jsr isLeftPressed
     bcc _fireLeft
-    jsr isRightClick
+    jsr isRightPressed
     bcc _fireRight
+    jsr isDownPressed
+    bcc _fireCenter
     rts
-_fireLeft
+_fireButton
+    jsr setCoordinates
     lda #20
     sta mFireDelay
-    jsr fireCenter
+    jsr fire
+    rts
+_fireCenter
+    jsr setCoordinates
+    lda #20
+    sta mFireDelay
+    lda #center
+    sta mBunkerSelect
+    jsr fire
+    rts
+_fireLeft
+    jsr setCoordinates
+    lda #20
+    sta mFireDelay
+    lda #left
+    sta mBunkerSelect
     jsr fire
     rts
 _fireRight
+    jsr setCoordinates
     lda #20
     sta mFireDelay
-    jsr fireSide
+    lda #right
+    sta mBunkerSelect
     jsr fire
     rts
+
 draw
     jsr draw0
     jsr draw1
@@ -125,30 +260,29 @@ draw7
     jsr drawAbm
     rts
 
-fireSide
-    jsr getMouseClickX
-   ; pha
-    txa
-    cmp #1
-    beq _setRightBunker
-    jsr getMouseClickX
-    sec
-    sbc #24
-    cmp #320/2
-    bcc _setLeftBunker
-_setRightBunker
-    lda #right
-    sta mBunkerSelect
-    rts
-_setLeftBunker
-    lda #left
-    sta mBunkerSelect
-    rts
+; fireSide
+;     jsr getMouseClickX
+;     txa
+;     cmp #1
+;     beq _setRightBunker
+;     jsr getMouseClickX
+;     sec
+;     sbc #24
+;     cmp #320/2
+;     bcc _setLeftBunker
+; _setRightBunker
+;     lda #right
+;     sta mBunkerSelect
+;     rts
+; _setLeftBunker
+;     lda #left
+;     sta mBunkerSelect
+;     rts
 
-fireCenter
-     lda #center
-    sta mBunkerSelect
-    rts
+; fireCenter
+;     lda #center
+;     sta mBunkerSelect
+;     rts
 
 fire
     lda mTotalAbm
@@ -156,6 +290,10 @@ fire
     bne _okToFire
     rts
 _okToFire
+    jsr isSiloHit
+    bcs _OK
+    rts
+_OK
     lda abmActve0
     beq _abm0
     lda abmActve1
@@ -238,6 +376,29 @@ intAbm6
 intAbm7
     #initMacro abm7, mLineData, origX7, origY7, destX7, destY7, abmActve7
     jsr initLeftAbm
+    rts
+
+
+isSiloAlive
+    rts
+isSiloHit
+    lda mBunkerSelect
+    cmp #left
+    beq _left
+    cmp #center
+    beq _center
+    cmp #right
+    beq _right
+    clc
+    rts
+_left
+    jsr collision.isSilo0Hit
+    rts
+_center
+    jsr collision.isSilo1Hit
+    rts
+_right
+    jsr collision.isSilo2Hit
     rts
 
 drawAbm
@@ -554,7 +715,7 @@ showActiveBunkers
     jsr bunker2
     rts
 bunker0
-   ; lda mBunkersActive0
+   ; lda mRightSiloActive0
    ; cmp #activeStatus
    ; beq _showBunker0
    ; lda #SPRITENUMBER_ABM0
@@ -582,7 +743,7 @@ _showBunker0
     rts
 
 bunker1
-    ;lda mBunkersActive1
+    ;lda mCenterSiloActive
     ;cmp #activeStatus
     ;beq _showBunker1
     ;lda #SPRITENUMBER_ABM1
@@ -611,7 +772,7 @@ _showBunker1
     rts
 
 bunker2
-    ;lda mBunkersActive2
+    ;lda mRightSiloActive
     ;cmp #activeStatus
     ;beq _showBunker2
     ;lda #SPRITENUMBER_ABM2
@@ -657,9 +818,47 @@ getBunkerCoord2
     ldy #bunkerY2 - 32 + 8
     rts
 
+
+showHideSilos
+    jsr showSilo0
+    jsr showSilo1
+    jsr showSilo2
+    rts
+
+showSilo0
+    jsr collision.isSilo0Hit
+    bcc _hide
+    rts
+_hide
+    lda #SPRITENUMBER_ABM0
+    jsr setSpriteNumber
+    jsr hideSprite
+    rts
+
+showSilo1
+    jsr collision.isSilo1Hit
+    bcc _hide
+    rts
+_hide
+    lda #SPRITENUMBER_ABM1
+    jsr setSpriteNumber
+    jsr hideSprite
+    rts
+
+showSilo2
+    jsr collision.isSilo2Hit
+    bcc _hide
+    rts
+_hide
+    lda #SPRITENUMBER_ABM2
+    jsr setSpriteNumber
+    jsr hideSprite
+    rts
+
 .endsection
 .section variables
 activeStatus = 1
+inactiveStatus = 0
 bunkerX0 = 50
 bunkerY0 = 242
 
@@ -869,11 +1068,11 @@ mFireDelay
     .byte $00
 mTotalAbm
     .byte $00, $00
-mBunkersActive0
+mLeftSiloActive
     .byte $00
-mBunkersActive1
+mCenterSiloActive
     .byte $00
-mBunkersActive2
+mRightSiloActive
     .byte $00
 mBunkerMissileCnt0
     .byte $00
@@ -887,8 +1086,21 @@ mBunkerSelect
     .byte $00
 
 
-center = 1
-left = 2
+siloX0 = bunkerX0
+siloX1 = bunkerX1
+siloX2 = bunkerX2
+siloY0 = bunkerY0
+siloY1 = bunkerY1
+siloY2 = bunkerY2
+SiloBmpX0 = bunkerX0 - 32 + 8
+SiloBmpX1 = bunkerX1 - 32 + 8
+SiloBmpX2 = bunkerX2 - 32 + 8
+
+SiloBmpY0 = bunkerY0 - 32 + 8
+SiloBmpY1 = bunkerY1 - 32 + 8
+SiloBmpY2 = bunkerY2 - 32 + 8
+left = 1
+center = 2
 right = 3
 
 .endsection
