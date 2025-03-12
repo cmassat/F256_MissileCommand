@@ -171,12 +171,13 @@ demo
     jsr state.next
    jsr icbm.reset
    jsr abm.reset
+
    jsr collision.initSiloCollision
     rts
 _playDemo
     jsr icbm.demo
    ; jsr site.draw
-  ;  jsr cruise.demo
+    jsr cruise.demo
     jsr plane.demo
   ;  jsr abm.handle
   ;  jsr explosion.handle

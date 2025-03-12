@@ -7,7 +7,7 @@ debug
      sta MMU_IO_CTRL
 
 
-    lda m_mouse_x_bmp_pos + 1
+    lda cruise.mCruiseStatus0
     lsr
     lsr
     lsr
@@ -16,7 +16,7 @@ debug
     lda mHex, y
     sta $C000
 
-    lda m_mouse_x_bmp_pos + 1
+    lda cruise.mCruiseStatus0
     and #$0F
     tay
     lda mHex, y
@@ -24,27 +24,23 @@ debug
 
 
 
-    lda m_mouse_x_bmp_pos
+    lda cruise.cruiseypos + 1
     lsr
     lsr
     lsr
     lsr
-    tay
-    lda mHex, y
-    sta $C002
-
-    lda m_mouse_x_bmp_pos
-    and #$0F
     tay
     lda mHex, y
     sta $C003
 
+    lda cruise.cruiseypos + 1
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C004
 
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
-
-    lda abm.mBunkerSelect
+    lda cruise.cruiseypos
     lsr
     lsr
     lsr
@@ -53,11 +49,28 @@ debug
     lda mHex, y
     sta $C005
 
-    lda abm.mBunkerSelect
+    lda cruise.cruiseypos
     and #$0F
     tay
     lda mHex, y
     sta $C006
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
+
+    ; lda abm.mBunkerSelect
+    ; lsr
+    ; lsr
+    ; lsr
+    ; lsr
+    ; tay
+    ; lda mHex, y
+    ; sta $C005
+
+    ; lda abm.mBunkerSelect
+    ; and #$0F
+    ; tay
+    ; lda mHex, y
+    ; sta $C006
 
     ; dex
     ; lda icbm.mIcbmStatus2,x

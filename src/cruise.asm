@@ -1,8 +1,12 @@
 cruise .namespace
 .section code
 init
-    lda #0
-    sta cruiseActve
+
+    stz  mSpeedTracker
+    stz  mSpeedTracker + 1
+
+    lda #inactiveStatus
+    sta mCruiseStatus0
 
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
@@ -11,85 +15,50 @@ init
     ldx #>SPRITE_CRUISE
     ldy #`SPRITE_CRUISE
     jsr setSpriteAddress
+
+
+    lda #$70
+    ldx #1
+    jsr setSpeed
     rts
 
-
 demo
-    jsr drawCruiseMissle
+
+    jsr draw
     rts
 
 draw
-    lda (POINTER_ACTIVE)
-    cmp #0
-    bne _move
+    jsr initCruise
+    jsr moveCruise
+   rts
 
-    jsr setupRandomPath
-
-    jsr getOriginX
-    sta (POINTER_SOURCEX)
-    txa
-    ldy #1
-    sta (POINTER_SOURCEX),y
-
-    jsr getOriginY
-    sta (POINTER_SOURCEY)
-    txa
-    ldy #1
-    sta (POINTER_SOURCEY),y
-
-    jsr getDestX
-    sta (POINTER_DESTX)
-    txa
-    ldy #1
-    sta (POINTER_DESTX),y
-
-    jsr getDestY
-    sta (POINTER_DESTY)
-    txa
-    ldy #1
-    sta (POINTER_DESTY),y
-
-    jsr lineInit
-
-    jsr linestep
-   ; jsr putPixel
-    lda #1
-    sta (POINTER_ACTIVE)
-
-_saveLineData
-    ;save line data for later
-
-    ldy #0
-_loop
-    lda (POINTER_TX),y
-    sta (POINTER_CRUISE),y
-    iny
-    cpy mLineDataLength
-    bne _loop
-
+moveCruise
+    lda mCruiseStatus0
+    cmp #activeStatus
+    beq _move
     rts
 _move
-    lda (POINTER_FRAME)
-    cmp #wave0
-    beq _goodFrame
-    lda (POINTER_FRAME)
+    lda mSpeedTracker + 1
+    cmp mSpeed + 1
+    bne _continue
+    stz mSpeedTracker + 1
+_continue
+    lda mSpeedTracker
     clc
-    adc #1
-    sta (POINTER_FRAME)
+    adc mSpeed
+    sta mSpeedTracker
+    lda mSpeedTracker + 1
+    adc #0
+    sta mSpeedTracker + 1
+
+    lda mSpeedTracker + 1
+    cmp #1
+    bcs _move1
     rts
-_goodFrame
-   lda #0
-   sta (POINTER_FRAME)
-
-    ldy #0
-_setLineDatagetPixel
-    lda (POINTER_CRUISE),y
-    sta (POINTER_TX),y
-    iny
-    cpy mlineDataLength
-    bne _setLineDatagetPixel
-
+_move1
+    jsr setLineData
     jsr linestep
+    jsr saveLineData
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
 
@@ -98,134 +67,111 @@ _setLineDatagetPixel
 
     jsr getOriginY
     jsr setSpriteY
-    jsr showSprite
-    bra _saveLineData
+
+    jsr getOriginY
+    cmp #0
+    beq _reset
+    ;jsr debug
+    rts
+_reset
+    lda #inactiveStatus
+    sta mCruiseStatus0
     rts
 
-cruiseMacro .macro
-    lda <#\1
-    sta POINTER_CRUISE
-    lda >#\1
-    sta POINTER_CRUISE + 1
 
-    lda <#\2
-    sta POINTER_TX
-    lda >#\2
-    sta POINTER_TX + 1
+setLineData
+    phy
+    phx
+    pha
+    ldy #0
+_loop
+    lda mCruisePathData0,y
+    sta mLineData,y
+    iny
+    cpy #$19
+    bne _loop
+    pla
+    plx
+    ply
+    rts
 
-    lda #<\3
-    sta POINTER_SOURCEX
-    lda #>\3
-    sta POINTER_SOURCEX + 1
-
-    lda #<\4
-    sta POINTER_SOURCEY
-    lda #>\4
-    sta POINTER_SOURCEY + 1
-
-    lda #<\5
-    sta POINTER_DESTX
-    lda #>\5
-    sta POINTER_DESTX + 1
-
-    lda #<\6
-    sta POINTER_DESTY
-    lda #>\6
-    sta POINTER_DESTY + 1
-
-    lda #<\7
-    sta POINTER_ACTIVE
-    lda #>\7
-    sta POINTER_ACTIVE + 1
-
-    lda #<\8
-    sta POINTER_FRAME
-    lda #>\8
-    sta POINTER_FRAME + 1
-
-.endmacro
-drawCruiseMissle
+saveLineData
      phy
-     phx
-     pha
-     #cruiseMacro mCruiseMissle, mLineData, origX, origY, destX, destY, cruiseActve, cruiseFrame
-     jsr draw
-     jsr collision.handlecruise
-     bcc _deactivate
-     jsr isYMax
-     bcc _deactivate
-     bra _end
- _deactivate
-     jsr deactivate
-     bra _end
- _wait
-     dec mWait
- _end
+    phx
+    pha
+    ldy #0
+_loop
+    lda mLineData,y
+    sta  mCruisePathData0,y
+    iny
+    cpy #$19
+    bne _loop
      pla
-     plx
-     ply
+    plx
+    ply
     rts
 
- deactivate
-     lda #0
-     sta (POINTER_ACTIVE)
-     lda #SPRITENUMBER_CRUISE
-     jsr setSpriteNumber
-     jsr hideSprite
-     lda #0
-     ldx #0
-     jsr setSpriteX
-     jsr setSpriteY
-     ldy #0
- _loop
-     lda #0
-     sta (POINTER_CRUISE),y
-     iny
-     cpy mlineDataLength
-     bne _loop
-     lda #0
-     sta cruiseActve
-     sta cruiseFrame
-     sta origX
-     sta origY
-     sta destX
-     sta destY
-     lda #waitFrames
-     sta mWait
 
-     rts
-setupRandomPath
+initCruise
+    lda mCruiseStatus0
+    cmp #inactiveStatus
+    beq _activate
+    rts
+_activate
+    lda #activeStatus
+    sta mCruiseStatus0
+
     jsr generateOriginX
     lda mrandXStart
-    ldx mrandXStart + 1
-    jsr setOrginX
-    lda <#0
-    ldx >#0
-    jsr setOrginY
+    clc
+    adc #32
+    sta mCruiseStartX0
+    lda mrandXStart + 1
+    adc #0
+    sta mCruiseStartX0 + 1
+
+    lda #16
+    sta mCruiseStartY0
 
     jsr generateDestX
     lda mrandXStart
-    ldx mrandXStart + 1
+    clc
+    adc #32
+    sta mCruiseDestX0
+    lda mrandXStart + 1
+    adc #0
+    sta mCruiseDestX0 + 1
+
+    lda #255
+    sta mCruiseDestY0
+
+
+    lda mCruiseStartX0
+    ldx mCruiseStartX0 + 1
+    jsr setOrginX
+
+    lda mCruiseStartY0
+    ldx #0
+    jsr setOrginY
+
+    lda mCruiseDestX0
+    ldx mCruiseDestX0 + 1
     jsr setDestX
-    lda <#240
-    ldx >#240
+
+    lda mCruiseDestY0
+    ldx #0
     jsr setDestY
+
+    jsr lineInit
+    jsr linestep
+
+    jsr saveLineData
+    lda #SPRITENUMBER_CRUISE
+    jsr setSpriteNumber
+    jsr showSprite
     rts
 
-isYMax
-    jsr getY
-    cmp #<240 + 32
-    bcs_checkHi
-    bcc _no
-_checkHi
-    cpx #1
-    bcs _yes
-_no
-    sec
-    rts
-_yes
-    clc
-    rts
+
 
 generateOriginX
 _tryAgain
@@ -278,43 +224,61 @@ _checkMin
     cmp #70
     bcc _tryAgain
     rts
+setSpeed
+    sta mSpeed
+    stx mSpeed + 1
 
+    stz mSpeedTracker
+    stz mSpeedTracker + 1
+    rts
 getX
-    lda mCruiseMissle + 14
-    ldx mCruiseMissle + 15
+   ; lda mCruiseMissle + 14
+  ;  ldx mCruiseMissle + 15
     rts
 
 getY
-    lda mCruiseMissle + 16
-    ldx mCruiseMissle + 17
+   ; lda mCruiseMissle + 16
+   ; ldx mCruiseMissle + 17
     rts
 
 .endsection
 .section variables
-mCruiseMissle
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
+inactiveStatus = 0
+activeStatus = 1
+
+lineLength = mlineDataEnd - mCruisePathData0
+wave0 = 2
+wave1 = 5
+mCruiseStatus0
+    .byte $0
+mCruiseCurrentY0
+    .byte $00
+mCruiseStartX0
+    .byte $00, $00
+mCruiseStartY0
+    .byte $00
+mCruiseDestX0
+    .byte $00, $00
+mCruiseDestY0
+    .byte $00
+mCruisePathData0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+    .word $0
+cruisexpos
+    .word $0
+cruiseypos
+    .word $0
+    .word $0
+    .word $0
     .byte $0
     .byte $00
     .byte $00
-    .byte $00
-cruiseActve .byte $0
-cruiseFrame .byte $0
-origX .byte $00, $00
-origY .byte $00, $00
-destX .byte $00, $00
-destY .byte $00, $00
-
+mlineDataEnd
 mrandXStart
     .byte $00, $00
 
@@ -322,7 +286,12 @@ mrandXStart
 mWait
     .byte $0
 waitFrames = 120
-wave0 = 2
-wave1 = 5
+
+
+mSpeed
+    .byte $00, $00
+mSpeedTracker
+    .byte $00, $00
+
 .endsection
 .endnamespace

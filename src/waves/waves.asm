@@ -103,38 +103,79 @@ setSpeed
     beq _setWave4
     cmp #5
     beq _setWave5
-    bra _setWave5
+    cmp #6
+    beq _setWave6
+    cmp #7
+    beq _setWave7
+    cmp #8
+    beq _setWave8
+    cmp #9
+    beq _setWave9
+    bra _setWave10
     rts
 _setWave0
-    lda #40
+    lda #$20
     ldx #1
     jsr icbm.setSpeed
+    jsr cruise.setSpeed
     rts
 _setWave1
-    lda #60
+    lda #$40
     ldx #1
     jsr icbm.setSpeed
-    rts
 _setWave2
-    lda #90
+    lda #$60
     ldx #1
     jsr icbm.setSpeed
+    jsr cruise.setSpeed
     rts
 _setWave3
-    lda #110
+    lda #$80
     ldx #1
     jsr icbm.setSpeed
+    jsr cruise.setSpeed
     rts
 _setWave4
-    lda #140
+    lda #$90
     ldx #1
     jsr icbm.setSpeed
+    jsr cruise.setSpeed
 _setWave5
-    lda #170
+    lda #$A0
     ldx #1
     jsr icbm.setSpeed
+    jsr cruise.setSpeed
     rts
-
+_setWave6
+    lda #$B0
+    ldx #1
+    jsr icbm.setSpeed
+    jsr cruise.setSpeed
+    rts
+_setWave7
+    lda #$C0
+    ldx #1
+    jsr icbm.setSpeed
+    jsr cruise.setSpeed
+    rts
+_setWave8
+    lda #$D0
+    ldx #1
+    jsr icbm.setSpeed
+    jsr cruise.setSpeed
+    rts
+_setWave9
+    lda #$E0
+    ldx #1
+    jsr icbm.setSpeed
+    jsr cruise.setSpeed
+    rts
+_setWave10
+    lda #$F0
+    ldx #1
+    jsr icbm.setSpeed
+    jsr cruise.setSpeed
+    rts
 setup
     jsr setSpeed
     jsr hideAllSprites

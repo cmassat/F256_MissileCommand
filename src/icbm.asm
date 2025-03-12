@@ -74,7 +74,7 @@ demo
 
     lda mSpeedTracker
     clc
-    adc #$14
+    adc #$60
     sta mSpeedTracker
     lda mSpeedTracker + 1
     adc #0
@@ -887,6 +887,7 @@ setSpeed
     stz mSpeedTracker
     stz mSpeedTracker + 1
     rts
+
 isWaveOver
     jsr areAnyMissilesLeft
     bcs _checkAllInactive
