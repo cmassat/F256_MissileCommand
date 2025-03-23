@@ -5,8 +5,7 @@ init
     stz  mSpeedTracker
     stz  mSpeedTracker + 1
 
-    lda #inactiveStatus
-    sta mCruiseStatus0
+
 
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
@@ -15,16 +14,29 @@ init
     ldx #>SPRITE_CRUISE
     ldy #`SPRITE_CRUISE
     jsr setSpriteAddress
-
+    jsr reset
 
     lda #$70
     ldx #1
     jsr setSpeed
     rts
 
-demo
+reset
+    lda #inactiveStatus
+    sta mCruiseStatus0
+    rts
 
+demo
     jsr draw
+    rts
+play
+    pha
+    phx
+    phy
+    jsr draw
+    ply
+    plx
+    pla
     rts
 
 draw
@@ -56,6 +68,7 @@ _continue
     bcs _move1
     rts
 _move1
+    jsr radar
     jsr setLineData
     jsr linestep
     jsr saveLineData
@@ -71,13 +84,42 @@ _move1
     jsr getOriginY
     cmp #0
     beq _reset
-    ;jsr debug
     rts
 _reset
     lda #inactiveStatus
     sta mCruiseStatus0
     rts
 
+radar
+    jsr getOriginY
+    clc
+    adc #32
+    pha
+    txa
+    adc #0
+    tax
+    pla
+    jsr setOrginY
+    jsr getPixel
+
+    cmp #EXPLOSION_CLR
+    beq _moveLeft
+    rts
+_moveLeft
+    jsr getOriginX
+    sec
+    sbc #1
+    pha
+    txa
+    sbc #0
+    tax
+    pla
+    jsr setOrginX
+
+    jsr lineInit
+    jsr linestep
+    jsr saveLineData
+    rts
 
 setLineData
     phy
@@ -123,11 +165,12 @@ _activate
 
     jsr generateOriginX
     lda mrandXStart
-    clc
-    adc #32
+  ;  clc
+  ;  adc #32
     sta mCruiseStartX0
-    lda mrandXStart + 1
-    adc #0
+   lda mrandXStart + 1
+  ;  adc #0
+
     sta mCruiseStartX0 + 1
 
     lda #16
@@ -135,11 +178,11 @@ _activate
 
     jsr generateDestX
     lda mrandXStart
-    clc
-    adc #32
+    ;clc
+    ;adc #32
     sta mCruiseDestX0
     lda mrandXStart + 1
-    adc #0
+    ;adc #0
     sta mCruiseDestX0 + 1
 
     lda #255

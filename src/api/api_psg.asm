@@ -321,7 +321,6 @@ psg_4_volume_right
     rts
 
 psg_2_freq_mono
-    
     sta mPSGFreqL2
     stx mPSGFreqH2
     
@@ -346,6 +345,10 @@ psg_2_freq_mono
     ora #PSG_TONE_1_FREQ_MASK_H
     sta PSG_MONO_REG
     rts 
+
+turnOff
+    rts
+
 
 mPSGFreqL1
     .byte $00

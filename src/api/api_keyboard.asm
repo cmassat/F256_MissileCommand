@@ -8,6 +8,21 @@ keyboardTimer
 _delay
     dec mKeyboardDelay
     rts 
+resetKeys
+    stz mKeyboardDelay
+    stz mKeyboardResetAnyKey
+    stz mAnyKey
+    stz mKeyW
+    stz mKeyA
+    stz mKeyS
+    stz mKeyD
+    stz mKeyL
+    stz mKeySP
+    stz mKeyF1
+    stz mKeyLeft
+    stz mKeyRight
+    stz mKeyDown
+    rts
 
 resetAnyKey
     lda mKeyboardResetAnyKey

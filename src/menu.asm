@@ -165,12 +165,12 @@ begin
     rts
 
 demo
-
     jsr isF1Pressed
     bcs _playDemo
     jsr state.next
-   jsr icbm.reset
-   jsr abm.reset
+    jsr icbm.reset
+    jsr abm.reset
+    jsr cruise.reset
 
    jsr collision.initSiloCollision
     rts

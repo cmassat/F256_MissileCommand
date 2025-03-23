@@ -4,3 +4,5 @@
 *.pgz
 workspace/
 .venv/
+.zed/
+cspell.json

@@ -91,6 +91,7 @@ mPoints
 
 mPtMult
     .byte 1,1,2,2,3,3,4,4,5,5,6,6
+    ;.byte 6,6,6,6,6,6,6,6,6,6,6,6
 mDelayTimer
     .byte $00, $00
 .endsection

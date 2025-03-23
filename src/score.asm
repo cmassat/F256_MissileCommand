@@ -46,6 +46,8 @@ addScore
 _addMore
     lda mscore
     jsr add2score
+    lda mscore
+    jsr add2Livescore
     inx
     cpx mPtMultiplier
     bcc _addMore

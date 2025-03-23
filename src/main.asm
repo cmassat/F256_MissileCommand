@@ -4,7 +4,6 @@
 *=$2000
 .dsection code 
 
-
 .section code
 start
     lda MMU_MEM_CTRL
@@ -34,6 +33,7 @@ start
 .include "gameover.asm"
 .include "collision/collision.asm"
 .include "debug.asm"
+
 main
     stz MMU_IO_CTRL
     jsr initGame
@@ -45,9 +45,6 @@ main
 _loop
     jmp _loop
     rts
-
-
-
 
 .section variables
 memCtrl

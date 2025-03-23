@@ -5,10 +5,10 @@ playBonus
     phy
     lda #1
     sta mBonusDoPlay
-    lda #8
+    lda #2
     sta mBonusTimer
-    lda #<PSG_5C
-    ldx #>PSG_5C
+    lda #<PSG_3C
+    ldx #>PSG_3C
     jsr psg_2_freq_right
 
     lda #$0

@@ -5,7 +5,8 @@ waves .namespace
 
 init
     stz mState
-    stz mExtraCityTracker
+    lda #0
+    sta mExtraCityTracker
     lda #0
     sta mCurrentWave
     jsr reset
@@ -15,6 +16,8 @@ reset
     lda #waveFrameDelay
     sta mWaveFrameDelay
     stz mBonusIdx
+    stz mAbmBonusComplete
+    stz mCitiesBonusComplete
     rts
 
 handle
@@ -23,7 +26,6 @@ handle
     bcc _ok
     rts
 _ok
-
     lda mState
     cmp #0
     beq _setup
@@ -56,13 +58,21 @@ play
     pha
     phx
     phy
+    ldy #11
+    lda mCurrentWave
+    cmp #11
+    bcs _getMult
     ldy mCurrentWave
+_getMult
     lda mPtMult, y
     jsr score.setPointMultiplier
+    lda mExtraCityTracker
+    cmp #0
+    bne _doNotEndGame
     jsr cities.getReamainingTotal
     cmp #0
     beq _endGame
-
+_doNotEndGame
     jsr icbm.isWaveOver
     bcs _continue
     jsr initBonusStuff
@@ -77,6 +87,7 @@ _continue
     jsr abm.play
     jsr explosion.play
     jsr cities.play
+    jsr cruise.play
     ;jsr plane.demo
 
     ply
@@ -85,6 +96,7 @@ _continue
     rts
 _endGame
     jsr state.next
+
     ply
     plx
     pla
@@ -130,48 +142,48 @@ _setWave2
     jsr cruise.setSpeed
     rts
 _setWave3
-    lda #$80
+    lda #$70
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
     rts
 _setWave4
-    lda #$90
+    lda #$80
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
 _setWave5
-    lda #$A0
+    lda #$90
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
     rts
 _setWave6
-    lda #$B0
+    lda #$a0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
     rts
 _setWave7
-    lda #$C0
+    lda #$B0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
     rts
 _setWave8
-    lda #$D0
+    lda #$C0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
     rts
 _setWave9
-    lda #$E0
+    lda #$D0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
     rts
 _setWave10
-    lda #$F0
+    lda #$E0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
@@ -240,7 +252,7 @@ setupBitmap1
     rts
 .endsection
 .section variables
-waveFrameDelay = 20
+waveFrameDelay = 4
 stateSetup = 0
 stateStart = 1
 statePlay = 2

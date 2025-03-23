@@ -7,53 +7,87 @@ debug
      sta MMU_IO_CTRL
 
 
-    lda cruise.mCruiseStatus0
-    lsr
-    lsr
-    lsr
-    lsr
-    tay
-    lda mHex, y
-    sta $C000
+    ; lda m_bonusLife_score_2 + 1
+    ; lsr
+    ; lsr
+    ; lsr
+    ; lsr
+    ; tay
+    ; lda mHex, y
+    ; sta $C000
 
-    lda cruise.mCruiseStatus0
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C001
+    ; lda m_bonusLife_score_2 + 1
+    ; and #$0F
+    ; tay
+    ; lda mHex, y
+    ; sta $C001
 
 
 
-    lda cruise.cruiseypos + 1
+    ; lda m_bonusLife_score_2
+    ; lsr
+    ; lsr
+    ; lsr
+    ; lsr
+    ; tay
+    ; lda mHex, y
+    ; sta $C002
+
+    ; lda m_bonusLife_score_2
+    ; and #$0F
+    ; tay
+    ; lda mHex, y
+    ; sta $C003
+    ; lda mHex, y
+    ; sta $C003
+
+
+    lda m_bonusLife_score_2
     lsr
     lsr
     lsr
     lsr
-    tay
-    lda mHex, y
-    sta $C003
-
-    lda cruise.cruiseypos + 1
-    and #$0F
     tay
     lda mHex, y
     sta $C004
 
-
-    lda cruise.cruiseypos
-    lsr
-    lsr
-    lsr
-    lsr
+    lda m_bonusLife_score_2
+    and #$0F
     tay
     lda mHex, y
     sta $C005
 
-    lda cruise.cruiseypos
-    and #$0F
+
+    lda m_bonusLife_score_1
+    lsr
+    lsr
+    lsr
+    lsr
     tay
     lda mHex, y
     sta $C006
+
+    lda m_bonusLife_score_1
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C007
+
+
+    lda m_bonusLife_score_0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C008
+
+    lda m_bonusLife_score_0
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C009
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
 

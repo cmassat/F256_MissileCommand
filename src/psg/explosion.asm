@@ -60,6 +60,13 @@ _turnOff
     stz mExplosionTimer
     rts
 
+turnOffExplosion
+    lda #$0f
+    jsr psg_noise_vol_left
+    stz mExplosionTimer
+    rts
+
+
 .endsection
 .section variables
 mExplosionTimer

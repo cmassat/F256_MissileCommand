@@ -223,6 +223,15 @@ getMouseClickY
     ldx m_mouse_click_y + 1
     rts
 
+resetMouse
+    stz m_mouse_bl
+    stz m_mouse_bm
+    stz m_mouse_br
+    stz m_mouse_click_x
+    stz m_mouse_click_y
+    stz m_mouse_click_x + 1
+    stz m_mouse_click_y + 1
+    rts
 .endsection
 
 .section variables

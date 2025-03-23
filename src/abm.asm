@@ -30,10 +30,100 @@ reset
     sta mCenterSiloActive
     sta mRightSiloActive
     jsr collision.initSiloCollision
+    lda #20
+    sta mFireDelay
 
+    jsr restAbm0
+    jsr restAbm1
+    jsr restAbm2
+    jsr restAbm3
+    jsr restAbm4
+    jsr restAbm5
+    jsr restAbm6
+    jsr restAbm7
     ply
     plx
     pla
+    rts
+
+restAbm0
+    lda #0
+    ldy #0
+_abm
+    sta abm0, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm1
+    lda #0
+    ldy #0
+_abm
+    sta abm1, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm2
+    lda #0
+    ldy #0
+_abm
+    sta abm2, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm3
+    lda #0
+    ldy #0
+_abm
+    sta abm3, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm4
+    lda #0
+    ldy #0
+_abm
+    sta abm4, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm5
+    lda #0
+    ldy #0
+_abm
+    sta abm5, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm6
+    lda #0
+    ldy #0
+_abm
+    sta abm6, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
+    rts
+
+restAbm7
+    lda #0
+    ldy #0
+_abm
+    sta abm1, y
+    iny
+    cpy #abmDataLength
+    bcc _abm
     rts
 
 play
@@ -166,9 +256,6 @@ handleFire
     lda mFireDelay
     cmp #0
     beq _ok
-    lda mFireDelay
-    cmp #0
-    beq _end
     dec mFireDelay
     stz mLeftClicked
     stz mRightClicked
@@ -867,6 +954,8 @@ bunkerY1 = 250
 
 bunkerX2 = 328
 bunkerY2 = 242
+abmDataLength = abm0End - abm0
+
 mNumbers
   .byte '0','1','2','3','4','5','6','7','8','9'
 abm0
@@ -892,6 +981,7 @@ origX0 .byte $00, $00
 origY0 .byte $00, $00
 destX0 .byte $00, $00
 destY0 .byte $00, $00
+abm0End
 
 abm1
     .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)

@@ -1,7 +1,6 @@
 cities .namespace
 .section code
 showSpriteMacro .macro spriteNum, spriteAddr, x, y
-
     lda #\spriteNum
     jsr setSpriteNumber
 
@@ -261,7 +260,72 @@ getCoord5
     ldy #cityBmpY5
     rts
 
+renewCity
+    lda mCityActive0
+    cmp #activeStatus
+    bne _activate0
+
+    lda mCityActive1
+    cmp #activeStatus
+    bne _activate1
+
+    lda mCityActive2
+    cmp #activeStatus
+    bne _activate2
+
+    lda mCityActive3
+    cmp #activeStatus
+    bne _activate3
+
+    lda mCityActive4
+    cmp #activeStatus
+    bne _activate4
+
+    lda mCityActive5
+    cmp #activeStatus
+    bne _activate5
+    rts
+_activate0
+    lda #activeStatus
+    sta mCityActive0
+    stz collision.mCityHit0
+    jsr resetCities
+    rts
+_activate1
+    lda #activeStatus
+    sta mCityActive1
+    stz collision.mCityHit1
+    #showSpriteMacro 62, SPRITE_CITY, cityX1, cityY1, mCityActive1
+    jsr resetCities
+    rts
+_activate2
+    lda #activeStatus
+    sta mCityActive2
+    stz collision.mCityHit2
+    #showSpriteMacro 61, SPRITE_CITY, cityX1, cityY1, mCityActive1
+    jsr resetCities
+    rts
+_activate3
+    lda #activeStatus
+    sta mCityActive3
+    stz collision.mCityHit3
+    jsr resetCities
+    rts
+_activate4
+    lda #activeStatus
+    sta mCityActive4
+    stz collision.mCityHit4
+    jsr resetCities
+    rts
+_activate5
+    lda #activeStatus
+    sta mCityActive5
+    stz collision.mCityHit5
+    jsr resetCities
+    rts
+
 .endsection
+
 .section variables
 activeStatus = 1
 cityX0 = 80

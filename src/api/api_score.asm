@@ -33,6 +33,23 @@ add2score
 	cld
 	rts
 
+add2Livescore
+	sed
+	clc
+	adc m_bonusLife_score
+	sta m_bonusLife_score
+
+	lda m_bonusLife_score + 1
+	adc #0
+	sta m_bonusLife_score + 1
+
+	lda m_bonusLife_score + 2
+	adc #0
+	sta m_bonusLife_score + 2
+	cld
+	rts
+
+
 add2BonusScore
 	sed
 	clc
@@ -131,8 +148,8 @@ getBonusScoreDigit3
 	lsr
 	rts
 
-getBonusScoreDigit4
-	lda m_bonus_score_2
+getBonusLifeScoreDigit4
+	lda m_bonusLife_score_2
 	and #$0f
 	rts
 getBonusScoreDigit5
@@ -145,6 +162,14 @@ getBonusScoreDigit5
 getBonusScoreDigit6
 	lda m_bonus_score_3
 	and #$0f
+	rts
+
+
+setBonusRollOver
+	sed
+	lda #$0
+	sta m_bonusLife_score_2
+	cld
 	rts
 
 resetScore
@@ -201,5 +226,13 @@ m_bonus_score_4
 m_bonus_score_5
  	.byte $00
 m_bonus_score_6
+ 	.byte $00
+
+m_bonusLife_score
+m_bonusLife_score_0
+ 	.byte $00
+m_bonusLife_score_1
+ 	.byte $00
+m_bonusLife_score_2
  	.byte $00
 .endsection

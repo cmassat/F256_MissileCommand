@@ -21,43 +21,42 @@ initBonusStuff
     lda #60
     sta mBonusFrameDelay
 
+    jsr initPsg
 
     rts
 
 waveOver
-    jsr explosion.play
+    jsr psg.turnOffExplosion
     jsr score.handle
     jsr plane.reset
-    jsr abm.getReaminingTotal
-    cmp #0
-    bne _showAbmBonus
-    lda mBonusTrackerCityies
-    cmp #0
-    bne _showCityBonus
 
-    bra _checkExtraCity
+    jsr showAbmBonus
+    jsr showCityBonus
+    jsr checkExtraCity
 
-   ; jsr icbm.reset
-    jsr reset
+    ;jsr rebuildCities
+    ;jsr icbm.targetCity
 
 
+   ; jsr icbm.rese
+    jsr resetMouse
+    jsr resetKeys
     lda #8
     jsr clearExtMem
     rts
-_showCityBonus
-    jsr showCityBonus
-    rts
-_showAbmBonus
-    jsr showAbmBonus
-    rts
-_checkExtraCity
-    jsr checkExtraCity
-    jsr icbm.targetCity
-    rts
+
 showAbmBonus
+    lda mAbmBonusComplete
+    cmp #1
+    beq _skip
     jsr abm.getReaminingTotal
     cmp #0
     bne _addAbmBonus
+    lda #waveFrameDelay
+    sta mWaveFrameDelay
+    lda #1
+    sta mAbmBonusComplete
+_skip
     rts
 _addAbmBonus
     dec mWaveFrameDelay
@@ -131,6 +130,18 @@ _resetIdx
     rts
 
 showCityBonus
+    lda mAbmBonusComplete
+    cmp #0
+    beq _skip
+    lda mCitiesBonusComplete
+    cmp #1
+    beq _skip
+    jsr abm.getReaminingTotal
+    cmp #0
+    beq _citiesLeft
+_skip
+    rts
+_citiesLeft
     lda mBonusTrackerCityies
     cmp #0
     bne _addBonus
@@ -206,21 +217,67 @@ _showOnScreen
     beq _reset
     rts
 _reset
+    lda #1
+    sta mCitiesBonusComplete
+    lda #waveFrameDelay
+    sta mWaveFrameDelay
     jsr resetBonusScore
     rts
 
 checkExtraCity
+    lda mAbmBonusComplete
+    cmp #1
+    bne _skip
+    lda mCitiesBonusComplete
+    cmp #1
+    bne _skip
+    ; dec mWaveFrameDelay
+    ; lda mWaveFrameDelay
+    ; cmp #0
+    ; bne _skip
     lda #stateBonusOverDelay
     sta mState
-    jsr getScoreDigit4
-    cmp mExtraCityTracker
-    bne _addExtraCity
+    jsr getBonusLifeScoreDigit4
+    cmp #1
+    beq _addExtraCity
+_skip
+    jsr rebuildCities
     rts
 _addExtraCity
+    lda mExtraCityTracker
+    clc
+    adc #1
     sta mExtraCityTracker
     jsr psg.playBonusCity
-
+    jsr setBonusRollOver
+_noBonusCity
+    jsr rebuildCities
     rts
+
+rebuildCities
+    ldx #0
+_checkBonusLeft
+    cpx #6
+    bcs _end
+    jsr cities.getReamainingTotal
+    cmp #6
+    bcs _end
+    lda mExtraCityTracker
+    cmp #0
+    bne _rebuild
+_end
+    rts
+_rebuild
+    inx
+    jsr cities.renewCity
+    sec
+    lda mExtraCityTracker
+    sbc #1
+    sta mExtraCityTracker
+    jsr _checkBonusLeft
+    rts
+
+
 
 bonusOverDelay
     lda mBonusFrameDelay
@@ -252,12 +309,15 @@ _end
     inc mCurrentWave
     jsr icbm.decMaxY
     jsr setSpeed
-    jsr psg.playBonusCity
+
     rts
 .endsection
 
 .section variables
-
+mCitiesBonusComplete
+    .byte $00
+mAbmBonusComplete
+    .byte $00
 mBonusTrackerCityies
     .byte $00
 mWaveFrameDelay
