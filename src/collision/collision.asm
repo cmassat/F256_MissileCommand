@@ -9,5 +9,6 @@ handle
 .include "cruise.asm"
 .include "cities.asm"
 .include "silos.asm"
+.include "saucer.asm"
 .endnamespace
 

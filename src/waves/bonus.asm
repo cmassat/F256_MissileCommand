@@ -27,9 +27,11 @@ initBonusStuff
 
 waveOver
     jsr psg.turnOffExplosion
+    jsr cruise.reset
     jsr score.handle
     jsr plane.reset
-
+    jsr saucer.reset
+    jsr setSpeed
     jsr showAbmBonus
     jsr showCityBonus
     jsr checkExtraCity
@@ -297,10 +299,10 @@ _end
     sta mState
     jsr clearScreenMemory
 
-    lda #0
-    ldx #0
-    ldy #0
-    jsr setBackgroundColor
+    ; lda #0
+    ; ldx #0
+    ; ldy #0
+    ; jsr setBackgroundColor
 
     jsr reset
     jsr icbm.reset

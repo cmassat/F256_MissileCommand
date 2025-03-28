@@ -355,6 +355,35 @@ cityBmpY2 = 250 - 32 + 8
 cityBmpY3 = 247 - 32 + 8
 cityBmpY4 = 244 - 32 + 8
 cityBmpY5 = 250 - 32 + 8
+mCityCurrentSpriteX0
+    .byte <cityBmpX0, >cityBmpX0
+mCityCurrentSpriteY0
+    .byte <cityBmpY0, >cityBmpY0
+
+mCityCurrentSpriteX1
+    .byte <cityBmpX1, >cityBmpX1
+mCityCurrentSpriteY1
+    .byte <cityBmpY1, >cityBmpY1
+
+mCityCurrentSpriteX2
+    .byte <cityBmpX2, >cityBmpX2
+mCityCurrentSpriteY2
+    .byte <cityBmpY2, >cityBmpY2
+
+mCityCurrentSpriteX3
+    .byte <cityBmpX3, >cityBmpX3
+mCityCurrentSpriteY3
+    .byte <cityBmpY3, >cityBmpY3
+
+mCityCurrentSpriteX4
+    .byte <cityBmpX4, >cityBmpX4
+mCityCurrentSpriteY4
+    .byte <cityBmpY4, >cityBmpY4
+
+mCityCurrentSpriteX5
+    .byte <cityBmpX5, >cityBmpX5
+mCityCurrentSpriteY5
+    .byte <cityBmpY5, >cityBmpY5
 
 mCityActive0
     .byte $00

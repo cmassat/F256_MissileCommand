@@ -20,6 +20,7 @@ initGame
     jsr explosion.init
     jsr gameOver.init
     jsr loadFont
+    jsr resetBonusLifeScore
     stz $D6E0   ;hide mouse
     rts 
 .endsection

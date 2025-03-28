@@ -88,7 +88,7 @@ missleColor
     stz  MMU_IO_CTRL
     rts
 
-IcbmColor
+icbmColor
      pha
     lda #CLUT_IO
     sta MMU_IO_CTRL
@@ -126,6 +126,48 @@ IcbmColor
     stz  MMU_IO_CTRL
     rts
 
+icbmHeadColor
+    lda #CLUT_IO
+    sta MMU_IO_CTRL
+
+    lda #<CLUT_0_ADDR + (ICBM_HEAD * 4)
+    sta POINTER_CLUT_DEST
+
+    lda #>CLUT_0_ADDR + (ICBM_HEAD * 4)
+    sta POINTER_CLUT_DEST   + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #5
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #10
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    lda (POINTER_CLUT_DEST)
+    clc
+    adc #15
+    sta (POINTER_CLUT_DEST)
+    stz  MMU_IO_CTRL
+    rts
 
 abmColor
     pha

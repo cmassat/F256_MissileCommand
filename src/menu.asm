@@ -179,6 +179,7 @@ _playDemo
    ; jsr site.draw
     jsr cruise.demo
     jsr plane.demo
+    jsr saucer.demo
   ;  jsr abm.handle
   ;  jsr explosion.handle
 

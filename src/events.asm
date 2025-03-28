@@ -16,7 +16,7 @@ _run
     jsr waves.handle
     jsr psg.handle
     jsr gameOver.handle
-
+    jsr score.handle
     inc r_seed
     ply
     plx

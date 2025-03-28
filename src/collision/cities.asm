@@ -99,12 +99,13 @@ handleCities
     pha
     phx
     phy
-    #trackCities cities.cityX0, cities.cityY0, cityX0, cityY0, mCityHit0
-    #trackCities cities.cityX1, cities.cityY1, cityX1, cityY1, mCityHit1
-    #trackCities cities.cityX2, cities.cityY2, cityX2, cityY2, mCityHit2
-    #trackCities cities.cityX3, cities.cityY3, cityX3, cityY3, mCityHit3
-    #trackCities cities.cityX4, cities.cityY4, cityX4, cityY4, mCityHit4
-    #trackCities cities.cityX5, cities.cityY5, cityX5, cityY5, mCityHit5
+    jsr trackCity0
+    jsr trackCity1
+    jsr trackCity2
+    jsr trackCity3
+    jsr trackCity4
+    jsr trackCity5
+
     lda  #16
     sta mhitTracker
 _loop
@@ -146,6 +147,24 @@ checkCity5
     #cityHit  cityX5, cityY5, mCityHit5, cities.cityBmpX5, cities.cityBmpY5
     rts
 
+trackCity0
+     #trackCities cities.cityX0, cities.cityY0, cityX0, cityY0, mCityHit0
+    rts
+trackCity1
+    #trackCities cities.cityX1, cities.cityY1, cityX1, cityY1, mCityHit1
+    rts
+trackCity2
+    #trackCities cities.cityX2, cities.cityY2, cityX2, cityY2, mCityHit2
+    rts
+trackCity3
+    #trackCities cities.cityX3, cities.cityY3, cityX3, cityY3, mCityHit3
+    rts
+trackCity4
+    #trackCities cities.cityX4, cities.cityY4, cityX4, cityY4, mCityHit4
+    rts
+trackCity5
+    #trackCities cities.cityX5, cities.cityY5, cityX5, cityY5, mCityHit5
+    rts
 isCity0Hit
     lda mCityHit0
     cmp #1

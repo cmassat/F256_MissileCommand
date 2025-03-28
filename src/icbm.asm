@@ -94,6 +94,7 @@ _move
     rts
 
 play
+    jsr icbmHeadColor
     lda mSpeedTracker + 1
     cmp mSpeed + 1
     bne _continue
@@ -119,7 +120,6 @@ _move1
     rts
 
 draw
-
     jsr initMissle
     jsr moveMissile
     jsr deactivate
@@ -148,14 +148,17 @@ _move
     adc #0
     sta POINTER_ICBM_LINE + 1
 
+
+    jsr setLineData
     lda #MISSLE_CLR
     jsr setPixelColor
-    jsr setLineData
-
+    jsr putPixel
     jsr linestep
     jsr getPixel
     cmp #EXPLOSION_CLR
     beq _explode
+    lda #ICBM_HEAD
+    jsr setPixelColor
     jsr putPixel
     jsr saveLineData
 

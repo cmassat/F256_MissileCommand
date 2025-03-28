@@ -30,7 +30,7 @@ reset
     sta mCenterSiloActive
     sta mRightSiloActive
     jsr collision.initSiloCollision
-    lda #20
+    lda #10
     sta mFireDelay
 
     jsr restAbm0
@@ -243,7 +243,7 @@ _checkCenter
     lda mCenterSiloActive
     cmp #activeStatus
     bne _checkRight
-    lda #left
+    lda #center
     sta mBunkerSelect
     rts
 _checkRight
@@ -274,13 +274,13 @@ _ok
     rts
 _fireButton
     jsr setCoordinates
-    lda #20
+    lda #10
     sta mFireDelay
     jsr fire
     rts
 _fireCenter
     jsr setCoordinates
-    lda #20
+    lda #10
     sta mFireDelay
     lda #center
     sta mBunkerSelect
@@ -288,7 +288,7 @@ _fireCenter
     rts
 _fireLeft
     jsr setCoordinates
-    lda #20
+    lda #10
     sta mFireDelay
     lda #left
     sta mBunkerSelect
@@ -296,7 +296,7 @@ _fireLeft
     rts
 _fireRight
     jsr setCoordinates
-    lda #20
+    lda #10
     sta mFireDelay
     lda #right
     sta mBunkerSelect
@@ -686,16 +686,16 @@ _right
     lda <#300
     ldx >#300
     jsr setOrginX
-    lda <#bunkerY2 - 32 + 8
-    ldx >#bunkerY2 - 32 + 8
+    lda <#siloY2 - 32 + 8
+    ldx >#siloY2 - 32 + 8
     jsr setOrginY
     rts
 _left
-    lda <#bunkerX0 - 32 + 8
-    ldx >#bunkerX0 - 32 + 8
+    lda <#siloX0 - 32 + 8
+    ldx >#siloX0 - 32 + 8
     jsr setOrginX
-    lda <#bunkerY0 - 32 + 8
-    ldx >#bunkerY0 - 32 + 8
+    lda <#siloY0 - 32 + 8
+    ldx >#siloY0 - 32 + 8
     jsr setOrginY
     rts
 initMacro .macro
@@ -767,9 +767,9 @@ setAbm
     lda #$30
     sta mTotalAbm
     lda #$10
-    sta mBunkerMissileCnt0
-    sta mBunkerMissileCnt1
-    sta mBunkerMissileCnt2
+    sta mBunkerMissiloCnt0
+    sta mBunkerMissiloCnt1
+    sta mBunkerMissiloCnt2
     cld
     rts
 
@@ -818,11 +818,11 @@ _showBunker0
     ldy `#SPRITE_ABM
     jsr setSpriteAddress
 
-    lda <#bunkerX0
-    ldx >#bunkerX0
+    lda <#siloX0
+    ldx >#siloX0
     jsr setSpriteX
 
-    lda #bunkerY0
+    lda #siloY0
     ldx #0
     jsr setSpriteY
 
@@ -847,11 +847,11 @@ _showBunker1
     jsr setSpriteAddress
 
 
-    lda <#bunkerX1
-    ldx >#bunkerX1
+    lda <#siloX1
+    ldx >#siloX1
     jsr setSpriteX
 
-    lda #bunkerY1
+    lda #siloY1
     ldx #0
     jsr setSpriteY
 
@@ -876,11 +876,11 @@ _showBunker2
     jsr setSpriteAddress
 
 
-    lda <#bunkerX2
-    ldx >#bunkerX2
+    lda <#siloX2
+    ldx >#siloX2
     jsr setSpriteX
 
-    lda #bunkerY2
+    lda #siloY2
     ldx #0
     jsr setSpriteY
 
@@ -888,21 +888,21 @@ _showBunker2
     rts
 
 getBunkerCoord0
-    lda #<bunkerX0 - 32 + 8
-    ldx #>bunkerX0 - 32 + 8
-    ldy #bunkerY0 - 32 + 8
+    lda #<siloX0 - 32 + 8
+    ldx #>siloX0 - 32 + 8
+    ldy #siloY0 - 32 + 8
     rts
 
 getBunkerCoord1
-    lda #<bunkerX1 - 32 + 8
-    ldx #>bunkerX1 - 32 + 8
-    ldy #bunkerY1 - 32 + 8
+    lda #<siloX1 - 32 + 8
+    ldx #>siloX1 - 32 + 8
+    ldy #siloY1 - 32 + 8
     rts
 
 getBunkerCoord2
-    lda #<bunkerX2 - 32 + 8
-    ldx #>bunkerX2 - 32 + 8
-    ldy #bunkerY2 - 32 + 8
+    lda #<siloX2 - 32 + 8
+    ldx #>siloX2 - 32 + 8
+    ldy #siloY2 - 32 + 8
     rts
 
 
@@ -946,14 +946,7 @@ _hide
 .section variables
 activeStatus = 1
 inactiveStatus = 0
-bunkerX0 = 50
-bunkerY0 = 242
 
-bunkerX1 = 179
-bunkerY1 = 250
-
-bunkerX2 = 328
-bunkerY2 = 242
 abmDataLength = abm0End - abm0
 
 mNumbers
@@ -1164,31 +1157,57 @@ mCenterSiloActive
     .byte $00
 mRightSiloActive
     .byte $00
-mBunkerMissileCnt0
+mBunkerMissiloCnt0
     .byte $00
-mBunkerMissileCnt1
+mBunkerMissiloCnt1
     .byte $00
-mBunkerMissileCnt2
+mBunkerMissiloCnt2
     .byte $00
 
 
 mBunkerSelect
     .byte $00
 
+mSiloX0
+    .byte <SiloBmpX0,>SiloBmpX0
 
-siloX0 = bunkerX0
-siloX1 = bunkerX1
-siloX2 = bunkerX2
-siloY0 = bunkerY0
-siloY1 = bunkerY1
-siloY2 = bunkerY2
-SiloBmpX0 = bunkerX0 - 32 + 8
-SiloBmpX1 = bunkerX1 - 32 + 8
-SiloBmpX2 = bunkerX2 - 32 + 8
+mSiloX1
+    .byte <SiloBmpX1,>SiloBmpX1
 
-SiloBmpY0 = bunkerY0 - 32 + 8
-SiloBmpY1 = bunkerY1 - 32 + 8
-SiloBmpY2 = bunkerY2 - 32 + 8
+mSiloX2
+    .byte <SiloBmpX2,>SiloBmpX2
+
+mSiloY0
+    .byte <SiloBmpY0,>SiloBmpY0
+
+mSiloY1
+    .byte <SiloBmpY1,>SiloBmpY1
+
+mSiloY2
+    .byte <SiloBmpY2,>SiloBmpY2
+
+
+; siloX0 = 50
+; siloY0 = 242
+
+; siloX1 = 179
+; siloY1 = 250
+
+; siloX2 = 328
+; siloY2 = 242
+siloX0 = 50
+siloX1 = 179
+siloX2 = 328
+siloY0 = 242
+siloY1 = 250
+siloY2 = 242
+SiloBmpX0 = siloX0 - 32 + 8
+SiloBmpX1 = siloX1 - 32 + 8
+SiloBmpX2 = siloX2 - 32 + 8
+
+SiloBmpY0 = siloY0 - 32 + 8
+SiloBmpY1 = siloY1 - 32 + 8
+SiloBmpY2 = siloY2 - 32 + 8
 left = 1
 center = 2
 right = 3

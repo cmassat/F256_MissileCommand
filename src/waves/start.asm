@@ -14,26 +14,26 @@ start
     ldy #12
     jsr drawText
 
-    lda #blue
-    ldx #black
-    ldy #10
-    jsr setColorByLine
+    ; lda #blue
+    ; ldx #black
+    ; ldy #10
+    ; jsr setColorByLine
 
-    lda #blue
-    ldx #black
-    ldy #12
-    jsr setColorByLine
+    ; lda #blue
+    ; ldx #black
+    ; ldy #12
+    ; jsr setColorByLine
 
-    lda #0
-    ldx #0
-    ldy #$ff
-    jsr abmColor
+    ; lda #0
+    ; ldx #0
+    ; ldy #$ff
+    ; jsr abmColor
 
 
-    lda #$ff
-    ldx #0
-    ldy #$00
-    jsr IcbmColor
+    ; lda #$ff
+    ; ldx #0
+    ; ldy #$00
+    ; jsr IcbmColor
 
 
     jsr displayPtMult
@@ -53,6 +53,7 @@ _skip
     jsr clearScreenMemory
     lda #statePlay
     sta mState
+
     rts
 
 displayPtMult

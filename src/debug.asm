@@ -7,7 +7,7 @@ debug
      sta MMU_IO_CTRL
 
 
-    ; lda m_bonusLife_score_2 + 1
+    ; lda mdebug
     ; lsr
     ; lsr
     ; lsr
@@ -16,7 +16,7 @@ debug
     ; lda mHex, y
     ; sta $C000
 
-    ; lda m_bonusLife_score_2 + 1
+    ; lda mdebug
     ; and #$0F
     ; tay
     ; lda mHex, y
@@ -24,7 +24,7 @@ debug
 
 
 
-    ; lda m_bonusLife_score_2
+    ; lda collision.mCityHit0
     ; lsr
     ; lsr
     ; lsr
@@ -33,7 +33,7 @@ debug
     ; lda mHex, y
     ; sta $C002
 
-    ; lda m_bonusLife_score_2
+    ; lda collision.mCityHit0
     ; and #$0F
     ; tay
     ; lda mHex, y
@@ -42,39 +42,54 @@ debug
     ; sta $C003
 
 
-    lda m_bonusLife_score_2
+    lda cruise.mCruiseStatus0
     lsr
     lsr
     lsr
     lsr
     tay
     lda mHex, y
-    sta $C004
+    sta $C000
 
-    lda m_bonusLife_score_2
+    lda cruise.mCruiseStatus0
     and #$0F
+    tay
+    lda mHex, y
+    sta $C001
+
+
+    lda cruise.mCruiseDestY0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C002
+
+    lda cruise.mCruiseDestY0
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C003
+
+
+    lda mDebug
+    lsr
+    lsr
+    lsr
+    lsr
     tay
     lda mHex, y
     sta $C005
 
-
-    lda m_bonusLife_score_1
-    lsr
-    lsr
-    lsr
-    lsr
+    lda mDebug
+    and #$0F
     tay
     lda mHex, y
     sta $C006
 
-    lda m_bonusLife_score_1
-    and #$0F
-    tay
-    lda mHex, y
-    sta $C007
-
-
-    lda m_bonusLife_score_0
+    lda cruise.mCruiseCurrentX0 + 1
     lsr
     lsr
     lsr
@@ -83,45 +98,123 @@ debug
     lda mHex, y
     sta $C008
 
-    lda m_bonusLife_score_0
+    lda cruise.mCruiseCurrentX0 + 1
     and #$0F
     tay
     lda mHex, y
     sta $C009
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
 
-    ; lda abm.mBunkerSelect
-    ; lsr
-    ; lsr
-    ; lsr
-    ; lsr
-    ; tay
-    ; lda mHex, y
-    ; sta $C005
+    lda cruise.mCruiseCurrentX0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C00a
 
-    ; lda abm.mBunkerSelect
-    ; and #$0F
-    ; tay
-    ; lda mHex, y
-    ; sta $C006
+    lda cruise.mCruiseCurrentX0
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C00b
 
-    ; dex
-    ; lda icbm.mIcbmStatus2,x
-    ; lsr
-    ; lsr
-    ; lsr
-    ; lsr
-    ; tay
-    ; lda mHex, y
-    ; sta $C007
 
-    ; lda icbm.mIcbmStatus2,x
-    ; and #$0F
-    ; tay
-    ; lda mHex, y
-    ; sta $C008
-;
+    lda cruise.mCruiseCurrentY0 + 1
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C00c
+
+    lda cruise.mCruiseCurrentY0 + 1
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C00d
+
+
+    lda cruise.mCruiseCurrentY0
+    lsr
+    lsr
+    lsr
+    lsr
+    tay
+    lda mHex, y
+    sta $C00e
+
+    lda cruise.mCruiseCurrentY0
+    and #$0F
+    tay
+    lda mHex, y
+    sta $C00f
+
+; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
+;     lda plane.currX + 1
+;     lsr
+;     lsr
+;     lsr
+;     lsr
+;     tay
+;     lda mHex, y
+;     sta $C000 + 40
+
+;     lda plane.currX + 1
+;     and #$0F
+;     tay
+;     lda mHex, y
+;     sta $C001 + 40
+
+
+;     lda plane.currX
+;     lsr
+;     lsr
+;     lsr
+;     lsr
+;     tay
+;     lda mHex, y
+;     sta $C002 + 40
+
+;     lda plane.currX
+;     and #$0F
+;     tay
+;     lda mHex, y
+;     sta $C003 + 40
+
+
+;     lda plane.destY + 1
+;     lsr
+;     lsr
+;     lsr
+;     lsr
+;     tay
+;     lda mHex, y
+;     sta $C005 + 40
+
+;     lda plane.destY + 1
+;     and #$0F
+;     tay
+;     lda mHex, y
+;     sta $C006 + 40
+
+;     lda plane.destY
+;     lsr
+;     lsr
+;     lsr
+;     lsr
+;     tay
+;     lda mHex, y
+;     sta $C007 + 40
+
+;     lda plane.destY
+;     and #$0F
+;     tay
+;     lda mHex, y
+;     sta $C008 + 40
+; ;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;mTotalLaunch;;;;
 ;   ldx icbm.offsetCurrentY
 ;   lda icbm.mTotalLaunch

@@ -131,7 +131,7 @@ mHitSpace
     .byte $00
 
 mVersion
-    .text '         Version 00.00.01-a.1 '
+    .text '         Version 00.01.01-a.1'
     .byte $00
 
 .endsection

@@ -33,6 +33,7 @@ showGameOverMessage
     bcc _reset
     rts
 _reset
+
     jsr init
     lda #state.menu
     jsr state.setState
@@ -43,6 +44,7 @@ _reset
     jsr cities.init
     jsr collision.initCityCollision
     jsr resetScore
+    jsr resetBonusLifeScore
     rts
 
 init

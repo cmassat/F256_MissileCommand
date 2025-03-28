@@ -5,8 +5,6 @@ init
     stz  mSpeedTracker
     stz  mSpeedTracker + 1
 
-
-
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
 
@@ -24,15 +22,32 @@ init
 reset
     lda #inactiveStatus
     sta mCruiseStatus0
+
+    lda #SPRITENUMBER_CRUISE
+    jsr setSpriteNumber
+    jsr hideSprite
+
+    lda #0
+    ldx #0
+    jsr setSpriteX
+    jsr setSpriteY
+
     rts
 
 demo
+    pha
+    phx
+    phy
     jsr draw
+    ply
+    plx
+    pla
     rts
 play
     pha
     phx
     phy
+    jsr collision.handlecruise
     jsr draw
     ply
     plx
@@ -74,26 +89,46 @@ _move1
     jsr saveLineData
     lda #SPRITENUMBER_CRUISE
     jsr setSpriteNumber
-
     jsr getOriginX
+    clc
+    adc #24
+    pha
+    txa
+    adc #0
+    tax
+    pla
     jsr setSpriteX
+    jsr getOriginX
+    sta mCruiseCurrentX0
+    stx mCruiseCurrentX0 + 1
 
     jsr getOriginY
+    clc
+    adc #24
+    ldx #0
     jsr setSpriteY
 
+
     jsr getOriginY
-    cmp #0
-    beq _reset
+    sta mCruiseCurrentY0
+    stx mCruiseCurrentY0 + 1
+    jsr getOriginY
+    sta mDebug
+    jsr getOriginY
+    cmp #$e5
+    bcs _reset
     rts
 _reset
-    lda #inactiveStatus
+    lda #0
     sta mCruiseStatus0
+    jsr reset
     rts
 
 radar
+    jsr setLineData
     jsr getOriginY
     clc
-    adc #32
+    adc #16
     pha
     txa
     adc #0
@@ -101,20 +136,43 @@ radar
     pla
     jsr setOrginY
     jsr getPixel
+    cmp #EXPLOSION_CLR
+    beq _moveLeft
 
+    jsr getOriginX
+    clc
+    adc #8
+    pha
+    txa
+    adc #0
+    tax
+    pla
+    jsr setOrginX
+    jsr getPixel
     cmp #EXPLOSION_CLR
     beq _moveLeft
     rts
 _moveLeft
+    jsr setLineData
     jsr getOriginX
     sec
-    sbc #1
+    sbc #2
     pha
     txa
     sbc #0
     tax
     pla
     jsr setOrginX
+
+    jsr getOriginY
+    sec
+    sbc #2
+    pha
+    txa
+    sbc #0
+    tax
+    pla
+    jsr setOrginY
 
     jsr lineInit
     jsr linestep
@@ -165,27 +223,22 @@ _activate
 
     jsr generateOriginX
     lda mrandXStart
-  ;  clc
-  ;  adc #32
     sta mCruiseStartX0
-   lda mrandXStart + 1
-  ;  adc #0
 
+    lda mrandXStart + 1
     sta mCruiseStartX0 + 1
 
-    lda #16
+    lda #0
     sta mCruiseStartY0
 
     jsr generateDestX
     lda mrandXStart
-    ;clc
-    ;adc #32
     sta mCruiseDestX0
+
     lda mrandXStart + 1
-    ;adc #0
     sta mCruiseDestX0 + 1
 
-    lda #255
+    lda #240
     sta mCruiseDestY0
 
 
@@ -246,27 +299,26 @@ _tryAgain
     sta mrandXStart + 1
 _checkOver320
     lda mrandXStart + 1
-    cmp >#300
+    cmp #1
     beq _checkLo
     bcs _tryAgain
     bcc _checkMin
     rts
 _checkLo
     lda mrandXStart
-    cmp <#300
+    cmp <#320
     bcs _tryAgain
 
-    cmp #80
-    bcc _tryAgain
     lda r_seed
     asl
     sta r_seed
     rts
 _checkMin
     lda mrandXStart
-    cmp #70
+    cmp #20
     bcc _tryAgain
     rts
+
 setSpeed
     sta mSpeed
     stx mSpeed + 1
@@ -274,26 +326,32 @@ setSpeed
     stz mSpeedTracker
     stz mSpeedTracker + 1
     rts
+
 getX
-   ; lda mCruiseMissle + 14
-  ;  ldx mCruiseMissle + 15
+    lda mCruiseCurrentX0
+    ldx mCruiseCurrentX0 + 1
     rts
 
 getY
-   ; lda mCruiseMissle + 16
-   ; ldx mCruiseMissle + 17
+    lda mCruiseCurrentY0
+    ldx mCruiseCurrentY0 + 1
     rts
 
 .endsection
 .section variables
 inactiveStatus = 0
 activeStatus = 1
-
+waitFrames = 120
 lineLength = mlineDataEnd - mCruisePathData0
 wave0 = 2
 wave1 = 5
+dataLength = dataEnd - dataStart
+
+dataStart
 mCruiseStatus0
     .byte $0
+mCruiseCurrentX0
+    .byte $00, $00
 mCruiseCurrentY0
     .byte $00
 mCruiseStartX0
@@ -324,17 +382,12 @@ cruiseypos
 mlineDataEnd
 mrandXStart
     .byte $00, $00
-
-
 mWait
     .byte $0
-waitFrames = 120
-
-
 mSpeed
     .byte $00, $00
 mSpeedTracker
     .byte $00, $00
-
+dataEnd
 .endsection
 .endnamespace

@@ -1,9 +1,9 @@
 .section code
-handleplane
+handlesaucer
     pha
     phx
     phy
-    jsr planeAbm
+    jsr saucerAbm
     ply
     plx
     pla
@@ -11,22 +11,22 @@ handleplane
 
 
 
-planeAbm
-    lda plane.planeActve
+saucerAbm
+    lda saucer.saucerActve
     cmp #0
     bne _ok
     rts
 _ok
-    jsr plane.getX
+    jsr saucer.getX
     jsr setOrginX
 
-    jsr plane.getY
+    jsr saucer.getY
     jsr setOrginY
     jsr getPixel
     cmp #EXPLOSION_CLR
     beq _hit
 ;-----------------------------------------------
-    jsr plane.getX
+    jsr saucer.getX
     clc
     adc #11
     pha
@@ -36,7 +36,7 @@ _ok
     pla
     jsr setOrginX
 
-    jsr plane.getY
+    jsr saucer.getY
     clc
     adc #8
     ldx #0
@@ -45,7 +45,7 @@ _ok
     cmp #EXPLOSION_CLR
     beq _hit
 ; ;-----------------------------------------------
-;     jsr plane.getX
+;     jsr saucer.getX
 ;     clc
 ;     adc #16
 ;     pha
@@ -55,7 +55,7 @@ _ok
 ;     pla
 ;     jsr setOrginX
 
-;     jsr plane.getY
+;     jsr saucer.getY
 ;     clc
 ;     adc #8
 ;     ldx #0
@@ -64,7 +64,7 @@ _ok
 ;     cmp #EXPLOSION_CLR
 ;     beq _hit
 ; ;-----------------------------------------------
-;     jsr plane.getX
+;     jsr saucer.getX
 ;     clc
 ;     adc #24
 ;     pha
@@ -74,7 +74,7 @@ _ok
 ;     pla
 ;     jsr setOrginX
 
-;     jsr plane.getY
+;     jsr saucer.getY
 ;     clc
 ;     adc #8
 ;     ldx #0
@@ -84,18 +84,18 @@ _ok
 ;     beq _hit
     rts
 _hit
-    jsr plane.reset
+    jsr saucer.reset
     jsr psg.playExplosion
     lda #$99
     jsr score.addScore
-    lda #$01
+    lda #$26
     jsr score.addScore
     rts
 .endsection 
 
 .section variables
-mCollisionX
+mSaucerCollisionX
     .byte $00, $00
-mCollisionY
+mSaucerCollisionY
     .byte $00, $00
 .endsection

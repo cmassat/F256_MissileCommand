@@ -340,7 +340,7 @@ mColorPalette
 .byte $ff,$ff,$ff,$62 ;01 white
 .byte $32,$39,$88,$00 ;02 red
 .byte $67,$b6,$67,$00 ;03 cyan
-.byte $96,$3f,$8b,$00 ;04 violet
+.byte $ff,$00,$ff,$00 ;04 violet
 .byte $49,$a0,$55,$00 ;05 green
 .byte $ff,$00,$00,$00 ;06 blue
 .byte $72,$ce,$bf,$00 ;07 yellow

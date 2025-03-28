@@ -173,7 +173,7 @@ setBonusRollOver
 	rts
 
 resetScore
-    lda #0
+    lda #$0
     sta m_score_0
     sta m_score_1
     sta m_score_2
@@ -184,7 +184,7 @@ resetScore
     rts
 
 resetBonusScore
-    lda #0
+    lda #$0
     sta m_bonus_score_0
     sta m_bonus_score_1
     sta m_bonus_score_2
@@ -193,6 +193,14 @@ resetBonusScore
     sta m_bonus_score_5
     sta m_bonus_score_6
     rts
+
+resetBonusLifeScore
+    lda #$0
+    stz m_bonusLife_score_0
+    stz m_bonusLife_score_1
+    stz m_bonusLife_score_2
+    rts
+
 .endsection
 
 .section variables

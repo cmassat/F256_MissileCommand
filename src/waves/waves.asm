@@ -81,22 +81,33 @@ _doNotEndGame
     pla
     rts
 _continue
-    jsr score.handle
+
     jsr site.draw
     jsr icbm.play
     jsr abm.play
     jsr explosion.play
     jsr cities.play
+    lda mCurrentWave
+    cmp #2
+    bcc _end
+    jsr plane.play
+    cmp #3
+    bcc _end
+    jsr saucer.play
+    cmp #4
+    bcc _end
     jsr cruise.play
-    ;jsr plane.demo
-
+    ;
+    ;jsr saucer.play
+   ; jsr debug
+_end
     ply
     plx
     pla
     rts
 _endGame
     jsr state.next
-
+    jsr setSpeed
     ply
     plx
     pla
@@ -126,76 +137,384 @@ setSpeed
     bra _setWave10
     rts
 _setWave0
+    jsr wave0setup
+    rts
+_setWave1
+    jsr wave1setup
+    rts
+_setWave2
+    jsr wave2setup
+    rts
+_setWave3
+    jsr wave3setup
+    rts
+_setWave4
+    jsr wave4setup
+    rts
+_setWave5
+    jsr wave5setup
+    rts
+_setWave6
+    jsr wave6setup
+    rts
+_setWave7
+    jsr wave7setup
+    rts
+_setWave8
+    jsr wave8setup
+    rts
+_setWave9
+    jsr wave9setup
+    rts
+_setWave10
+    jsr wave10setup
+    rts
+wave0setup
     lda #$20
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr blackBack
     rts
-_setWave1
+wave1setup
     lda #$40
     ldx #1
     jsr icbm.setSpeed
-_setWave2
-    lda #$60
+    jsr plane.setSpeed
+    jsr cruise.setSpeed
+    jsr saucer.setSpeed
+
+    jsr blackBack
+    rts
+wave2setup
+     lda #$60
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr blueBack
     rts
-_setWave3
-    lda #$70
+
+wave3setup
+     lda #$70
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr blueBack
     rts
-_setWave4
+
+wave4setup
     lda #$80
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
-_setWave5
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr cyanBack
+    rts
+
+wave5setup
     lda #$90
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr cyanBack
     rts
-_setWave6
+
+wave6setup
     lda #$a0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr magentaBack
     rts
-_setWave7
-    lda #$B0
+
+wave7setup
+     lda #$B0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr magentaBack
     rts
-_setWave8
-    lda #$C0
+
+wave8setup
+     lda #$C0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr yellowBack
     rts
-_setWave9
+
+wave9setup
     lda #$D0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr whiteBack
     rts
-_setWave10
+
+wave10setup
     lda #$E0
     ldx #1
     jsr icbm.setSpeed
     jsr cruise.setSpeed
+    jsr plane.setSpeed
+    jsr saucer.setSpeed
+    jsr redBack
     rts
-setup
-    jsr setSpeed
-    jsr hideAllSprites
 
+redBack
+    lda #$00
+    ldx #$00
+    ldy #$FF
+    jsr setBackgroundColor
+
+    lda #$00
+    ldx #$00
+    ldy #$ff
+    jsr abmColor
+
+    lda #$00
+    ldx #$00
+    ldy #$00
+    jsr icbmColor
+
+
+    lda #black
+    ldx #red
+    ldy #1
+    jsr setColorByLine
+
+    lda #black
+    ldx #red
+    ldy #10
+    jsr setColorByLine
+
+    lda #blue
+    ldx #red
+    ldy #12
+    jsr setColorByLine
+    rts
+
+blueBack
+    lda #255
+    ldx #0
+    ldy #0
+    jsr setBackgroundColor
+
+    lda #$01
+    ldx #$01
+    ldy #$01
+    jsr abmColor
+
+
+    lda #$ff
+    ldx #00
+    ldy #$00
+    jsr icbmColor
+
+    lda #white
+    ldx #blue
+    ldy #1
+    jsr setColorByLine
+
+    lda #black
+    ldx #blue
+    ldy #10
+    jsr setColorByLine
+
+    lda #black
+    ldx #blue
+    ldy #12
+    jsr setColorByLine
+    rts
+
+cyanBack
+    lda #255
+    ldx #255
+    ldy #00
+    jsr setBackgroundColor
+
+    lda #$00
+    ldx #$00
+    ldy #$ff
+    jsr abmColor
+
+
+    lda #$ff
+    ldx #00
+    ldy #$00
+    jsr icbmColor
+
+
+    lda #blue
+    ldx #cyan
+    ldy #1
+    jsr setColorByLine
+
+    lda #blue
+    ldx #cyan
+    ldy #10
+    jsr setColorByLine
+
+    lda #blue
+    ldx #cyan
+    ldy #12
+    jsr setColorByLine
+    rts
+
+blackBack
     lda #0
     ldx #0
     ldy #0
     jsr setBackgroundColor
+
+    lda #$00
+    ldx #$00
+    ldy #$ff
+    jsr abmColor
+
+
+    lda #$ff
+    ldx #00
+    ldy #$00
+    jsr icbmColor
+
+    lda #blue
+    ldx #black
+    ldy #1
+    jsr setColorByLine
+
+    lda #blue
+    ldx #black
+    ldy #10
+    jsr setColorByLine
+
+    lda #blue
+    ldx #black
+    ldy #12
+    jsr setColorByLine
+    rts
+
+whiteBack
+    lda #255
+    ldx #255
+    ldy #255
+    jsr setBackgroundColor
+
+    lda #$00
+    ldx #$ff
+    ldy #$00
+    jsr abmColor
+
+
+    lda #$ff
+    ldx #00
+    ldy #$ff
+    jsr icbmColor
+
+    lda #violet
+    ldx #white
+    ldy #1
+    jsr setColorByLine
+
+    lda #violet
+    ldx #white
+    ldy #10
+    jsr setColorByLine
+
+    lda #violet
+    ldx #white
+    ldy #12
+    jsr setColorByLine
+    rts
+
+yellowBack
+    lda #0
+    ldx #255
+    ldy #255
+    jsr setBackgroundColor
+
+    lda #$ff
+    ldx #$00
+    ldy #$00
+    jsr abmColor
+
+
+    lda #$00
+    ldx #00
+    ldy #$00
+    jsr icbmColor
+
+
+    lda #red
+    ldx #yellow
+    ldy #1
+    jsr setColorByLine
+
+    lda #red
+    ldx #yellow
+    ldy #10
+    jsr setColorByLine
+
+    lda #red
+    ldx #yellow
+    ldy #12
+    jsr setColorByLine
+    rts
+
+magentaBack
+    lda #255
+    ldx #0
+    ldy #255
+    jsr setBackgroundColor
+
+    lda #$00
+    ldx #$ff
+    ldy #$ff
+    jsr abmColor
+
+
+    lda #$00
+    ldx #00
+    ldy #$00
+    jsr icbmColor
+
+    lda #yellow
+    ldx #violet
+    ldy #1
+    jsr setColorByLine
+
+    lda #yellow
+    ldx #violet
+    ldy #10
+    jsr setColorByLine
+
+    lda #yellow
+    ldx #violet
+    ldy #12
+    jsr setColorByLine
+    rts
+
+setup
+    jsr setSpeed
+    jsr hideAllSprites
+
 
     jsr clearVideo
     jsr clearScreenMemory

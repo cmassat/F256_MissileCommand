@@ -3,201 +3,295 @@ saucer .namespace
 init
     lda #0
     sta saucerActve
+    sta mWait
+    jsr reset
+    lda #$70
+    ldx #1
+    jsr setSpeed
+    rts
 
+reset
+    lda #SPRITENUMBER_SAUCER
+    jsr setSpriteNumber
+    jsr hideSprite
+    lda #0
+    ldx #0
+    jsr setSpriteX
+    jsr setSpriteY
+     lda #inactive
+    sta saucerActve
+
+    lda #120
+    sta mDelayLaunch
+
+
+    rts
+
+demo
+    pha
+    phx
+    phy
+    jsr draw
+    ply
+    plx
+    pla
+    rts
+
+play
+    pha
+    phx
+    phy
+    jsr collision.handlesaucer
+    jsr draw
+    ply
+    plx
+    pla
+    rts
+
+draw
+    lda mDelayLaunch
+    cmp #0
+    beq _skip
+    dec mDelayLaunch
+_skip
+    lda saucerActve
+    cmp #active
+    beq _move
+    jsr activate
+    rts
+_move
+    lda mSpeedTracker + 1
+    cmp mSpeed + 1
+    bne _continue
+    stz mSpeedTracker + 1
+_continue
+    lda mSpeedTracker
+    clc
+    adc mSpeed
+    sta mSpeedTracker
+    lda mSpeedTracker + 1
+    adc #0
+    sta mSpeedTracker + 1
+
+    lda mSpeedTracker + 1
+    cmp #1
+    bcs _move1
+    rts
+_move1
     lda #SPRITENUMBER_SAUCER
     jsr setSpriteNumber
 
+    jsr setLineData
+    jsr linestep
+    jsr saveLineData
+
+    lda #SPRITENUMBER_SAUCER
+    jsr setSpriteNumber
+    jsr getOriginX
+    clc
+    adc #24
+    pha
+    txa
+    adc #0
+    tax
+    pla
+    jsr setSpriteX
+
+    jsr getOriginX
+    sta currX
+    stx currX + 1
+
+    lda #SPRITENUMBER_SAUCER
+    jsr setSpriteNumber
+    jsr getOriginY
+    clc
+    adc #24
+    ldx #0
+    jsr setSpriteY
+    jsr getOriginY
+    sta currY
+    stx currY + 1
+
+    jsr outOfBounds
+    rts
+
+outOfBounds
+    jsr rightOutOfBounds
+    jsr leftOutOfBounds
+    rts
+
+rightOutOfBounds
+    lda saucerDirection
+    cmp #right
+    beq _check
+    rts
+_check
+    lda currX + 1
+    cmp #1
+    bcs _checkLo
+    rts
+_checkLo
+    lda currX
+    cmp #<320 + 24
+    bcs _deactivate
+    rts
+_deactivate
+    jsr reset
+    rts
+
+leftOutOfBounds
+    lda saucerDirection
+    cmp #left
+    beq _check
+    rts
+_check
+    lda currX + 1
+    cmp #0
+    beq _checkLo
+    rts
+_checkLo
+    lda currX
+    cmp #16
+    bcc _deactivate
+    rts
+_deactivate
+    lda #inactive
+    sta saucerActve
+    jsr reset
+    rts
+
+activate
+    jsr plane.getX
+    cmp #50
+    bcs _checkUpper
+    rts
+_checkUpper
+    jsr plane.getX
+    txa
+    cmp #1
+    bne _ok
+    jsr plane.getX
+    cmp #10
+    bcc _ok
+    rts
+_ok
+    jsr setupRandomPath
+    jsr lineInit
+    jsr linestep
+    jsr saveLineData
+    jsr getOriginX
+    sta currX
+    stx currX + 1
+
+    jsr getOriginY
+    sta currY
+    stx currY + 1
+
+    lda #SPRITENUMBER_SAUCER
+    jsr setSpriteNumber
+    jsr showSprite
+    lda #active
+    sta saucerActve
+    rts
+
+setupRandomPath
+     jsr pickDirection
+     lda saucerDirection
+     cmp #right
+     beq rightPath
+     jsr leftPath
+    jsr leftPath
+    rts
+
+rightPath
+    lda #0
+    ldx #00
+    jsr setOrginX
+    sta origX
+    stx origX + 1
+
+    jsr generateOriginY
+    lda origY
+    ldx origY + 1
+    jsr setOrginY
+
+    lda <#352
+    ldx >#352
+    jsr setDestX
+    sta destX
+    stx destX + 1
+
+    lda origY
+    ldx origY + 1
+    jsr setDestY
+    sta destY
+    stx destY + 1
+
+    lda #SPRITENUMBER_SAUCER
+    jsr setSpriteNumber
+    lda #<SPRITE_SAUCERRIGHT
+    ldx #>SPRITE_SAUCERRIGHT
+    ldy #`SPRITE_SAUCERRIGHT
+    jsr setSpriteAddress
+    jsr showSprite
+    rts
+
+leftPath
+    lda #<352
+    ldx #>352
+    jsr setOrginX
+    sta origX
+    stx origX + 1
+    jsr generateOriginY
+    lda origY
+    ldx origY + 1
+    jsr setOrginY
+
+    lda <#32
+    ldx >#32
+    jsr setDestX
+    sta destX
+    stx destX + 1
+
+    lda origY
+    ldx origY + 1
+    jsr setDestY
+    sta destY
+    stx destY + 1
+
+    lda #SPRITENUMBER_SAUCER
+    jsr setSpriteNumber
     lda #<SPRITE_SAUCERLEFT
     ldx #>SPRITE_SAUCERLEFT
     ldy #`SPRITE_SAUCERLEFT
     jsr setSpriteAddress
-    rts
-
-
-draw
-    lda (POINTER_ACTIVE)
-    cmp #0
-    bne _move
-
-    jsr setupRandomPath
-
-    jsr getOriginX
-    sta (POINTER_SOURCEX)
-    txa
-    ldy #1
-    sta (POINTER_SOURCEX),y
-
-    jsr getOriginY
-    sta (POINTER_SOURCEY)
-    txa
-    ldy #1
-    sta (POINTER_SOURCEY),y
-
-    jsr getDestX
-    sta (POINTER_DESTX)
-    txa
-    ldy #1
-    sta (POINTER_DESTX),y
-
-    jsr getDestY
-    sta (POINTER_DESTY)
-    txa
-    ldy #1
-    sta (POINTER_DESTY),y
-
-    jsr lineInit
-
-    jsr linestep
-   ; jsr putPixel
-    lda #1
-    sta (POINTER_ACTIVE)
-
-_saveLineData
-    ;save line data for later
-
-    ldy #0
-_loop
-    lda (POINTER_TX),y
-    sta (POINTER_SAUCER),y
-    iny
-    cpy mlineDataLength
-    bne _loop
+     jsr showSprite
 
     rts
-_move
-    lda (POINTER_FRAME)
-    cmp #wave0
-    beq _goodFrame
-    lda (POINTER_FRAME)
-    clc
-    adc #1
-    sta (POINTER_FRAME)
+
+pickDirection
+    jsr getRandom
+    cmp #127
+    bcc _left
+    lda #right
+    sta saucerDirection
     rts
-_goodFrame
-   lda #0
-   sta (POINTER_FRAME)
-
-    ldy #0
-_setLineDatagetPixel
-    lda (POINTER_SAUCER),y
-    sta (POINTER_TX),y
-    iny
-    cpy mlineDataLength
-    bne _setLineDatagetPixel
-
-    jsr linestep
-    jsr getOriginx
-    txa
-    cmp #0
-    beq _ok
-    jsr getOriginx
-    cmp #$FA
-    bcs _deactivte
-
-_ok
-    lda #SPRITENUMBER_SAUCER
-    jsr setSpriteNumber
-
-    jsr getOriginX
-    jsr setSpriteX
-    jsr getOriginY
-    jsr setSpriteY
-    jsr showSprite
-
-    lda #SPRITENUMBER_SAUCER
-    jsr setSpriteNumber
-
-    jmp _saveLineData
-    rts
-_deactivte
-    lda #0
-    sta (POINTER_ACTIVE)
-    lda #SPRITENUMBER_SAUCER
-    jsr setSpriteNumber
-    jsr hideSprite
-
-    lda #SPRITENUMBER_SAUCER
-    jsr setSpriteNumber
-    jsr hideSprite
-    rts
-
-saucerMacro .macro
-    lda <#\1
-    sta POINTER_SAUCER
-    lda >#\1
-    sta POINTER_SAUCER + 1
-
-    lda <#\2
-    sta POINTER_TX
-    lda >#\2
-    sta POINTER_TX + 1
-
-    lda #<\3
-    sta POINTER_SOURCEX
-    lda #>\3
-    sta POINTER_SOURCEX + 1
-
-    lda #<\4
-    sta POINTER_SOURCEY
-    lda #>\4
-    sta POINTER_SOURCEY + 1
-
-    lda #<\5
-    sta POINTER_DESTX
-    lda #>\5
-    sta POINTER_DESTX + 1
-
-    lda #<\6
-    sta POINTER_DESTY
-    lda #>\6
-    sta POINTER_DESTY + 1
-
-    lda #<\7
-    sta POINTER_ACTIVE
-    lda #>\7
-    sta POINTER_ACTIVE + 1
-
-    lda #<\8
-    sta POINTER_FRAME
-    lda #>\8
-    sta POINTER_FRAME + 1
-    jsr draw
-.endmacro
-drawsaucer
-    phy
-    phx
-    pha
-    #saucerMacro mSaucer, mLineData, origX, origY, destX, destY, saucerActve, saucerFrame
-    pla
-    plx
-    ply
-    rts
-
-setupRandomPath
-    lda <#352
-    ldx >#352
-    jsr setOrginX
-    jsr generateOriginY
-    lda mrandYStart
-    ldx mrandYStart + 1
-    jsr setOrginY
-
-    lda <#0
-    ldx >#0
-    jsr setDestX
-    lda mrandYStart
-    ldx mrandYStart + 1
-    jsr setDestY
-
+_left
+    lda #left
+    sta saucerDirection
     rts
 
 
 generateOriginY
 _tryAgain
     jsr getRandom
-    sta mrandYStart
-    lda mrandYStart
-    cmp #200
+    asl
+    sta r_seed
+    jsr getRandom
+    sta origY
+    stz origY + 1
+    lda origY
+    cmp #150
     bcs _tryAgain
     cmp #80
     bcc _tryAgain
@@ -206,36 +300,113 @@ _tryAgain
     sta r_seed
     rts
 
+getX
+    lda currX
+    ldx currX + 1
+    rts
+
+getY
+    lda currY
+    ldx currY + 1
+    rts
+
+saveLineData
+    phy
+    phx
+    pha
+    ldy #0
+_loop
+    lda mLineData,y
+    sta msaucerPathData,y
+    iny
+    cpy #pathDataLength
+    bne _loop
+    pla
+    plx
+    ply
+    rts
+
+setLineData
+    phy
+    phx
+    pha
+    ldy #0
+_loop
+    lda msaucerPathData,y
+    sta mLineData,y
+    iny
+    cpy #pathDataLength
+    bne _loop
+    pla
+    plx
+    ply
+    rts
+
+setSpeed
+    sta mSpeed
+    stx mSpeed + 1
+
+    stz mSpeedTracker
+    stz mSpeedTracker + 1
+    rts
+
 .endsection
 .section variables
-mSaucer
-    .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
-    .word $0  ; ZU - "dlugosc" y
-    .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
-    .word $0  ; U2
-    .word $0 ; U2 step
-    .word $0 ; U2 step
-    .word $0 ; U2 'error'
-    ;poin.byte $0 ;
-    .word $0 ; ZU poczatek linii
-    .word $0 ; ZU
-    .word $0 ; ZU koniec linii
-    .word $0 ; ZU
-    .byte $0
+right = 0
+left = 1
+inactive = 0
+active = 1
+msaucerDataLength
+waitFrames = 120
+wave0 = 2
+wave1 = 5
+pathDataLength = msaucerPathDataEnd - msaucerPathData
+msaucerPathData
+ .word $0 ; ZU - "dlugosc" x (rozpietosc na osi)
+ .word $0  ; ZU - "dlugosc" y A
+ .word $0  ; U2 xi,yi - kierunek rysowania w osi x , y
+ .word $0  ; U2
+ .word $0 ; U2 step
+ .word $0 ; U2 step
+ .word $0 ; U2 'error'
+
+;poin.byte $0 ;
+ .word $0 ; ZU poczatek linii
+ .word $0 ; ZU
+ .word $0 ; ZU koniec linii
+ .word $0 ; ZU
+
+	.byte $0
+
     .byte $00
+
     .byte $00
-saucerActve .byte $0
+; mDWeight
+;     .byte $00
+msaucerPathDataEnd
+saucerActve
+    .byte $00
+saucerDirection
+    .byte $00
 saucerFrame .byte $0
 origX .byte $00, $00
 origY .byte $00, $00
 destX .byte $00, $00
 destY .byte $00, $00
+currX
+    .byte $00, $00
+currY
+    .byte $00, $00
 
 spiteCalc
     .byte $00, $00
-mrandYStart
+mWait
+    .byte $0
+mSpeed
     .byte $00, $00
-wave0 = 2
-wave1 = 5
+mSpeedTracker
+    .byte $00, $00
+mDelayLaunch
+    .byte $0
 .endsection
 .endnamespace
