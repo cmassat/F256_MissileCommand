@@ -311,7 +311,7 @@ _end
     inc mCurrentWave
     jsr icbm.decMaxY
     jsr setSpeed
-
+    jsr psg.playPulse
     rts
 .endsection
 

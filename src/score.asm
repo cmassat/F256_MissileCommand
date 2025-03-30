@@ -19,6 +19,14 @@ handle
     phy
     phx
     pha
+    lda #state.splash
+    jsr state.is
+    bcs _display
+     pla
+    plx
+    ply
+    rts
+_display
     jsr getScoreDigit0
     #writeScoreMacro $c009 + (1 * 40)
     jsr getScoreDigit1

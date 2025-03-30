@@ -528,7 +528,7 @@ setup
 
     jsr cities.init
 
-    lda #127
+    lda #90
     sta mDelayTimer
     sta mDelayTimer + 1
     ;jsr showBitmap

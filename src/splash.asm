@@ -133,7 +133,7 @@ mHitSpace
     .byte $00
 
 mVersion
-    .text '         Version 00.02.01-b.1'
+    .text '         Version 00.02.01-VCF.1'
     .byte $00
 
 .endsection

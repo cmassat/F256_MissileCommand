@@ -306,7 +306,7 @@ _checkOver320
     rts
 _checkLo
     lda mrandXStart
-    cmp <#320
+    cmp <#300
     bcs _tryAgain
 
     lda r_seed
