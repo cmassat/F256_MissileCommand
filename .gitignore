@@ -6,3 +6,4 @@ workspace/
 .venv/
 .zed/
 cspell.json
+*.sh
