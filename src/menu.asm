@@ -46,6 +46,7 @@ _demo
     rts
 
 begin
+    jsr clearVideo
     lda #8
     jsr clearMemory
     lda #9
@@ -87,42 +88,14 @@ begin
     jsr psg.playExplosion
     jsr hideAllSprites
 
-    lda #0
-    ldx #0
-    ldy #0
-    jsr setBackgroundColor
-    jsr clearVideo
-    jsr enableText
-    jsr enableGrafix
-    jsr enableSprite
-    jsr enableBitmap
-    jsr setVideo
-    jsr clearLayers
-
-    jsr clut_load_0
+    jsr waves.blackBack
 
 
-   ; jsr clearExtMem
-    ; lda #0
-    ; jsr setBitmapNumber
+    lda #00
+    ldx #00
+    ldy #255
+    jsr alphaColor
 
-
-;      lda #<BITMAP_START
-;      ldx #>BITMAP_START
-;      ldy #`BITMAP_START
-;      jsr setBitmapAddress
-
-;      ;lda #0
-;     ;jsr setBitmapClut
-;    jsr showBitmap
-;
-;
-    jsr setBitmapLayer0
-    jsr setupBitmap0
-    ;
-    jsr setBitmapLayer1
-    jsr setupBitmap1
-    jsr setLayers
     ;
     jsr cities.demo
     jsr clearTextScreen
@@ -162,6 +135,20 @@ begin
 
 
     jsr nextState
+
+    jsr setBitmapLayer0
+    jsr setupBitmap0
+    ;
+    jsr setBitmapLayer1
+    jsr setupBitmap1
+    jsr setLayers
+
+    jsr enableText
+    jsr enableGrafix
+    jsr enableSprite
+    jsr enableBitmap
+    jsr setVideo
+
     rts
 
 demo
@@ -175,6 +162,7 @@ demo
    jsr collision.initSiloCollision
     rts
 _playDemo
+    jsr icbmHeadColor
     jsr icbm.demo
    ; jsr site.draw
     jsr cruise.demo

@@ -81,7 +81,6 @@ _doNotEndGame
     pla
     rts
 _continue
-
     jsr site.draw
     jsr icbm.play
     jsr abm.play
@@ -388,7 +387,6 @@ blackBack
     ldx #$00
     ldy #$ff
     jsr abmColor
-
 
     lda #$ff
     ldx #00

@@ -1,7 +1,17 @@
 .section code 
 initGame
 
+    jsr clearVideo
+    jsr clut_load_0
+    jsr init_mouse
+    stz $D6E0   ;hide mouse
     jsr hideAllSprites
+
+    lda #0
+    ldx #0
+    ldy #0
+    jsr setBackgroundColor
+
     jsr clearExtMem
     jsr cities.init
     jsr initPsg
@@ -21,6 +31,6 @@ initGame
     jsr gameOver.init
     jsr loadFont
     jsr resetBonusLifeScore
-    stz $D6E0   ;hide mouse
+
     rts 
 .endsection

@@ -55,6 +55,8 @@ printletter .macro spritenumber, letter, x,y
 setup
     lda #0
     sta MMU_IO_CTRL
+    jsr clearVideo
+    jsr site.hide
 
     lda #0
     ldx #0
@@ -64,7 +66,7 @@ setup
     jsr enableGrafix
     jsr enableSprite
     jsr setVideo
-    jsr clut_load_0
+
 
     #printletter 00, SPRITE_LETTER_M, 32 + 100 + (0* 16), 32 + 120 - 32
     #printletter 01, SPRITE_LETTER_I, 32 + 100 + (1* 16), 32 + 120 - 32

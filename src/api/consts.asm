@@ -133,10 +133,8 @@ EXPLOSION_CLR = 48
 MISSLE_CLR = 112
 ICBM_HEAD = 122
 ABM_CLR = 4
-txtRed = 3
-txtWhite = 96
-txtBlack = 1
-txtBlue = 10
+APLHA_CLR = 8
+
 
 
 PSG_2A	      = $3F6

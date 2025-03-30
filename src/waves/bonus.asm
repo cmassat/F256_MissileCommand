@@ -35,7 +35,7 @@ waveOver
     jsr showAbmBonus
     jsr showCityBonus
     jsr checkExtraCity
-
+    jsr site.hide
     ;jsr rebuildCities
     ;jsr icbm.targetCity
 

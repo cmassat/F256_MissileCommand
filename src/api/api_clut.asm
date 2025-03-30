@@ -88,6 +88,45 @@ missleColor
     stz  MMU_IO_CTRL
     rts
 
+
+alphaColor
+     pha
+    lda #CLUT_IO
+    sta MMU_IO_CTRL
+
+    lda #<CLUT_0_ADDR + (APLHA_CLR * 4)
+    sta POINTER_CLUT_DEST
+
+    lda #>CLUT_0_ADDR + (APLHA_CLR * 4)
+    sta POINTER_CLUT_DEST   + 1
+
+    tya
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    txa
+    sta (POINTER_CLUT_DEST)
+
+    lda POINTER_CLUT_DEST
+    clc
+    adc #1
+    sta POINTER_CLUT_DEST
+    lda POINTER_CLUT_DEST + 1
+    adc #0
+    sta POINTER_CLUT_DEST + 1
+
+    pla
+    sta (POINTER_CLUT_DEST)
+    stz  MMU_IO_CTRL
+    rts
+
 icbmColor
      pha
     lda #CLUT_IO

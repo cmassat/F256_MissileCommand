@@ -69,6 +69,12 @@ draw
     plx
     pla
     rts
+
+hide
+    lda #SPRITENUMBER_REDICLE
+    jsr setSpriteNumber
+    jsr hideSprite
+    rts
 .endsection
 .section variables
 TEMP_X

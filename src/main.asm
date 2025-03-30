@@ -37,7 +37,7 @@ start
 main
     stz MMU_IO_CTRL
     jsr initGame
-    jsr init_mouse
+
 
     jsr initEvents
     jsr setFrameTimer
