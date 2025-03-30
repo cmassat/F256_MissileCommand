@@ -22,7 +22,7 @@ handle
     lda #state.splash
     jsr state.is
     bcs _display
-     pla
+    pla
     plx
     ply
     rts
@@ -41,11 +41,26 @@ _display
     #writeScoreMacro $c004 + (1 * 40)
     jsr getScoreDigit6
     #writeScoreMacro $c003 + (1 * 40)
+
+
+    jsr getHighScoreDigit0
+    #writeScoreMacro $c018 + (1 * 40)
+    jsr getHighScoreDigit1
+    #writeScoreMacro $c017 + (1 * 40)
+    jsr getHighScoreDigit2
+    #writeScoreMacro $c016 + (1 * 40)
+    jsr getHighScoreDigit3
+    #writeScoreMacro $c015 + (1 * 40)
+    jsr getHighScoreDigit4
+    #writeScoreMacro $c014 + (1 * 40)
+    jsr getHighScoreDigit5
+    #writeScoreMacro $c013 + (1 * 40)
+    jsr getHighScoreDigit6
+    #writeScoreMacro $c012 + (1 * 40)
     pla
     plx
     ply
     rts
-
 
 addScore
     phx
